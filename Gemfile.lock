@@ -369,7 +369,8 @@ DEPENDENCIES
   propshaft
   puma (>= 5.0)
   rails (~> 8.0.3)
-  rspec-rails (~> 7.0)
+  rspec-rails
+  rubocop
   rubocop-rails-omakase
   simplecov
   solid_cable

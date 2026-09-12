@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe CheckIn, type: :model do
@@ -11,5 +13,3 @@ RSpec.describe CheckIn, type: :model do
     expect(check_in).not_to be_valid
   end
 end
-
-
