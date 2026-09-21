@@ -10,26 +10,87 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_12_200359) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_21_190241) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
-  create_table "check_ins", force: :cascade do |t|
-    t.integer "member_id"
-    t.integer "event_id"
+  create_table "appeals", force: :cascade do |t|
+    t.bigint "submitting_member_id", null: false
+    t.bigint "event_id", null: false
+    t.string "appeal_type"
+    t.text "reason"
+    t.string "status"
+    t.bigint "reviewed_by_member_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_appeals_on_event_id"
+    t.index ["reviewed_by_member_id"], name: "index_appeals_on_reviewed_by_member_id"
+    t.index ["submitting_member_id"], name: "index_appeals_on_submitting_member_id"
+  end
+
+  create_table "attendances", force: :cascade do |t|
+    t.bigint "member_id", null: false
+    t.bigint "event_id", null: false
+    t.datetime "check_in_time"
+    t.string "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["event_id"], name: "index_attendances_on_event_id"
+    t.index ["member_id"], name: "index_attendances_on_member_id"
+  end
+
+  create_table "categories", force: :cascade do |t|
+    t.string "category_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "events", force: :cascade do |t|
-    t.string "title"
+    t.bigint "category_id", null: false
+    t.bigint "semester_id", null: false
+    t.string "event_name"
+    t.datetime "event_date_time"
+    t.decimal "point_value"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_events_on_category_id"
+    t.index ["semester_id"], name: "index_events_on_semester_id"
+  end
+
+  create_table "members", force: :cascade do |t|
+    t.integer "uin"
+    t.string "tamu_email"
+    t.string "name"
+    t.integer "class_year"
+    t.boolean "is_admin"
+    t.string "standing"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "members", force: :cascade do |t|
-    t.string "name"
+  create_table "semester_requirements", force: :cascade do |t|
+    t.bigint "semester_id", null: false
+    t.bigint "category_id", null: false
+    t.integer "required_count"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "index_semester_requirements_on_category_id"
+    t.index ["semester_id"], name: "index_semester_requirements_on_semester_id"
+  end
+
+  create_table "semesters", force: :cascade do |t|
+    t.string "term_name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
+
+  add_foreign_key "appeals", "events"
+  add_foreign_key "appeals", "members", column: "reviewed_by_member_id"
+  add_foreign_key "appeals", "members", column: "submitting_member_id"
+  add_foreign_key "attendances", "events"
+  add_foreign_key "attendances", "members"
+  add_foreign_key "events", "categories"
+  add_foreign_key "events", "semesters"
+  add_foreign_key "semester_requirements", "categories"
+  add_foreign_key "semester_requirements", "semesters"
 end
