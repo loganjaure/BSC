@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class CreateAppeals < ActiveRecord::Migration[7.0]
   def change
     create_table :appeals, if_not_exists: true do |t|

@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'rails_helper'
 
 RSpec.describe Member, type: :model do
@@ -9,7 +11,7 @@ RSpec.describe Member, type: :model do
   end
 
   describe 'Validations' do
-    subject { Member.new(uin: 123456789, tamu_email: 'test@tamu.edu', name: 'Test User') }
+    subject { Member.new(uin: 123_456_789, tamu_email: 'test@tamu.edu', name: 'Test User') }
 
     it { should validate_presence_of(:uin) }
     it { should validate_uniqueness_of(:uin) }

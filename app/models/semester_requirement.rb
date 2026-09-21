@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class SemesterRequirement < ApplicationRecord
   belongs_to :semester
   belongs_to :category
