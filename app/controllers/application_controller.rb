@@ -20,7 +20,7 @@ class ApplicationController < ActionController::Base
   def require_login
     # AC-03.3: Block unauthenticated users
     unless logged_in?
-      redirect_to root_path, alert: 'Please sign in with your TAMU email to continue.'
+      redirect_to root_path, alert: "Please sign in with your TAMU email to continue."
     end
   end
 end
