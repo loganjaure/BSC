@@ -1,0 +1,23 @@
+<div style="text-align: center; margin-top: 50px;">
+  <h1>BSC Attendance Portal</h1>
+  <p>Sign in using your official TAMU email address (@tamu.edu)</p>
+
+  <% if flash[:alert] %>
+    <div style="color: red; margin: 15px 0;"><%= flash[:alert] %></div>
+  <% end %>
+  <% if flash[:notice] %>
+    <div style="color: green; margin: 15px 0;"><%= flash[:notice] %></div>
+  <% end %>
+
+  <% if logged_in? %>
+    <p>Welcome back, <strong><%= current_user.full_name %></strong>!</p>
+    <p>Logged in as: <code><%= current_user.email %></code></p>
+    <div style="margin-top: 20px;">
+      <%= link_to "Go to Dashboard", dashboard_path %>
+    </div>
+  <% else %>
+    <div style="margin-top: 20px;">
+      <%= button_to "Sign in with Google", "/auth/google_oauth2", method: :post, data: { turbo: false } %>
+    </div>
+  <% end %>
+</div>
