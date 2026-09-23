@@ -8,9 +8,9 @@
       "RSpec"
     ],
     "project_name": "Bsc-500",
-    "timestamp": "2026-09-23T08:46:35.567+00:00",
-    "root": "/csce431/BSC-500",
-    "commit": "b7c70bd77b777887a7be467bc52f99510c8949c1",
+    "timestamp": "2026-09-23T18:29:37.671+00:00",
+    "root": "/BSC-500",
+    "commit": "33db850ed0f25e2d78cb19ffce2f083fcfd7baf3",
     "primary_coverage": "line",
     "line_coverage": true,
     "branch_coverage": false,
@@ -18,12 +18,12 @@
   },
   "total": {
     "lines": {
-      "covered": 0,
-      "missed": 54,
-      "omitted": 54,
-      "total": 54,
-      "percent": 0.0,
-      "strength": 0.0
+      "covered": 113,
+      "missed": 21,
+      "omitted": 144,
+      "total": 134,
+      "percent": 84.32835820895522,
+      "strength": 1.6044776119402986
     }
   },
   "coverage": {
@@ -32,23 +32,335 @@
         "# frozen_string_literal: true",
         "",
         "class ApplicationController < ActionController::Base",
-        "  # Only allow modern browsers supporting webp images, web push, badges, import maps, CSS nesting, and CSS :has.",
         "  allow_browser versions: :modern",
+        "  before_action :require_login",
+        "  before_action :ensure_profile_complete",
+        "  helper_method :current_user, :logged_in?",
+        "",
+        "  private",
+        "",
+        "  def current_user",
+        "    # AC-03.4: User stays logged in across refreshes/reopening",
+        "    @current_user ||= User.find_by(id: session[:user_id]) if session[:user_id]",
+        "  end",
+        "",
+        "  def current_member",
+        "    @current_member ||= current_user&.member",
+        "  end",
+        "",
+        "  def logged_in?",
+        "    current_user.present?",
+        "  end",
+        "",
+        "  def require_login",
+        "    # AC-03.3: Block unauthenticated users",
+        "    unless logged_in?",
+        "      redirect_to root_path, alert: \"Please sign in with your TAMU email to continue.\"",
+        "    end",
+        "  end",
+        "",
+        "  def ensure_profile_complete",
+        "    return unless logged_in? && current_member",
+        "",
+        "    # redirect to edit profile if UIN is missing",
+        "    if current_member.uin.blank? && !profile_action?",
+        "      redirect_to edit_member_path(current_member), alert: \"Please complete your profile details to proceed.\"",
+        "    end",
+        "  end",
+        "  ",
+        "  def profile_action?",
+        "    (controller_name == \"members\" && action_name.in?(%w[edit update])) || controller_name == \"sessions\"",
+        "  end",
+        "",
         "end"
       ],
       "lines": [
         null,
         null,
+        1,
+        1,
+        1,
+        1,
+        1,
+        null,
+        1,
+        null,
+        1,
+        null,
+        12,
+        null,
+        null,
+        1,
+        3,
+        null,
+        null,
+        1,
+        14,
+        null,
+        null,
+        1,
+        null,
+        6,
+        2,
+        null,
+        null,
+        null,
+        1,
+        8,
+        null,
+        null,
+        3,
+        0,
+        null,
+        null,
+        null,
+        1,
+        1,
+        null,
+        null,
+        null
+      ],
+      "lines_covered_percent": 95.23809523809524,
+      "covered_lines": 20,
+      "missed_lines": 1,
+      "omitted_lines": 23,
+      "total_lines": 21
+    },
+    "app/controllers/dashboard_controller.rb": {
+      "source": [
+        "class DashboardController < ApplicationController",
+        "  # require_login from ApplicationController ensures only authenticated users access this controller",
+        "  def show",
+        "  end",
+        "end"
+      ],
+      "lines": [
         0,
         null,
         0,
+        null,
         null
       ],
       "lines_covered_percent": 0.0,
       "covered_lines": 0,
       "missed_lines": 2,
-      "omitted_lines": 4,
+      "omitted_lines": 3,
       "total_lines": 2
+    },
+    "app/controllers/home_controller.rb": {
+      "source": [
+        "class HomeController < ApplicationController",
+        "  skip_before_action :require_login, only: [ :index ]",
+        "",
+        "  def index",
+        "    redirect_to dashboard_path if logged_in?",
+        "  end",
+        "end"
+      ],
+      "lines": [
+        0,
+        0,
+        null,
+        0,
+        0,
+        null,
+        null
+      ],
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 4,
+      "omitted_lines": 3,
+      "total_lines": 4
+    },
+    "app/controllers/members_controller.rb": {
+      "source": [
+        "class MembersController < ApplicationController",
+        "  before_action :set_member, only: [:show, :edit, :update]",
+        "",
+        "  # GET /members/:id",
+        "  def show",
+        "  end",
+        "",
+        "  # GET /members/:id/edit",
+        "  def edit",
+        "  end",
+        "",
+        "  # PATCH/PUT /members/:id",
+        "  def update",
+        "    if @member.update(member_params)",
+        "      redirect_to @member, notice: \"Profile updated successfully!\"",
+        "    else",
+        "      render :edit, status: :unprocessable_entity",
+        "    end",
+        "  end",
+        "",
+        "  private",
+        "",
+        "  def set_member",
+        "    @member = Member.find(params[:id])",
+        "  end",
+        "",
+        "  def member_params",
+        "    params.require(:member).permit(:name, :uin, :class_year, :tamu_email)",
+        "  end",
+        "end"
+      ],
+      "lines": [
+        1,
+        1,
+        null,
+        null,
+        1,
+        null,
+        null,
+        null,
+        1,
+        null,
+        null,
+        null,
+        1,
+        1,
+        1,
+        null,
+        0,
+        null,
+        null,
+        null,
+        1,
+        null,
+        1,
+        3,
+        null,
+        null,
+        1,
+        1,
+        null,
+        null
+      ],
+      "lines_covered_percent": 92.3076923076923,
+      "covered_lines": 12,
+      "missed_lines": 1,
+      "omitted_lines": 17,
+      "total_lines": 13
+    },
+    "app/controllers/sessions_controller.rb": {
+      "source": [
+        "class SessionsController < ApplicationController",
+        "  skip_before_action :require_login, only: [ :create, :failure ]",
+        "",
+        "  def create",
+        "    auth = request.env[\"omniauth.auth\"]",
+        "    email = auth.info.email",
+        "",
+        "    # AC-01.2: Deny non-TAMU emails with an explicit error message",
+        "    unless email.to_s.downcase.end_with?(\"@tamu.edu\")",
+        "      redirect_to root_path, alert: \"Access denied: You must use an official @tamu.edu email address.\"",
+        "      return",
+        "    end",
+        "",
+        "    user = User.from_google(",
+        "      email: email,",
+        "      full_name: auth.info.name,",
+        "      uid: auth.uid,",
+        "      provider: auth.provider",
+        "    )",
+        "",
+        "    if user&.persisted?",
+        "      # Link or create member record",
+        "      member = Member.find_or_create_by(tamu_email: user.email) do |m|",
+        "        m.name = user.full_name",
+        "        m.user = user",
+        "      end",
+        "      ",
+        "      # assign user_id if member preexists",
+        "      member.update(user: user) if member.user_id.nil?",
+        "",
+        "      session[:user_id] = user.id # AC-03.1 & AC-03.4: Maintain logged-in session",
+        "",
+        "      # redirect to edit profile if UIN is missing",
+        "      if member.uin.blank?",
+        "        redirect_to edit_member_path(member), notice: \"Please complete your profile by providing your UIN and Class Year.\"",
+        "      else",
+        "        redirect_to dashboard_path, notice: \"Successfully signed in!\" # AC-01.3",
+        "      end",
+        "    else",
+        "      redirect_to root_path, alert: \"Failed to sign in using Google.\"",
+        "    end",
+        "  end",
+        "",
+        "  # AC-03.2: Log out and terminate session",
+        "  def destroy",
+        "    reset_session",
+        "    redirect_to root_path, notice: \"Logged out successfully.\"",
+        "  end",
+        "",
+        "  # AC-01.5: Return user to login on OAuth cancellation without creating partial account",
+        "  def failure",
+        "    redirect_to root_path, alert: \"Sign-in was canceled or failed. Please try again.\"",
+        "  end",
+        "end"
+      ],
+      "lines": [
+        1,
+        1,
+        null,
+        1,
+        3,
+        3,
+        null,
+        null,
+        3,
+        1,
+        1,
+        null,
+        null,
+        2,
+        null,
+        null,
+        null,
+        null,
+        null,
+        null,
+        2,
+        null,
+        2,
+        2,
+        2,
+        null,
+        null,
+        null,
+        2,
+        null,
+        2,
+        null,
+        null,
+        2,
+        2,
+        null,
+        0,
+        null,
+        null,
+        0,
+        null,
+        null,
+        null,
+        null,
+        1,
+        0,
+        0,
+        null,
+        null,
+        null,
+        1,
+        0,
+        null,
+        null
+      ],
+      "lines_covered_percent": 79.16666666666667,
+      "covered_lines": 19,
+      "missed_lines": 5,
+      "omitted_lines": 30,
+      "total_lines": 24
     },
     "app/helpers/application_helper.rb": {
       "source": [
@@ -60,13 +372,28 @@
       "lines": [
         null,
         null,
-        0,
+        1,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 1,
+      "lines_covered_percent": 100.0,
+      "covered_lines": 1,
+      "missed_lines": 0,
       "omitted_lines": 3,
+      "total_lines": 1
+    },
+    "app/helpers/members_helper.rb": {
+      "source": [
+        "module MembersHelper",
+        "end"
+      ],
+      "lines": [
+        1,
+        null
+      ],
+      "lines_covered_percent": 100.0,
+      "covered_lines": 1,
+      "missed_lines": 0,
+      "omitted_lines": 1,
       "total_lines": 1
     },
     "app/jobs/application_job.rb": {
@@ -137,18 +464,18 @@
       "lines": [
         null,
         null,
-        0,
-        0,
-        0,
-        0,
+        1,
+        1,
+        1,
+        1,
         null,
-        0,
-        0,
+        1,
+        1,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 6,
+      "lines_covered_percent": 100.0,
+      "covered_lines": 6,
+      "missed_lines": 0,
       "omitted_lines": 4,
       "total_lines": 6
     },
@@ -163,13 +490,13 @@
       "lines": [
         null,
         null,
-        0,
-        0,
+        1,
+        1,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 2,
+      "lines_covered_percent": 100.0,
+      "covered_lines": 2,
+      "missed_lines": 0,
       "omitted_lines": 3,
       "total_lines": 2
     },
@@ -188,17 +515,17 @@
       "lines": [
         null,
         null,
-        0,
-        0,
-        0,
+        1,
+        1,
+        1,
         null,
-        0,
-        0,
+        1,
+        1,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 5,
+      "lines_covered_percent": 100.0,
+      "covered_lines": 5,
+      "missed_lines": 0,
       "omitted_lines": 4,
       "total_lines": 5
     },
@@ -216,16 +543,16 @@
       "lines": [
         null,
         null,
-        0,
-        0,
-        0,
+        1,
+        1,
+        1,
         null,
-        0,
+        1,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 4,
+      "lines_covered_percent": 100.0,
+      "covered_lines": 4,
+      "missed_lines": 0,
       "omitted_lines": 4,
       "total_lines": 4
     },
@@ -275,58 +602,68 @@
       "lines": [
         null,
         null,
-        0,
-        0,
-        0,
-        0,
-        0,
-        0,
+        1,
+        1,
+        1,
+        1,
+        1,
+        1,
         null,
-        0,
-        0,
-        0,
+        1,
+        1,
+        1,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 9,
+      "lines_covered_percent": 100.0,
+      "covered_lines": 9,
+      "missed_lines": 0,
       "omitted_lines": 4,
       "total_lines": 9
     },
     "app/models/member.rb": {
       "source": [
-        "# frozen_string_literal: true",
-        "",
         "class Member < ApplicationRecord",
+        "  belongs_to :user, optional: true",
+        "",
         "  has_many :attendances, dependent: :destroy",
         "  has_many :events, through: :attendances",
         "  has_many :submitted_appeals, class_name: \"Appeal\", foreign_key: \"submitting_member_id\"",
         "  has_many :reviewed_appeals, class_name: \"Appeal\", foreign_key: \"reviewed_by_member_id\"",
         "",
-        "  validates :uin, presence: true, uniqueness: true",
+        "  validates :name, presence: { message: \"cannot be blank\" }",
+        "",
         "  validates :tamu_email, presence: true, uniqueness: true",
-        "  validates :name, presence: true",
+        "",
+        "  validates :uin, presence: { message: \"cannot be blank\" }, numericality: { only_integer: true, message: \"must be numeric \"}, length: { is: 9, message: \"must be exactly 9 digits\" }, uniqueness: { case_sensitive: false }, on: :update",
+        "",
+        "  validates :class_year, presence: { message: \"cannot be blank\" }, numericality: { only_integer: true, greater_than: 2000, less_than: 2100, message: \"must be a valid 4-digit year\" }, on: :update",
+        "",
         "end"
       ],
       "lines": [
+        1,
+        1,
         null,
+        1,
+        1,
+        1,
+        1,
         null,
-        0,
-        0,
-        0,
-        0,
-        0,
+        1,
         null,
-        0,
-        0,
-        0,
+        1,
+        null,
+        1,
+        null,
+        1,
+        null,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 8,
-      "omitted_lines": 4,
-      "total_lines": 8
+      "lines_covered_percent": 100.0,
+      "covered_lines": 10,
+      "missed_lines": 0,
+      "omitted_lines": 7,
+      "total_lines": 10
     },
     "app/models/semester.rb": {
       "source": [
@@ -342,16 +679,16 @@
       "lines": [
         null,
         null,
-        0,
-        0,
-        0,
+        1,
+        1,
+        1,
         null,
-        0,
+        1,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 4,
+      "lines_covered_percent": 100.0,
+      "covered_lines": 4,
+      "missed_lines": 0,
       "omitted_lines": 4,
       "total_lines": 4
     },
@@ -369,47 +706,109 @@
       "lines": [
         null,
         null,
-        0,
-        0,
-        0,
+        1,
+        1,
+        1,
         null,
-        0,
+        1,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 4,
+      "lines_covered_percent": 100.0,
+      "covered_lines": 4,
+      "missed_lines": 0,
       "omitted_lines": 4,
       "total_lines": 4
     },
     "app/models/user.rb": {
       "source": [
         "class User < ApplicationRecord",
+        "  # Association with member model",
+        "  has_one :member, dependent: :destroy",
+        "",
+        "  validates :email, presence: true, uniqueness: true",
+        "  validate :must_be_tamu_email",
+        "",
+        "  def self.from_google(email:, full_name:, uid:, provider:)",
+        "    # AC-01.2: Restrict non-TAMU emails",
+        "    return nil unless email.to_s.downcase.end_with?(\"@tamu.edu\")",
+        "",
+        "    # AC-01.4: Find existing user by email instead of creating duplicate accounts",
+        "    user = find_or_create_by(email: email.downcase) do |u|",
+        "      u.uid = uid",
+        "      u.provider = provider",
+        "      u.full_name = full_name",
+        "    end",
+        "",
+        "    # Update attributes in case provider info was missing",
+        "    user.update(uid: uid, provider: provider, full_name: full_name) if user.persisted?",
+        "    user",
+        "  end",
+        "",
+        "  private",
+        "",
+        "  def must_be_tamu_email",
+        "    unless email.to_s.downcase.end_with?(\"@tamu.edu\")",
+        "      errors.add(:email, \"must be an official TAMU email (@tamu.edu)\")",
+        "    end",
+        "  end",
         "end"
       ],
       "lines": [
-        0,
+        1,
+        null,
+        1,
+        null,
+        1,
+        1,
+        null,
+        1,
+        null,
+        5,
+        null,
+        null,
+        4,
+        3,
+        3,
+        3,
+        null,
+        null,
+        null,
+        4,
+        4,
+        null,
+        null,
+        1,
+        null,
+        1,
+        24,
+        3,
+        null,
+        null,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 1,
-      "omitted_lines": 1,
-      "total_lines": 1
+      "lines_covered_percent": 100.0,
+      "covered_lines": 16,
+      "missed_lines": 0,
+      "omitted_lines": 15,
+      "total_lines": 16
     }
   },
   "groups": {
     "Controllers": {
       "lines": {
-        "covered": 0,
-        "missed": 2,
-        "omitted": 4,
-        "total": 2,
-        "percent": 0.0,
-        "strength": 0.0
+        "covered": 51,
+        "missed": 13,
+        "omitted": 76,
+        "total": 64,
+        "percent": 79.6875,
+        "strength": 1.703125
       },
       "files": [
-        "app/controllers/application_controller.rb"
+        "app/controllers/application_controller.rb",
+        "app/controllers/dashboard_controller.rb",
+        "app/controllers/home_controller.rb",
+        "app/controllers/members_controller.rb",
+        "app/controllers/sessions_controller.rb"
       ]
     },
     "Channels": {
@@ -425,12 +824,12 @@
     },
     "Models": {
       "lines": {
-        "covered": 0,
-        "missed": 47,
-        "omitted": 36,
-        "total": 47,
-        "percent": 0.0,
-        "strength": 0.0
+        "covered": 60,
+        "missed": 4,
+        "omitted": 53,
+        "total": 64,
+        "percent": 93.75,
+        "strength": 1.625
       },
       "files": [
         "app/models/appeal.rb",
@@ -460,15 +859,16 @@
     },
     "Helpers": {
       "lines": {
-        "covered": 0,
-        "missed": 1,
-        "omitted": 3,
-        "total": 1,
-        "percent": 0.0,
-        "strength": 0.0
+        "covered": 2,
+        "missed": 0,
+        "omitted": 4,
+        "total": 2,
+        "percent": 100.0,
+        "strength": 1.0
       },
       "files": [
-        "app/helpers/application_helper.rb"
+        "app/helpers/application_helper.rb",
+        "app/helpers/members_helper.rb"
       ]
     },
     "Views": {
@@ -1520,6 +1920,378 @@
         },
         "app/models/user.rb": {
           "line": 0.0
+        }
+      }
+    },
+    {
+      "created_at": "2026-09-23T14:48:16Z",
+      "branch": "feature/user-profile",
+      "commit": "33db850ed0f25e2d78cb19ffce2f083fcfd7baf3",
+      "totals": {
+        "line": 0.0
+      },
+      "groups": {
+        "Controllers": {
+          "line": 0.0
+        },
+        "Channels": {
+          "line": 100.0
+        },
+        "Models": {
+          "line": 0.0
+        },
+        "Mailers": {
+          "line": 0.0
+        },
+        "Helpers": {
+          "line": 0.0
+        },
+        "Views": {
+          "line": 100.0
+        },
+        "Jobs": {
+          "line": 0.0
+        },
+        "Libraries": {
+          "line": 100.0
+        }
+      },
+      "files": {
+        "app/controllers/application_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/dashboard_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/home_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/members_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/sessions_controller.rb": {
+          "line": 0.0
+        },
+        "app/helpers/application_helper.rb": {
+          "line": 0.0
+        },
+        "app/helpers/members_helper.rb": {
+          "line": 0.0
+        },
+        "app/jobs/application_job.rb": {
+          "line": 0.0
+        },
+        "app/mailers/application_mailer.rb": {
+          "line": 0.0
+        },
+        "app/models/appeal.rb": {
+          "line": 0.0
+        },
+        "app/models/application_record.rb": {
+          "line": 0.0
+        },
+        "app/models/attendance.rb": {
+          "line": 0.0
+        },
+        "app/models/category.rb": {
+          "line": 0.0
+        },
+        "app/models/check_in.rb": {
+          "line": 0.0
+        },
+        "app/models/event.rb": {
+          "line": 0.0
+        },
+        "app/models/member.rb": {
+          "line": 0.0
+        },
+        "app/models/semester.rb": {
+          "line": 0.0
+        },
+        "app/models/semester_requirement.rb": {
+          "line": 0.0
+        },
+        "app/models/user.rb": {
+          "line": 0.0
+        }
+      }
+    },
+    {
+      "created_at": "2026-09-23T15:13:47Z",
+      "branch": "feature/user-profile",
+      "commit": "33db850ed0f25e2d78cb19ffce2f083fcfd7baf3",
+      "totals": {
+        "line": 58.95
+      },
+      "groups": {
+        "Controllers": {
+          "line": 39.06
+        },
+        "Channels": {
+          "line": 100.0
+        },
+        "Models": {
+          "line": 81.25
+        },
+        "Mailers": {
+          "line": 0.0
+        },
+        "Helpers": {
+          "line": 100.0
+        },
+        "Views": {
+          "line": 100.0
+        },
+        "Jobs": {
+          "line": 0.0
+        },
+        "Libraries": {
+          "line": 100.0
+        }
+      },
+      "files": {
+        "app/controllers/application_controller.rb": {
+          "line": 76.19
+        },
+        "app/controllers/dashboard_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/home_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/members_controller.rb": {
+          "line": 69.23
+        },
+        "app/controllers/sessions_controller.rb": {
+          "line": 0.0
+        },
+        "app/helpers/application_helper.rb": {
+          "line": 100.0
+        },
+        "app/helpers/members_helper.rb": {
+          "line": 100.0
+        },
+        "app/jobs/application_job.rb": {
+          "line": 0.0
+        },
+        "app/mailers/application_mailer.rb": {
+          "line": 0.0
+        },
+        "app/models/appeal.rb": {
+          "line": 100.0
+        },
+        "app/models/application_record.rb": {
+          "line": 100.0
+        },
+        "app/models/attendance.rb": {
+          "line": 100.0
+        },
+        "app/models/category.rb": {
+          "line": 100.0
+        },
+        "app/models/check_in.rb": {
+          "line": 0.0
+        },
+        "app/models/event.rb": {
+          "line": 100.0
+        },
+        "app/models/member.rb": {
+          "line": 100.0
+        },
+        "app/models/semester.rb": {
+          "line": 100.0
+        },
+        "app/models/semester_requirement.rb": {
+          "line": 100.0
+        },
+        "app/models/user.rb": {
+          "line": 50.0
+        }
+      }
+    },
+    {
+      "created_at": "2026-09-23T15:20:55Z",
+      "branch": "feature/user-profile",
+      "commit": "33db850ed0f25e2d78cb19ffce2f083fcfd7baf3",
+      "totals": {
+        "line": 84.32
+      },
+      "groups": {
+        "Controllers": {
+          "line": 79.68
+        },
+        "Channels": {
+          "line": 100.0
+        },
+        "Models": {
+          "line": 93.75
+        },
+        "Mailers": {
+          "line": 0.0
+        },
+        "Helpers": {
+          "line": 100.0
+        },
+        "Views": {
+          "line": 100.0
+        },
+        "Jobs": {
+          "line": 0.0
+        },
+        "Libraries": {
+          "line": 100.0
+        }
+      },
+      "files": {
+        "app/controllers/application_controller.rb": {
+          "line": 95.23
+        },
+        "app/controllers/dashboard_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/home_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/members_controller.rb": {
+          "line": 92.3
+        },
+        "app/controllers/sessions_controller.rb": {
+          "line": 79.16
+        },
+        "app/helpers/application_helper.rb": {
+          "line": 100.0
+        },
+        "app/helpers/members_helper.rb": {
+          "line": 100.0
+        },
+        "app/jobs/application_job.rb": {
+          "line": 0.0
+        },
+        "app/mailers/application_mailer.rb": {
+          "line": 0.0
+        },
+        "app/models/appeal.rb": {
+          "line": 100.0
+        },
+        "app/models/application_record.rb": {
+          "line": 100.0
+        },
+        "app/models/attendance.rb": {
+          "line": 100.0
+        },
+        "app/models/category.rb": {
+          "line": 100.0
+        },
+        "app/models/check_in.rb": {
+          "line": 0.0
+        },
+        "app/models/event.rb": {
+          "line": 100.0
+        },
+        "app/models/member.rb": {
+          "line": 100.0
+        },
+        "app/models/semester.rb": {
+          "line": 100.0
+        },
+        "app/models/semester_requirement.rb": {
+          "line": 100.0
+        },
+        "app/models/user.rb": {
+          "line": 100.0
+        }
+      }
+    },
+    {
+      "created_at": "2026-09-23T18:29:37Z",
+      "branch": "feature/user-profile",
+      "commit": "33db850ed0f25e2d78cb19ffce2f083fcfd7baf3",
+      "totals": {
+        "line": 84.32
+      },
+      "groups": {
+        "Controllers": {
+          "line": 79.68
+        },
+        "Channels": {
+          "line": 100.0
+        },
+        "Models": {
+          "line": 93.75
+        },
+        "Mailers": {
+          "line": 0.0
+        },
+        "Helpers": {
+          "line": 100.0
+        },
+        "Views": {
+          "line": 100.0
+        },
+        "Jobs": {
+          "line": 0.0
+        },
+        "Libraries": {
+          "line": 100.0
+        }
+      },
+      "files": {
+        "app/controllers/application_controller.rb": {
+          "line": 95.23
+        },
+        "app/controllers/dashboard_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/home_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/members_controller.rb": {
+          "line": 92.3
+        },
+        "app/controllers/sessions_controller.rb": {
+          "line": 79.16
+        },
+        "app/helpers/application_helper.rb": {
+          "line": 100.0
+        },
+        "app/helpers/members_helper.rb": {
+          "line": 100.0
+        },
+        "app/jobs/application_job.rb": {
+          "line": 0.0
+        },
+        "app/mailers/application_mailer.rb": {
+          "line": 0.0
+        },
+        "app/models/appeal.rb": {
+          "line": 100.0
+        },
+        "app/models/application_record.rb": {
+          "line": 100.0
+        },
+        "app/models/attendance.rb": {
+          "line": 100.0
+        },
+        "app/models/category.rb": {
+          "line": 100.0
+        },
+        "app/models/check_in.rb": {
+          "line": 0.0
+        },
+        "app/models/event.rb": {
+          "line": 100.0
+        },
+        "app/models/member.rb": {
+          "line": 100.0
+        },
+        "app/models/semester.rb": {
+          "line": 100.0
+        },
+        "app/models/semester_requirement.rb": {
+          "line": 100.0
+        },
+        "app/models/user.rb": {
+          "line": 100.0
         }
       }
     }
