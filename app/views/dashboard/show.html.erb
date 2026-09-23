@@ -1,0 +1,14 @@
+<div style="padding: 20px;">
+  <h1>BSC Member Dashboard</h1>
+  
+  <% if flash[:notice] %>
+    <div style="color: green; margin-bottom: 15px;"><%= flash[:notice] %></div>
+  <% end %>
+
+  <p>Welcome back, <strong><%= current_user.full_name %></strong>!</p>
+  <p>Logged in as: <code><%= current_user.email %></code></p>
+
+  <div style="margin-top: 20px;">
+    <%= button_to "Log Out", logout_path, method: :delete, data: { turbo: false } %>
+  </div>
+</div>
