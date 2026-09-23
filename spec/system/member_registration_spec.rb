@@ -19,7 +19,7 @@ RSpec.describe "Member Registration Flow", type: :request do
   it 'allows a user to sign in with Google and complete their profile' do
     # 1. Trigger Google OAuth callback
     get '/auth/google_oauth2/callback'
-    
+
     # 2. Verify user was created and session was set
     user = User.find_by(email: 'new_student@tamu.edu')
     expect(user).not_to be_nil

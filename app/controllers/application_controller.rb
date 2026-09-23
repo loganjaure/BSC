@@ -36,9 +36,8 @@ class ApplicationController < ActionController::Base
       redirect_to edit_member_path(current_member), alert: "Please complete your profile details to proceed."
     end
   end
-  
+
   def profile_action?
     (controller_name == "members" && action_name.in?(%w[edit update])) || controller_name == "sessions"
   end
-
 end

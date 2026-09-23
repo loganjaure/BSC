@@ -1,5 +1,5 @@
 class MembersController < ApplicationController
-  before_action :set_member, only: [:show, :edit, :update]
+  before_action :set_member, only: [ :show, :edit, :update ]
 
   # GET /members/:id
   def show

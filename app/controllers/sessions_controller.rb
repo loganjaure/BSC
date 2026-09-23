@@ -24,7 +24,7 @@ class SessionsController < ApplicationController
         m.name = user.full_name
         m.user = user
       end
-      
+
       # assign user_id if member preexists
       member.update(user: user) if member.user_id.nil?
 

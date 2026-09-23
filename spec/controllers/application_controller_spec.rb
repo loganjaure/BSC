@@ -4,7 +4,7 @@ require 'rails_helper'
 
 RSpec.describe ApplicationController, type: :controller do
   controller do
-    before_action :require_login, only: [:index]
+    before_action :require_login, only: [ :index ]
 
     def index
       render plain: 'secure area'
