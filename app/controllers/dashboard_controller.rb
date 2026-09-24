@@ -1,5 +1,7 @@
 class DashboardController < ApplicationController
-  # require_login from ApplicationController ensures only authenticated users access this controller
+  # Old dashboard replaced by the home page (points + events live there now)
   def show
+    flash.keep
+    redirect_to root_path
   end
 end

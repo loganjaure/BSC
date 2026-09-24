@@ -1,0 +1,27 @@
+<%# AC-04.2: checked-in value tells the page to disable the button if already checked in %>
+<section class="bsc-center"
+         data-controller="check-in"
+         data-check-in-url-value="<%= event_check_in_path(@event) %>"
+         data-check-in-checked-in-value="<%= @attendance.present? %>">
+
+  <p class="bsc-meta"><%= event_datetime(@event) %></p>
+  <h1 class="bsc-meta bsc-meta--name"><%= @event.event_name %></h1>
+  <p class="bsc-points"><%= event_points(@event) %></p>
+  <%# AC-04.1: check-in button for an active event %>
+  <button type="button" class="bsc-checkin-btn"
+          data-check-in-target="button" data-action="check-in#submit">
+    <span class="bsc-spinner" data-check-in-target="spinner" hidden></span>
+    <span data-check-in-target="label">Click to check-in</span>
+  </button>
+
+  <p class="bsc-status" data-check-in-target="status" aria-live="polite"></p>
+  <%# AC-04.3: checkmark shown after a confirmed check-in %>
+  <svg class="bsc-check" data-check-in-target="check" hidden
+       viewBox="0 0 100 100" role="img" aria-label="Attendance recorded">
+    <circle cx="50" cy="50" r="46" fill="none" stroke="currentColor" stroke-width="5"/>
+    <path d="M27 52 L43 67 L73 35" fill="none" stroke="currentColor"
+          stroke-width="10" stroke-linecap="round" stroke-linejoin="round"/>
+  </svg>
+
+  <%= link_to "Back to events", root_path, class: "bsc-back" %>
+</section>

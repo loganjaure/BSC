@@ -1,0 +1,22 @@
+<% body = capture do %>
+  <div class="bsc-event-card__top">
+    <span class="bsc-event-card__name"><%= event.event_name %></span>
+    <% if checked_in %>
+      <span class="bsc-tag bsc-tag--done">Checked in</span>
+    <% elsif event.active? %>
+      <span class="bsc-tag bsc-tag--open">Open</span>
+    <% else %>
+      <span class="bsc-tag bsc-tag--muted">Upcoming</span>
+    <% end %>
+  </div>
+  <div class="bsc-event-card__meta">
+    <span><%= event_datetime(event) %></span>
+    <span><%= event_points(event) %></span>
+  </div>
+<% end %>
+
+<% if event.active? %>
+  <%= link_to body, event_check_in_path(event), class: "bsc-event-card" %>
+<% else %>
+  <div class="bsc-event-card is-disabled" aria-disabled="true"><%= body %></div>
+<% end %>
