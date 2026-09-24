@@ -1,0 +1,49 @@
+<div class="container my-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <h2>Member Profile</h2>
+    <%= link_to "Edit Profile", edit_member_path(@member), class: "btn btn-primary" %>
+  </div>
+
+  <% if notice.present? %>
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+      <%= notice %>
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+  <% end %>
+
+  <div class="card shadow-sm">
+    <div class="card-body">
+      <div class="row mb-3">
+        <div class="col-sm-3 fw-bold">Full Name</div>
+        <div class="col-sm-9"><%= @member.name %></div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-sm-3 fw-bold">TAMU Email</div>
+        <div class="col-sm-9"><%= @member.tamu_email %></div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-sm-3 fw-bold">UIN</div>
+        <div class="col-sm-9">
+          <% if @member.uin.present? %>
+            <%= @member.uin %>
+          <% else %>
+            <span class="text-muted italic">Not provided</span>
+          <% end %>
+        </div>
+      </div>
+
+      <div class="row mb-3">
+        <div class="col-sm-3 fw-bold">Class Year</div>
+        <div class="col-sm-9">
+          <% if @member.class_year.present? %>
+            <%= @member.class_year %>
+          <% else %>
+            <span class="text-muted italic">Not provided</span>
+          <% end %>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

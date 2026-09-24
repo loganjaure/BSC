@@ -1,4 +1,7 @@
 class User < ApplicationRecord
+  # Association with member model
+  has_one :member, dependent: :destroy
+
   validates :email, presence: true, uniqueness: true
   validate :must_be_tamu_email
 
