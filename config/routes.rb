@@ -14,7 +14,7 @@ Rails.application.routes.draw do
   get  "events/:id/check_in", to: "check_ins#show", as: :event_check_in
   post "events/:id/check_in", to: "check_ins#create"
 
-  resources :appeals, only: [:index]
+  resources :appeals, only: [ :index ]
 
   get "/dashboard", to: "dashboard#show", as: :dashboard
 

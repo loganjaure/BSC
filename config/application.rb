@@ -42,7 +42,7 @@ module Bsc500
     # Don't generate system test files.
     config.generators.system_tests = nil
 
-    #Set time: 
+    # Set time:
     config.time_zone = "Central Time (US & Canada)"
   end
 end
