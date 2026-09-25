@@ -4,7 +4,8 @@ class ApplicationController < ActionController::Base
   allow_browser versions: :modern
   before_action :require_login
   before_action :ensure_profile_complete
-  helper_method :current_user, :logged_in?
+  # US:04 Makes sure only members can sign in for individual events
+  helper_method :current_user, :logged_in?, :current_member
 
   private
 

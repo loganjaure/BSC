@@ -1,0 +1,11 @@
+<nav class="bsc-nav" aria-label="Main">
+  <%# AC-05.4: Appeals visible but not clickable yet %>
+  <%= link_to "Appeals", appeals_path,
+        class: class_names("bsc-nav__link", "is-active": controller_name == "appeals") %>
+
+  <%= link_to "Check-In", root_path,
+        class: class_names("bsc-nav__link", "is-active": %w[home check_ins].include?(controller_name)) %>
+
+  <%= link_to "User Profile", (current_member ? member_path(current_member) : new_member_path),
+        class: class_names("bsc-nav__link", "is-active": controller_name == "members") %>
+</nav>

@@ -4,10 +4,17 @@ Rails.application.routes.draw do
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   root "home#index"
+
   # OmniAuth routes
   get "/auth/:provider/callback", to: "sessions#create"
   get "/auth/failure", to: "sessions#failure"
   delete "/logout", to: "sessions#destroy", as: :logout
+
+  # Check-in page + the button's save request
+  get  "events/:id/check_in", to: "check_ins#show", as: :event_check_in
+  post "events/:id/check_in", to: "check_ins#create"
+
+  resources :appeals, only: [ :index ]
 
   get "/dashboard", to: "dashboard#show", as: :dashboard
 

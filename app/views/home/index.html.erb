@@ -1,23 +1,48 @@
-<div style="text-align: center; margin-top: 50px;">
-  <h1>BSC Attendance Portal</h1>
-  <p>Sign in using your official TAMU email address (@tamu.edu)</p>
+<%# AC-05.2: never show a cached copy of this page, so the point total is fresh after checking in %>
+<% content_for :head do %>
+  <meta name="turbo-cache-control" content="no-cache">
+<% end %>
 
-  <% if flash[:alert] %>
-    <div style="color: red; margin: 15px 0;"><%= flash[:alert] %></div>
-  <% end %>
-  <% if flash[:notice] %>
-    <div style="color: green; margin: 15px 0;"><%= flash[:notice] %></div>
-  <% end %>
+<% if logged_in? %>
+  <section class="bsc-center">
+    <% if current_member.nil? %>
+      <div class="bsc-panel bsc-panel--narrow">
+        <p>Your member profile hasn't been created yet. Contact a BSC officer to get set up.</p>
+      </div>
+    <% else %>
+      <%# AC-05.1 / AC-05.3: member's name and current point total %>
+      <div class="bsc-summary">
+        <h1 class="bsc-title"><%= current_member.name.presence || current_user.full_name %></h1>
+        <p class="bsc-total">
+          <span class="bsc-total__num"><%= format_points(@total_points) %></span>
+          <span class="bsc-total__label">Total points</span>
+        </p>
+      </div>
 
-  <% if logged_in? %>
-    <p>Welcome back, <strong><%= current_user.full_name %></strong>!</p>
-    <p>Logged in as: <code><%= current_user.email %></code></p>
-    <div style="margin-top: 20px;">
-      <%= link_to "Go to Dashboard", dashboard_path %>
-    </div>
-  <% else %>
-    <div style="margin-top: 20px;">
-      <%= button_to "Sign in with Google", "/auth/google_oauth2", method: :post, data: { turbo: false } %>
-    </div>
-  <% end %>
-</div>
+      <%# AC-05.6: event list showing which events are active %>
+      <h2 class="bsc-section-title">Events</h2>
+      <% if @events.empty? %>
+        <p class="bsc-sub">No events have been added yet.</p>
+      <% else %>
+        <div class="bsc-event-list">
+          <% @events.each do |event| %>
+            <%= render "home/event_card", event: event, checked_in: @checked_in_ids.include?(event.id) %>
+          <% end %>
+        </div>
+      <% end %>
+
+      <%# AC-05.4: Appeals section is visible but not interactive yet %>
+      <div class="bsc-appeals-preview" aria-disabled="true">
+        <h2 class="bsc-section-title">Appeals</h2>
+        <p>Submitting appeals isn't available yet.</p>
+      </div>
+    <% end %>
+  </section>
+<% else %>
+  <section class="bsc-center bsc-signin">
+    <h1 class="bsc-title">BSC Attendance Portal</h1>
+    <p class="bsc-sub">Sign in with your official TAMU email (@tamu.edu).</p>
+    <%= button_to "Sign in with Google", "/auth/google_oauth2",
+          method: :post, data: { turbo: false }, class: "bsc-btn bsc-btn--lg" %>
+  </section>
+<% end %>

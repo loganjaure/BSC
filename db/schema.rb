@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2026_09_23_142736) do
+ActiveRecord::Schema[8.0].define(version: 2026_09_24_194845) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -36,6 +36,7 @@ ActiveRecord::Schema[8.0].define(version: 2026_09_23_142736) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["event_id"], name: "index_attendances_on_event_id"
+    t.index ["member_id", "event_id"], name: "index_attendances_on_member_id_and_event_id", unique: true
     t.index ["member_id"], name: "index_attendances_on_member_id"
   end
 
