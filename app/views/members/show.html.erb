@@ -22,6 +22,11 @@
       <div class="bsc-label">Class year</div>
       <div><%= display_or_not_provided(@member.class_year) %></div>
     </div>
+
+    <div class="bsc-row">
+      <div class="bsc-label">Role</div>
+      <div><%= display_or_not_provided(@member.is_admin ? "Admin" : "Member") %></div>
+    </div>
   </div>
 
   <div class="bsc-actions">

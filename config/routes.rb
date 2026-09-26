@@ -1,6 +1,7 @@
 # frozen_string_literal: true
 
 Rails.application.routes.draw do
+  get "admin/index"
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
 
   root "home#index"
@@ -17,6 +18,7 @@ Rails.application.routes.draw do
   resources :appeals, only: [ :index ]
 
   get "/dashboard", to: "dashboard#show", as: :dashboard
+  get "/admin", to: "admin#index", as: :admin
 
   # Member profile routes (show, edit, update)
   resources :members, only: [ :show, :edit, :update ]
