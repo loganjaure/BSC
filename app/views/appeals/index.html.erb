@@ -1,6 +1,10 @@
 <section class="bsc-center">
   <h1 class="bsc-title">Appeals</h1>
   <div class="bsc-panel bsc-panel--narrow">
-    <p>Appeals aren't available yet.</p>
+    <% if current_member&.is_admin? %>
+      <p>View appeals from members</p>
+    <% else %>
+      <p>Submit appeals here</p>
+    <% end %>
   </div>
 </section>
