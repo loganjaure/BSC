@@ -18,6 +18,7 @@ Rails.application.routes.draw do
 
   get "/dashboard", to: "dashboard#show", as: :dashboard
   get "/admin", to: "admin#index", as: :admin
+  get "/admin/events", to: "admin/events#index", as: :admin_events
 
   # Member profile routes (show, edit, update)
   resources :members, only: [ :show, :edit, :update ]

@@ -12,5 +12,8 @@
   <% if current_member&.is_admin? %>
             <%= link_to "Admin", admin_path,
                   class: class_names("bsc-nav__link", "is-active": controller_name == "admin") %>
+
+            <%= link_to "Events", admin_events_path,
+                  class: class_names("bsc-nav__link", "is-active": controller_path == "admin/events") %>
   <% end %>
 </nav>
