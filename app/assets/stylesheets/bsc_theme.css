@@ -475,3 +475,81 @@ a.bsc-event-card:focus-visible::before { opacity: 1; }
   .bsc-checkin-btn.is-loading::before { animation: none; }
   .bsc-event-card, .bsc-checkin-btn, .bsc-btn { transition: none; }
 }
+
+/* Admin members table */
+
+.admin-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.25rem;
+}
+
+.admin-header h2 {
+  margin: 0;
+}
+
+.admin-member-count {
+  color: var(--ink-dim);
+  font-size: 0.9rem;
+  font-weight: 700;
+}
+
+.admin-table-wrapper {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.admin-table th {
+  color: var(--ink-dim);
+  font-size: 0.8rem;
+  font-weight: 800;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  padding: 0.8rem 1rem;
+  border-bottom: 2px solid var(--border);
+}
+
+.admin-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+.admin-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.admin-table tbody tr:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.admin-name {
+  font-weight: 700;
+}
+
+.admin-role {
+  display: inline-block;
+  border-radius: 999px;
+  background: var(--surface);
+  color: var(--ink-dim);
+  font-weight: 800;
+}
+
+.admin-role--admin {
+  color: var(--ink);
+  background: var(--accent);
+}
+
+.admin-empty {
+  color: var(--ink-dim);
+  text-align: center;
+  padding: 2rem;
+}
