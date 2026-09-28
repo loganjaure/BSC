@@ -81,18 +81,13 @@ test:
 production:
   primary: &primary_production
     <<: *default
-    database: bsc_500_production
-    username: bsc_500
-    password: <%= ENV["BSC_500_DATABASE_PASSWORD"] %>
+    url: <%= ENV["DATABASE_URL"] %>
   cache:
     <<: *primary_production
-    database: bsc_500_production_cache
     migrations_paths: db/cache_migrate
   queue:
     <<: *primary_production
-    database: bsc_500_production_queue
     migrations_paths: db/queue_migrate
   cable:
     <<: *primary_production
-    database: bsc_500_production_cable
     migrations_paths: db/cable_migrate
