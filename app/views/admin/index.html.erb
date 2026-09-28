@@ -5,7 +5,7 @@
     <div class="admin-header">
       <h2>Members</h2>
       <span class="admin-member-count">
-        <%= pluralize(@members.count, " member") %>
+        <%= pluralize(@members.count, "member") %>
       </span>
     </div>
 
@@ -19,6 +19,7 @@
               <th>UIN</th>
               <th>Class Year</th>
               <th>Role</th>
+              <th>Actions</th>
             </tr>
           </thead>
 
@@ -46,6 +47,21 @@
                     <span class="admin-role admin-role--admin">Admin</span>
                   <% else %>
                     <span class="admin-role">Member</span>
+                  <% end %>
+                </td>
+
+                <td>
+                  <%= link_to "View Details", admin_member_path(member) %>
+
+                  <% unless member.is_admin? %>
+                    <%= button_to "Make Admin",
+                                  promote_admin_member_path(member),
+                                  method: :patch,
+                                  form: {
+                                    data: {
+                                      turbo_confirm: "Make #{member.name} an admin?"
+                                    }
+                                  } %>
                   <% end %>
                 </td>
               </tr>
