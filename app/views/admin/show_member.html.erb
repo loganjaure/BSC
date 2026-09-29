@@ -1,0 +1,56 @@
+<section class="bsc-center">
+  <h1 class="bsc-title">Member Details</h1>
+
+  <div class="bsc-panel">
+    <h2><%= @member.name %></h2>
+
+    <p><strong>Email:</strong> <%= @member.tamu_email %></p>
+    <p><strong>UIN:</strong> <%= @member.uin.presence || "Not provided" %></p>
+    <p><strong>Class Year:</strong> <%= @member.class_year.presence || "Not provided" %></p>
+    <p><strong>Role:</strong> <%= @member.is_admin? ? "Admin" : "Member" %></p>
+    <p><strong>Total Points:</strong> <%= @member.total_points %></p>
+
+    <% unless @member.is_admin? %>
+      <%= button_to "Make Admin",
+                    promote_admin_member_path(@member),
+                    method: :patch,
+                    form: {
+                      data: {
+                        turbo_confirm: "Make #{@member.name} an admin?"
+                      }
+                    } %>
+    <% end %>
+
+    <%= link_to "Back to Admin", admin_path %>
+  </div>
+
+  <div class="bsc-panel">
+    <h2>Event History</h2>
+
+    <% if @events.any? %>
+      <div class="admin-table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Date</th>
+              <th>Points</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @events.each do |event| %>
+              <tr>
+                <td><%= event.event_name %></td>
+                <td><%= event.event_date_time.strftime("%B %d, %Y at %I:%M %p") %></td>
+                <td><%= event.point_value %></td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p>No event history found for this member.</p>
+    <% end %>
+  </div>
+</section>

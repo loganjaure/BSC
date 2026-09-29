@@ -8,9 +8,9 @@
       "RSpec"
     ],
     "project_name": "Bsc-500",
-    "timestamp": "2026-09-23T18:29:37.671+00:00",
-    "root": "/BSC-500",
-    "commit": "33db850ed0f25e2d78cb19ffce2f083fcfd7baf3",
+    "timestamp": "2026-09-25T23:02:32.202-05:00",
+    "root": "/mnt/c/Users/kaika/csce431/bsc500/BSC-500",
+    "commit": "0d6d2e301679080ac95e12a628b96ca51493d5dc",
     "primary_coverage": "line",
     "line_coverage": true,
     "branch_coverage": false,
@@ -18,15 +18,59 @@
   },
   "total": {
     "lines": {
-      "covered": 113,
-      "missed": 21,
-      "omitted": 144,
-      "total": 134,
-      "percent": 84.32835820895522,
-      "strength": 1.6044776119402986
+      "covered": 0,
+      "missed": 185,
+      "omitted": 199,
+      "total": 185,
+      "percent": 0.0,
+      "strength": 0.0
     }
   },
   "coverage": {
+    "app/controllers/admin_controller.rb": {
+      "source": [
+        "class AdminController < ApplicationController",
+        "  def index",
+        "  end",
+        "end"
+      ],
+      "lines": [
+        0,
+        0,
+        null,
+        null
+      ],
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 2,
+      "omitted_lines": 2,
+      "total_lines": 2
+    },
+    "app/controllers/appeals_controller.rb": {
+      "source": [
+        "# Placeholder so the nav link works. Skip if you already have one.",
+        "class AppealsController < ApplicationController",
+        "  before_action :require_login",
+        "",
+        "  def index",
+        "  end",
+        "end"
+      ],
+      "lines": [
+        null,
+        0,
+        0,
+        null,
+        0,
+        null,
+        null
+      ],
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 3,
+      "omitted_lines": 4,
+      "total_lines": 3
+    },
     "app/controllers/application_controller.rb": {
       "source": [
         "# frozen_string_literal: true",
@@ -35,7 +79,8 @@
         "  allow_browser versions: :modern",
         "  before_action :require_login",
         "  before_action :ensure_profile_complete",
-        "  helper_method :current_user, :logged_in?",
+        "  # US:04 Makes sure only members can sign in for individual events",
+        "  helper_method :current_user, :logged_in?, :current_member",
         "",
         "  private",
         "",
@@ -67,100 +112,187 @@
         "      redirect_to edit_member_path(current_member), alert: \"Please complete your profile details to proceed.\"",
         "    end",
         "  end",
-        "  ",
+        "",
         "  def profile_action?",
         "    (controller_name == \"members\" && action_name.in?(%w[edit update])) || controller_name == \"sessions\"",
         "  end",
-        "",
         "end"
       ],
       "lines": [
         null,
         null,
-        1,
-        1,
-        1,
-        1,
-        1,
+        0,
+        0,
+        0,
+        0,
         null,
-        1,
+        0,
         null,
-        1,
+        0,
         null,
-        12,
+        0,
         null,
-        null,
-        1,
-        3,
+        0,
         null,
         null,
-        1,
-        14,
+        0,
+        0,
         null,
         null,
-        1,
-        null,
-        6,
-        2,
+        0,
+        0,
         null,
         null,
+        0,
         null,
-        1,
-        8,
-        null,
-        null,
-        3,
+        0,
         0,
         null,
         null,
         null,
-        1,
-        1,
-        null,
-        null,
-        null
-      ],
-      "lines_covered_percent": 95.23809523809524,
-      "covered_lines": 20,
-      "missed_lines": 1,
-      "omitted_lines": 23,
-      "total_lines": 21
-    },
-    "app/controllers/dashboard_controller.rb": {
-      "source": [
-        "class DashboardController < ApplicationController",
-        "  # require_login from ApplicationController ensures only authenticated users access this controller",
-        "  def show",
-        "  end",
-        "end"
-      ],
-      "lines": [
+        0,
         0,
         null,
+        null,
+        0,
+        0,
+        null,
+        null,
+        null,
+        0,
         0,
         null,
         null
       ],
       "lines_covered_percent": 0.0,
       "covered_lines": 0,
-      "missed_lines": 2,
-      "omitted_lines": 3,
-      "total_lines": 2
+      "missed_lines": 21,
+      "omitted_lines": 23,
+      "total_lines": 21
     },
-    "app/controllers/home_controller.rb": {
+    "app/controllers/check_ins_controller.rb": {
       "source": [
-        "class HomeController < ApplicationController",
-        "  skip_before_action :require_login, only: [ :index ]",
+        "class CheckInsController < ApplicationController",
+        "  before_action :require_login",
+        "  before_action :require_member",
+        "  before_action :set_event",
         "",
-        "  def index",
-        "    redirect_to dashboard_path if logged_in?",
+        "  # AC-04.1: check-in page only opens for active events",
+        "  # AC-04.2: @attendance tells the view whether the member already checked in",
+        "  def show",
+        "    return redirect_to(root_path, alert: \"#{@event.event_name} isn't open for check-in yet.\") unless @event.active?",
+        "",
+        "    @attendance = current_member.attendances.find_by(event: @event)",
+        "  end",
+        "  # AC-04.1: records the member's attendance; points come from Member#total_points",
+        "  # AC-04.2: find_or_create_by! means a second check-in never creates a duplicate",
+        "  def create",
+        "    # Never trust the button: re-check on the server",
+        "    unless @event.active?",
+        "      return render json: { error: \"This event isn't open for check-in yet.\" }, status: :unprocessable_entity",
+        "    end",
+        "",
+        "    attendance = current_member.attendances.find_or_create_by!(event: @event) do |a|",
+        "      a.check_in_time = Time.current",
+        "      a.status = \"present\"",
+        "    end",
+        "",
+        "    render json: { checked_in: true, check_in_time: attendance.check_in_time }",
+        "  rescue ActiveRecord::RecordNotUnique",
+        "    # Double-tap race: the other request already saved it",
+        "    render json: { checked_in: true }",
+        "  rescue ActiveRecord::RecordInvalid => e",
+        "    render json: { error: e.record.errors.full_messages.to_sentence }, status: :unprocessable_entity",
+        "  end",
+        "",
+        "  private",
+        "",
+        "  def set_event",
+        "    @event = Event.find(params[:id])",
+        "  end",
+        "",
+        "  def require_member",
+        "    return if current_member",
+        "",
+        "    if request.format.json?",
+        "      render json: { error: \"Set up your member profile first.\" }, status: :forbidden",
+        "    else",
+        "      redirect_to new_member_path, alert: \"Set up your member profile before checking in.\"",
+        "    end",
         "  end",
         "end"
       ],
       "lines": [
         0,
         0,
+        0,
+        0,
         null,
+        null,
+        null,
+        0,
+        0,
+        null,
+        0,
+        null,
+        null,
+        null,
+        0,
+        null,
+        0,
+        0,
+        null,
+        null,
+        0,
+        0,
+        0,
+        null,
+        null,
+        0,
+        null,
+        null,
+        0,
+        null,
+        0,
+        null,
+        null,
+        0,
+        null,
+        0,
+        0,
+        null,
+        null,
+        0,
+        0,
+        null,
+        0,
+        0,
+        null,
+        0,
+        null,
+        null,
+        null
+      ],
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 24,
+      "omitted_lines": 25,
+      "total_lines": 24
+    },
+    "app/controllers/dashboard_controller.rb": {
+      "source": [
+        "class DashboardController < ApplicationController",
+        "  # Old dashboard replaced by the home page (points + events live there now)",
+        "  def show",
+        "    flash.keep",
+        "    redirect_to root_path",
+        "  end",
+        "end"
+      ],
+      "lines": [
+        0,
+        null,
+        0,
         0,
         0,
         null,
@@ -172,10 +304,51 @@
       "omitted_lines": 3,
       "total_lines": 4
     },
+    "app/controllers/home_controller.rb": {
+      "source": [
+        "class HomeController < ApplicationController",
+        "  skip_before_action :require_login",
+        "",
+        "  def index",
+        "    return unless logged_in?",
+        "",
+        "    # AC-05.6: list events; active ones are clickable, future ones greyed out",
+        "    events = Event.order(:event_date_time).to_a",
+        "    @events = events.select(&:active?).reverse + events.reject(&:active?)",
+        "    @checked_in_ids = current_member ? current_member.attendances.pluck(:event_id) : []",
+        "",
+        "    # AC-05.1 / AC-05.3: current point total (0 for a new member)",
+        "    @total_points = current_member&.total_points || 0",
+        "  end",
+        "end"
+      ],
+      "lines": [
+        0,
+        0,
+        null,
+        0,
+        0,
+        null,
+        null,
+        0,
+        0,
+        0,
+        null,
+        null,
+        0,
+        null,
+        null
+      ],
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 8,
+      "omitted_lines": 7,
+      "total_lines": 8
+    },
     "app/controllers/members_controller.rb": {
       "source": [
         "class MembersController < ApplicationController",
-        "  before_action :set_member, only: [:show, :edit, :update]",
+        "  before_action :set_member, only: [ :show, :edit, :update ]",
         "",
         "  # GET /members/:id",
         "  def show",
@@ -206,40 +379,40 @@
         "end"
       ],
       "lines": [
-        1,
-        1,
+        0,
+        0,
         null,
-        null,
-        1,
-        null,
-        null,
-        null,
-        1,
-        null,
-        null,
-        null,
-        1,
-        1,
-        1,
         null,
         0,
         null,
         null,
         null,
-        1,
-        null,
-        1,
-        3,
+        0,
         null,
         null,
-        1,
-        1,
+        null,
+        0,
+        0,
+        0,
+        null,
+        0,
+        null,
+        null,
+        null,
+        0,
+        null,
+        0,
+        0,
+        null,
+        null,
+        0,
+        0,
         null,
         null
       ],
-      "lines_covered_percent": 92.3076923076923,
-      "covered_lines": 12,
-      "missed_lines": 1,
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 13,
       "omitted_lines": 17,
       "total_lines": 13
     },
@@ -271,7 +444,7 @@
         "        m.name = user.full_name",
         "        m.user = user",
         "      end",
-        "      ",
+        "",
         "      # assign user_id if member preexists",
         "      member.update(user: user) if member.user_id.nil?",
         "",
@@ -301,41 +474,41 @@
         "end"
       ],
       "lines": [
-        1,
-        1,
+        0,
+        0,
         null,
-        1,
-        3,
-        3,
-        null,
-        null,
-        3,
-        1,
-        1,
+        0,
+        0,
+        0,
         null,
         null,
-        2,
+        0,
+        0,
+        0,
         null,
         null,
+        0,
         null,
         null,
         null,
         null,
-        2,
-        null,
-        2,
-        2,
-        2,
         null,
         null,
+        0,
         null,
-        2,
+        0,
+        0,
+        0,
         null,
-        2,
         null,
         null,
-        2,
-        2,
+        0,
+        null,
+        0,
+        null,
+        null,
+        0,
+        0,
         null,
         0,
         null,
@@ -345,22 +518,37 @@
         null,
         null,
         null,
-        1,
         0,
         0,
+        0,
         null,
         null,
         null,
-        1,
+        0,
         0,
         null,
         null
       ],
-      "lines_covered_percent": 79.16666666666667,
-      "covered_lines": 19,
-      "missed_lines": 5,
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 24,
       "omitted_lines": 30,
       "total_lines": 24
+    },
+    "app/helpers/admin_helper.rb": {
+      "source": [
+        "module AdminHelper",
+        "end"
+      ],
+      "lines": [
+        0,
+        null
+      ],
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 1,
+      "omitted_lines": 1,
+      "total_lines": 1
     },
     "app/helpers/application_helper.rb": {
       "source": [
@@ -372,14 +560,69 @@
       "lines": [
         null,
         null,
-        1,
+        0,
         null
       ],
-      "lines_covered_percent": 100.0,
-      "covered_lines": 1,
-      "missed_lines": 0,
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 1,
       "omitted_lines": 3,
       "total_lines": 1
+    },
+    "app/helpers/events_helper.rb": {
+      "source": [
+        "module EventsHelper",
+        "  # \"Thursday 9/24/2026, 6:00 PM\"",
+        "  def event_datetime(event)",
+        "    return \"Date TBD\" if event.event_date_time.blank?",
+        "",
+        "    event.event_date_time.in_time_zone.strftime(\"%A %-m/%-d/%Y, %-l:%M %p\")",
+        "  end",
+        "",
+        "  # 5.0 -> \"5\", 0.5 -> \"0.5\"",
+        "  def format_points(value)",
+        "    number_with_precision(value || 0, precision: 2, strip_insignificant_zeros: true)",
+        "  end",
+        "",
+        "  def event_points(event)",
+        "    pluralize(format_points(event.point_value), \"point\")",
+        "  end",
+        "",
+        "  # AC-05.5: blank profile fields show \"Not Provided\"",
+        "  def display_or_not_provided(value)",
+        "    value.present? ? value : content_tag(:span, \"Not Provided\", class: \"bsc-muted\")",
+        "  end",
+        "end"
+      ],
+      "lines": [
+        0,
+        null,
+        0,
+        0,
+        null,
+        0,
+        null,
+        null,
+        null,
+        0,
+        0,
+        null,
+        null,
+        0,
+        0,
+        null,
+        null,
+        null,
+        0,
+        0,
+        null,
+        null
+      ],
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 10,
+      "omitted_lines": 12,
+      "total_lines": 10
     },
     "app/helpers/members_helper.rb": {
       "source": [
@@ -387,12 +630,12 @@
         "end"
       ],
       "lines": [
-        1,
+        0,
         null
       ],
-      "lines_covered_percent": 100.0,
-      "covered_lines": 1,
-      "missed_lines": 0,
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 1,
       "omitted_lines": 1,
       "total_lines": 1
     },
@@ -464,18 +707,18 @@
       "lines": [
         null,
         null,
-        1,
-        1,
-        1,
-        1,
+        0,
+        0,
+        0,
+        0,
         null,
-        1,
-        1,
+        0,
+        0,
         null
       ],
-      "lines_covered_percent": 100.0,
-      "covered_lines": 6,
-      "missed_lines": 0,
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 6,
       "omitted_lines": 4,
       "total_lines": 6
     },
@@ -490,13 +733,13 @@
       "lines": [
         null,
         null,
-        1,
-        1,
+        0,
+        0,
         null
       ],
-      "lines_covered_percent": 100.0,
-      "covered_lines": 2,
-      "missed_lines": 0,
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 2,
       "omitted_lines": 3,
       "total_lines": 2
     },
@@ -515,17 +758,17 @@
       "lines": [
         null,
         null,
-        1,
-        1,
-        1,
+        0,
+        0,
+        0,
         null,
-        1,
-        1,
+        0,
+        0,
         null
       ],
-      "lines_covered_percent": 100.0,
-      "covered_lines": 5,
-      "missed_lines": 0,
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 5,
       "omitted_lines": 4,
       "total_lines": 5
     },
@@ -543,16 +786,16 @@
       "lines": [
         null,
         null,
-        1,
-        1,
-        1,
+        0,
+        0,
+        0,
         null,
-        1,
+        0,
         null
       ],
-      "lines_covered_percent": 100.0,
-      "covered_lines": 4,
-      "missed_lines": 0,
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 4,
       "omitted_lines": 4,
       "total_lines": 4
     },
@@ -597,28 +840,40 @@
         "  validates :event_name, presence: true",
         "  validates :event_date_time, presence: true",
         "  validates :point_value, numericality: { greater_than_or_equal_to: 0 }",
+        "",
+        "  # AC-04.1 / AC-05.6: an event is \"active\" (check-in allowed) once it has started",
+        "  def active?",
+        "    return false if event_date_time.blank?",
+        "    Time.current.between?(event_date_time - 15.minutes, event_date_time + 3.hours)",
+        "  end",
         "end"
       ],
       "lines": [
         null,
         null,
-        1,
-        1,
-        1,
-        1,
-        1,
-        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
         null,
-        1,
-        1,
-        1,
+        0,
+        0,
+        0,
+        null,
+        null,
+        0,
+        0,
+        0,
+        null,
         null
       ],
-      "lines_covered_percent": 100.0,
-      "covered_lines": 9,
-      "missed_lines": 0,
-      "omitted_lines": 4,
-      "total_lines": 9
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 12,
+      "omitted_lines": 7,
+      "total_lines": 12
     },
     "app/models/member.rb": {
       "source": [
@@ -634,36 +889,48 @@
         "",
         "  validates :tamu_email, presence: true, uniqueness: true",
         "",
-        "  validates :uin, presence: { message: \"cannot be blank\" }, numericality: { only_integer: true, message: \"must be numeric \"}, length: { is: 9, message: \"must be exactly 9 digits\" }, uniqueness: { case_sensitive: false }, on: :update",
+        "  validates :uin, presence: { message: \"cannot be blank\" }, numericality: { only_integer: true, message: \"must be numeric \" }, length: { is: 9, message: \"must be exactly 9 digits\" }, uniqueness: { case_sensitive: false }, on: :update",
         "",
         "  validates :class_year, presence: { message: \"cannot be blank\" }, numericality: { only_integer: true, greater_than: 2000, less_than: 2100, message: \"must be a valid 4-digit year\" }, on: :update",
-        "",
+        "  # AC-04.1 / AC-05.1 / AC-05.2 / AC-05.3",
+        "  # Point total = sum of point values for every event this member checked into.",
+        "  # Calculated live from attendances, so a new check-in counts right away,",
+        "  # and a member with no check-ins gets 0.",
+        "  def total_points",
+        "    events.sum(:point_value)",
+        "  end",
         "end"
       ],
       "lines": [
-        1,
-        1,
+        0,
+        0,
         null,
-        1,
-        1,
-        1,
-        1,
+        0,
+        0,
+        0,
+        0,
         null,
-        1,
+        0,
         null,
-        1,
+        0,
         null,
-        1,
+        0,
         null,
-        1,
+        0,
+        null,
+        null,
+        null,
+        null,
+        0,
+        0,
         null,
         null
       ],
-      "lines_covered_percent": 100.0,
-      "covered_lines": 10,
-      "missed_lines": 0,
-      "omitted_lines": 7,
-      "total_lines": 10
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 12,
+      "omitted_lines": 11,
+      "total_lines": 12
     },
     "app/models/semester.rb": {
       "source": [
@@ -679,16 +946,16 @@
       "lines": [
         null,
         null,
-        1,
-        1,
-        1,
+        0,
+        0,
+        0,
         null,
-        1,
+        0,
         null
       ],
-      "lines_covered_percent": 100.0,
-      "covered_lines": 4,
-      "missed_lines": 0,
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 4,
       "omitted_lines": 4,
       "total_lines": 4
     },
@@ -706,16 +973,16 @@
       "lines": [
         null,
         null,
-        1,
-        1,
-        1,
+        0,
+        0,
+        0,
         null,
-        1,
+        0,
         null
       ],
-      "lines_covered_percent": 100.0,
-      "covered_lines": 4,
-      "missed_lines": 0,
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 4,
       "omitted_lines": 4,
       "total_lines": 4
     },
@@ -754,41 +1021,41 @@
         "end"
       ],
       "lines": [
-        1,
+        0,
         null,
-        1,
+        0,
         null,
-        1,
-        1,
+        0,
+        0,
         null,
-        1,
+        0,
         null,
-        5,
-        null,
-        null,
-        4,
-        3,
-        3,
-        3,
+        0,
         null,
         null,
+        0,
+        0,
+        0,
+        0,
         null,
-        4,
-        4,
         null,
         null,
-        1,
+        0,
+        0,
         null,
-        1,
-        24,
-        3,
+        null,
+        0,
+        null,
+        0,
+        0,
+        0,
         null,
         null,
         null
       ],
-      "lines_covered_percent": 100.0,
-      "covered_lines": 16,
-      "missed_lines": 0,
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 16,
       "omitted_lines": 15,
       "total_lines": 16
     }
@@ -796,15 +1063,18 @@
   "groups": {
     "Controllers": {
       "lines": {
-        "covered": 51,
-        "missed": 13,
-        "omitted": 76,
-        "total": 64,
-        "percent": 79.6875,
-        "strength": 1.703125
+        "covered": 0,
+        "missed": 99,
+        "omitted": 111,
+        "total": 99,
+        "percent": 0.0,
+        "strength": 0.0
       },
       "files": [
+        "app/controllers/admin_controller.rb",
+        "app/controllers/appeals_controller.rb",
         "app/controllers/application_controller.rb",
+        "app/controllers/check_ins_controller.rb",
         "app/controllers/dashboard_controller.rb",
         "app/controllers/home_controller.rb",
         "app/controllers/members_controller.rb",
@@ -824,12 +1094,12 @@
     },
     "Models": {
       "lines": {
-        "covered": 60,
-        "missed": 4,
-        "omitted": 53,
-        "total": 64,
-        "percent": 93.75,
-        "strength": 1.625
+        "covered": 0,
+        "missed": 69,
+        "omitted": 60,
+        "total": 69,
+        "percent": 0.0,
+        "strength": 0.0
       },
       "files": [
         "app/models/appeal.rb",
@@ -859,15 +1129,17 @@
     },
     "Helpers": {
       "lines": {
-        "covered": 2,
-        "missed": 0,
-        "omitted": 4,
-        "total": 2,
-        "percent": 100.0,
-        "strength": 1.0
+        "covered": 0,
+        "missed": 13,
+        "omitted": 17,
+        "total": 13,
+        "percent": 0.0,
+        "strength": 0.0
       },
       "files": [
+        "app/helpers/admin_helper.rb",
         "app/helpers/application_helper.rb",
+        "app/helpers/events_helper.rb",
         "app/helpers/members_helper.rb"
       ]
     },
@@ -2292,6 +2564,114 @@
         },
         "app/models/user.rb": {
           "line": 100.0
+        }
+      }
+    },
+    {
+      "created_at": "2026-09-26T04:02:32Z",
+      "branch": "admin",
+      "commit": "0d6d2e301679080ac95e12a628b96ca51493d5dc",
+      "totals": {
+        "line": 0.0
+      },
+      "groups": {
+        "Controllers": {
+          "line": 0.0
+        },
+        "Channels": {
+          "line": 100.0
+        },
+        "Models": {
+          "line": 0.0
+        },
+        "Mailers": {
+          "line": 0.0
+        },
+        "Helpers": {
+          "line": 0.0
+        },
+        "Views": {
+          "line": 100.0
+        },
+        "Jobs": {
+          "line": 0.0
+        },
+        "Libraries": {
+          "line": 100.0
+        }
+      },
+      "files": {
+        "app/controllers/admin_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/appeals_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/application_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/check_ins_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/dashboard_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/home_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/members_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/sessions_controller.rb": {
+          "line": 0.0
+        },
+        "app/helpers/admin_helper.rb": {
+          "line": 0.0
+        },
+        "app/helpers/application_helper.rb": {
+          "line": 0.0
+        },
+        "app/helpers/events_helper.rb": {
+          "line": 0.0
+        },
+        "app/helpers/members_helper.rb": {
+          "line": 0.0
+        },
+        "app/jobs/application_job.rb": {
+          "line": 0.0
+        },
+        "app/mailers/application_mailer.rb": {
+          "line": 0.0
+        },
+        "app/models/appeal.rb": {
+          "line": 0.0
+        },
+        "app/models/application_record.rb": {
+          "line": 0.0
+        },
+        "app/models/attendance.rb": {
+          "line": 0.0
+        },
+        "app/models/category.rb": {
+          "line": 0.0
+        },
+        "app/models/check_in.rb": {
+          "line": 0.0
+        },
+        "app/models/event.rb": {
+          "line": 0.0
+        },
+        "app/models/member.rb": {
+          "line": 0.0
+        },
+        "app/models/semester.rb": {
+          "line": 0.0
+        },
+        "app/models/semester_requirement.rb": {
+          "line": 0.0
+        },
+        "app/models/user.rb": {
+          "line": 0.0
         }
       }
     }

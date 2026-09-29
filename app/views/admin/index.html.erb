@@ -1,0 +1,81 @@
+<section class="bsc-center">
+  <h1 class="bsc-title">Admin</h1>
+
+  <nav class="dashboard-view-toggle" aria-label="Dashboard view">
+    <%= link_to "Member View", root_path %>
+    <span aria-current="page">Admin View</span>
+  </nav>
+
+  <div class="bsc-panel">
+    <div class="admin-header">
+      <h2>Members</h2>
+      <span class="admin-member-count">
+        <%= pluralize(@members.count, "member") %>
+      </span>
+    </div>
+
+    <% if @members.any? %>
+      <div class="admin-table-wrapper">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th>Name</th>
+              <th>Email</th>
+              <th>UIN</th>
+              <th>Class Year</th>
+              <th>Role</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @members.each do |member| %>
+              <tr>
+                <td class="admin-name">
+                  <%= member.name.presence || "Not provided" %>
+                </td>
+
+                <td>
+                  <%= member.tamu_email %>
+                </td>
+
+                <td>
+                  <%= member.uin.presence || "—" %>
+                </td>
+
+                <td>
+                  <%= member.class_year.presence || "—" %>
+                </td>
+
+                <td>
+                  <% if member.is_admin? %>
+                    <span class="admin-role admin-role--admin">Admin</span>
+                  <% else %>
+                    <span class="admin-role">Member</span>
+                  <% end %>
+                </td>
+
+                <td>
+                  <%= link_to "View Details", admin_member_path(member) %>
+
+                  <% unless member.is_admin? %>
+                    <%= button_to "Make Admin",
+                                  promote_admin_member_path(member),
+                                  method: :patch,
+                                  form: {
+                                    data: {
+                                      turbo_confirm: "Make #{member.name} an admin?"
+                                    }
+                                  } %>
+                  <% end %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p class="admin-empty">No members found.</p>
+    <% end %>
+  </div>
+</section>
