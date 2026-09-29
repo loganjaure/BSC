@@ -22,7 +22,7 @@ class AdminController < ApplicationController
                   notice: "#{@member.name} is now an admin."
     else
       redirect_to admin_member_path(@member),
-                  alert: "The member could not be made an admin."
+                  alert: 'The member could not be made an admin.'
     end
   end
 
