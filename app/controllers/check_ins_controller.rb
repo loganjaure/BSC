@@ -14,13 +14,11 @@ class CheckInsController < ApplicationController
   # AC-04.2: find_or_create_by! means a second check-in never creates a duplicate
   def create
     # Never trust the button: re-check on the server
-    unless @event.active?
-      return render json: { error: "This event isn't open for check-in yet." }, status: :unprocessable_entity
-    end
+    return render json: { error: "This event isn't open for check-in yet." }, status: :unprocessable_entity unless @event.active?
 
     attendance = current_member.attendances.find_or_create_by!(event: @event) do |a|
       a.check_in_time = Time.current
-      a.status = "present"
+      a.status = 'present'
     end
 
     render json: { checked_in: true, check_in_time: attendance.check_in_time }
@@ -41,9 +39,9 @@ class CheckInsController < ApplicationController
     return if current_member
 
     if request.format.json?
-      render json: { error: "Set up your member profile first." }, status: :forbidden
+      render json: { error: 'Set up your member profile first.' }, status: :forbidden
     else
-      redirect_to new_member_path, alert: "Set up your member profile before checking in."
+      redirect_to new_member_path, alert: 'Set up your member profile before checking in.'
     end
   end
 end

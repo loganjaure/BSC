@@ -12,7 +12,7 @@ class MembersController < ApplicationController
   # PATCH/PUT /members/:id
   def update
     if @member.update(member_params)
-      redirect_to @member, notice: "Profile updated successfully!"
+      redirect_to @member, notice: 'Profile updated successfully!'
     else
       render :edit, status: :unprocessable_entity
     end

@@ -1,3 +1,8 @@
+inherit_from: .rubocop_todo.yml
+
+plugins:
+  - rubocop-rails
+
 inherit_gem:
   rubocop-rails-omakase: rubocop.yml
 
@@ -16,5 +21,106 @@ AllCops:
     - "config/environments/production.rb"
     - "spec/spec_helper.rb"
 
+# for unnecessary comments
+Style/CommentAnnotation:
+  Enabled: true
+
 Style/Documentation:
   Enabled: false
+
+Layout/IndentationWidth:
+  Width: 5
+
+Layout/IndentationConsistency:
+  EnforcedStyle: indented_internal_methods
+
+
+# loops
+
+Style/WhileUntilModifier:
+  Enabled: true
+
+# snake case
+Naming/MethodName:
+  EnforcedStyle: snake_case
+
+Naming/VariableName:
+  EnforcedStyle: snake_case
+
+# camel case
+Naming/ClassAndModuleCamelCase:
+  Enabled: true
+
+# predicate methods should end in ?
+Naming/PredicateMethod:
+  Enabled: true
+
+Naming/PredicatePrefix:
+  Enabled: true
+
+# instance variables should start with a lowercase letter
+Naming/VariableNumber:
+  Enabled: true
+
+# constants should use uppercase letters
+Naming/ConstantName:
+  Enabled: True
+
+# parentheses when methods have parameters
+Style/DefWithParentheses:
+  Enabled: true
+
+# no unnecessary duplication
+Metrics/MethodLength:
+  Enabled: true
+
+Metrics/ClassLength: 
+  Enabled: true 
+
+# encourage readable methods
+Metrics/PerceivedComplexity:
+  Enabled: true
+  
+Metrics/CyclomaticComplexity:
+  Enabled: true
+
+# use Rails' built-in methods and conventions
+Rails/Delegate:
+  Enabled: true
+
+Rails/EnumSyntax:
+  Enabled: true
+
+Rails/SkipsModelValidations:
+  Enabled: true
+
+# keep database queries out of views
+Rails/OutputSafety:
+  Enabled: true
+
+# prefer single quotes for strings
+Style/StringLiterals:
+  EnforcedStyle: single_quotes
+
+# prefer each over for loops
+Style/For: 
+  EnforcedStyle: each 
+
+# avoid unnecessary return statements
+Style/RedundantReturn:
+  Enabled: true
+
+# concise conditional statements
+Style/IfUnlessModifier:
+  Enabled: true 
+  
+# prefer unless when appropriate
+Style/NegatedIf:
+  Enabled: true
+
+# use Rails migration conventions
+Rails/CreateTableWithTimestamps:
+  Enabled: true 
+
+Rails/InverseOf: 
+  Enabled: true
