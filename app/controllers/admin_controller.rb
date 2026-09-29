@@ -33,8 +33,6 @@ class AdminController < ApplicationController
   end
 
   def require_admin
-    unless current_member&.is_admin?
-      redirect_to root_path, alert: "Access denied."
-    end
+    redirect_to root_path, alert: 'Access denied.' unless current_member&.is_admin?
   end
 end

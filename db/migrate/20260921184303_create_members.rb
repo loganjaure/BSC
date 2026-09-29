@@ -7,7 +7,7 @@ class CreateMembers < ActiveRecord::Migration[8.0]
       t.string :tamu_email
       t.string :name
       t.integer :class_year
-      t.boolean :is_admin, default: false, null:false
+      t.boolean :is_admin, default: false, null: false
       t.string :standing
 
       t.timestamps

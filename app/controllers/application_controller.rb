@@ -24,21 +24,17 @@ class ApplicationController < ActionController::Base
 
   def require_login
     # AC-03.3: Block unauthenticated users
-    unless logged_in?
-      redirect_to root_path, alert: "Please sign in with your TAMU email to continue."
-    end
+    redirect_to root_path, alert: 'Please sign in with your TAMU email to continue.' unless logged_in?
   end
 
   def ensure_profile_complete
     return unless logged_in? && current_member
 
     # redirect to edit profile if UIN is missing
-    if current_member.uin.blank? && !profile_action?
-      redirect_to edit_member_path(current_member), alert: "Please complete your profile details to proceed."
-    end
+    redirect_to edit_member_path(current_member), alert: 'Please complete your profile details to proceed.' if current_member.uin.blank? && !profile_action?
   end
 
   def profile_action?
-    (controller_name == "members" && action_name.in?(%w[edit update])) || controller_name == "sessions"
+    (controller_name == 'members' && action_name.in?(%w[edit update])) || controller_name == 'sessions'
   end
 end
