@@ -56,6 +56,7 @@ group :development, :test do
   gem "rubocop-rails-omakase", require: false
 
   gem "rspec-rails"
+  gem "rspec_junit_formatter"
   gem "simplecov", require: false
   gem 'rubocop', require: false
   gem 'shoulda-matchers', '~>6.0'
