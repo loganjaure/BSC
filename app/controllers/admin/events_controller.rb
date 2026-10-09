@@ -16,7 +16,7 @@ class Admin::EventsController < ApplicationController
 
     if @event.save
       # AC-13.02: Success confirmation message
-      redirect_to admin_events_path, notice: "Event successfully created!"
+      redirect_to admin_events_path, notice: 'Event successfully created!'
     else
       # AC-13.03: Block save and display errors
       render :new, status: :unprocessable_entity
