@@ -40,6 +40,10 @@ tomorrow_11am = central.now.tomorrow.change(hour: 11)
 category = Category.find_or_create_by!(category_name: "General Meeting")
 semester = Semester.find_or_create_by!(term_name: "Fall 2026")
 
+SemesterRequirement.find_or_create_by!(semester: semester, category: category) do |requirement|
+  requirement.required_count = 3
+end
+
 Event.find_or_create_by!(
   event_name: "BSC Test Event",
   event_date_time: tomorrow_11am

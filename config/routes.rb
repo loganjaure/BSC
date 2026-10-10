@@ -20,6 +20,9 @@ Rails.application.routes.draw do
   get '/admin/events/new', to: 'admin/events#new', as: :new_admin_event
   post '/admin/events', to: 'admin/events#create'
 
+  # AC-23.1: public help page so members can use the app without the dev team
+  get '/support', to: 'support#show', as: :support
+
   get '/dashboard', to: 'dashboard#show', as: :dashboard
   get '/admin', to: 'admin#index', as: :admin
 

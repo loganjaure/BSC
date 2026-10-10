@@ -1,0 +1,95 @@
+<%# AC-23.1: text-only help page covering every member and admin task in the app %>
+<section class="bsc-center">
+  <h1 class="bsc-title">Help &amp; Support</h1>
+  <p class="bsc-sub">How to use the BSC Attendance Portal.</p>
+
+  <div class="bsc-panel bsc-panel--narrow">
+    <h2>Signing in</h2>
+    <p>
+      Press <strong>Sign in with Google</strong> on the home page and choose your official
+      TAMU Google account (an address ending in <strong>@tamu.edu</strong>). Personal Gmail
+      and other accounts are turned away with an "Access denied" message.
+    </p>
+    <p>
+      The first time you sign in, you'll be asked to complete your profile with your full name,
+      your 9-digit UIN, and your class year. You need to save your profile before you can use the
+      rest of the app. After that, you stay signed in when you refresh or reopen the page.
+    </p>
+
+    <h2>Updating your profile</h2>
+    <p>
+      Open <strong>User Profile</strong> in the navigation bar to see your details. Press
+      <strong>Edit profile</strong> to fix your name, UIN, or class year.
+    </p>
+
+    <h2>Checking in to an event</h2>
+    <p>
+      The <strong>Check-In</strong> page (the home page) lists every event with its date and point
+      value. Each event has a tag:
+    </p>
+    <ul>
+      <li><strong>Open</strong>: check-in is available. Tap the event to open it.</li>
+      <li><strong>Upcoming</strong>: the event isn't open yet and can't be selected.</li>
+      <li><strong>Checked in</strong>: your attendance is already recorded.</li>
+    </ul>
+    <p>
+      Check-in opens 15 minutes before an event starts and closes 3 hours after it starts. On the
+      event page, press <strong>Click to check-in</strong>. A checkmark confirms your attendance was
+      saved. You can only check in once per event, so pressing the button again won't add extra points.
+    </p>
+
+    <h2>Viewing your points</h2>
+    <p>
+      Every event belongs to a category, such as General Meeting. The top of the home page shows one
+      large number per category, side by side. Scroll sideways if there are more than fit on the screen.
+      Each number is the points you've earned this semester over the points required, for example
+      "2 / 3" under General Meeting. Each event you check in to adds its point value right away. Only
+      events from the current semester count.
+    </p>
+
+    <h2>Category requirements</h2>
+    <ul>
+      <li>
+        <strong>Satisfied</strong> (with a checkmark) means you've earned at least the required points.
+        Extra points still show, and the category stays satisfied.
+      </li>
+      <li><strong>In progress</strong> means you still need more points in that category.</li>
+      <li><strong>No requirement</strong> means no requirement is set for that category this semester, so only your earned points show.</li>
+    </ul>
+    <p>
+      If you see "No active semester", the BSC officers haven't set up a semester yet.
+    </p>
+
+    <h2>Appeals</h2>
+    <p>
+      The <strong>Appeals</strong> page is where you'll be able to dispute a missed or incorrect check-in.
+      Submitting appeals in the app isn't available yet. Until it is, contact a BSC officer directly
+      about attendance problems.
+    </p>
+
+    <h2>For admins</h2>
+    <p>Members marked as admins see two extra links in the navigation bar.</p>
+    <h3>Admin</h3>
+    <ul>
+      <li>See every member with their email, UIN, class year, and role.</li>
+      <li>Select <strong>View Details</strong> to see a member's total points and event history.</li>
+      <li>Select <strong>Make Admin</strong> to give a member admin access. You'll be asked to confirm first.</li>
+    </ul>
+    <h3>Events</h3>
+    <ul>
+      <li>See a list of all events in date order.</li>
+    </ul>
+
+    <h2>Common problems</h2>
+    <ul>
+      <li><strong>"Access denied" when signing in:</strong> sign in with your @tamu.edu account, not a personal one.</li>
+      <li><strong>Sent back to your profile form:</strong> your UIN or class year is missing. Fill them in and save.</li>
+      <li><strong>"Isn't open for check-in yet":</strong> wait until 15 minutes before the event starts.</li>
+      <li><strong>Points look wrong:</strong> check that the event shows "Checked in", then contact a BSC officer.</li>
+    </ul>
+  </div>
+
+  <% unless logged_in? %>
+    <%= link_to "Back to sign in", root_path, class: "bsc-back" %>
+  <% end %>
+</section>

@@ -1,0 +1,14 @@
+<%# AC-16:01: one category's earned points for the current semester, styled like the old total %>
+<li class="<%= class_names("bsc-progress", "is-satisfied": row.satisfied?) %>" data-category-id="<%= row.category.id %>">
+  <p class="bsc-total">
+    <span class="bsc-total__num"><%= format_points(row.earned) %><%= " / #{row.required}" if row.requirement? %></span>
+    <span class="bsc-total__label"><%= row.category.category_name %></span>
+  </p>
+  <% if row.satisfied? %>
+    <span class="bsc-tag bsc-tag--done" data-status="satisfied"><span aria-hidden="true">&#10003;</span> Satisfied</span>
+  <% elsif row.requirement? %>
+    <span class="bsc-tag bsc-tag--muted" data-status="in-progress">In progress</span>
+  <% else %>
+    <span class="bsc-tag bsc-tag--muted" data-status="no-requirement">No requirement</span>
+  <% end %>
+</li>
