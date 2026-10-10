@@ -255,6 +255,37 @@ a.bsc-event-card:focus-visible::before { opacity: 1; }
 .bsc-tag--done { background: rgba(126, 217, 87, .15); color: #bdf5a3; border-color: rgba(126, 217, 87, .35); }
 .bsc-tag--muted { background: rgba(255, 255, 255, .04); color: var(--ink-faint); border-color: var(--glass-line); }
 
+/* ---------- Category progress (AC-16:01) ---------- */
+/* one card per category, side by side; scrolls sideways when they don't fit */
+.bsc-progress-list {
+  display: flex;
+  justify-content: safe center;
+  gap: 1rem;
+  width: 100%;
+  margin: .75rem 0 2.75rem;
+  padding: .25rem .25rem 1rem;
+  list-style: none;
+  overflow-x: auto;
+  scroll-snap-type: x proximity;
+}
+.bsc-progress {
+  flex: 0 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: .9rem;
+  min-width: 220px;
+  padding: 1.25rem 1.75rem;
+  border-radius: var(--r-md);
+  border: 1px dashed var(--glass-line);
+  background: var(--glass);
+  scroll-snap-align: center;
+}
+.bsc-progress .bsc-total { margin: 0; }
+.bsc-progress .bsc-total__num { white-space: nowrap; }
+/* satisfied: solid border + checkmark badge, not just a color change */
+.bsc-progress.is-satisfied { border-style: solid; border-color: rgba(126, 217, 87, .45); }
+
 /* ---------- Check-in screen ---------- */
 .bsc-meta { color: var(--ink-dim); font-weight: 600; font-size: clamp(1rem, 1.4vw, 1.15rem); margin: 0 0 .9rem; font-variant-numeric: tabular-nums; }
 .bsc-meta.bsc-meta--name {

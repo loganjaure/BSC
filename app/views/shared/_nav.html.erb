@@ -9,6 +9,10 @@
   <%= link_to "User Profile", (current_member ? member_path(current_member) : new_member_path),
         class: class_names("bsc-nav__link", "is-active": controller_name == "members") %>
 
+  <%# AC-23.1: Help link to the support page %>
+  <%= link_to "Help", support_path,
+        class: class_names("bsc-nav__link", "is-active": controller_name == "support") %>
+
   <% if current_member&.is_admin? %>
             <%= link_to "Admin", admin_path,
                   class: class_names("bsc-nav__link", "is-active": controller_name == "admin") %>

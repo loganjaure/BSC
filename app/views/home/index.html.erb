@@ -10,14 +10,20 @@
         <p>Your member profile hasn't been created yet. Contact a BSC officer to get set up.</p>
       </div>
     <% else %>
-      <%# AC-05.1 / AC-05.3: member's name and current point total %>
-      <div class="bsc-summary">
-        <h1 class="bsc-title"><%= current_member.name.presence || current_user.full_name %></h1>
-        <p class="bsc-total">
-          <span class="bsc-total__num"><%= format_points(@total_points) %></span>
-          <span class="bsc-total__label">Total points</span>
-        </p>
-      </div>
+      <%# AC-05.1 / AC-05.3: member's name and current points (shown per category below) %>
+      <h1 class="bsc-title"><%= current_member.name.presence || current_user.full_name %></h1>
+
+      <%# AC-05.1 / AC-05.3: current points, 0 for a new member %>
+      <%# AC-16:01: points earned per category this semester, side by side and horizontally scrollable %>
+      <% if @current_semester.nil? %>
+        <p class="bsc-sub">No active semester. Category progress will show here once a semester is set up.</p>
+      <% elsif @category_progress.empty? %>
+        <p class="bsc-sub">No categories have been set up yet.</p>
+      <% else %>
+        <ul class="bsc-progress-list" aria-label="Category progress">
+          <%= render partial: "home/category_progress", collection: @category_progress, as: :row %>
+        </ul>
+      <% end %>
 
       <%# AC-05.6: event list showing which events are active %>
       <h2 class="bsc-section-title">Events</h2>
@@ -44,5 +50,7 @@
     <p class="bsc-sub">Sign in with your official TAMU email (@tamu.edu).</p>
     <%= button_to "Sign in with Google", "/auth/google_oauth2",
           method: :post, data: { turbo: false }, class: "bsc-btn bsc-btn--lg" %>
+    <%# AC-23.1: help is reachable before signing in %>
+    <%= link_to "Need help?", support_path, class: "bsc-back" %>
   </section>
 <% end %>

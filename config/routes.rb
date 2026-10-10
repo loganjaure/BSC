@@ -16,6 +16,9 @@ Rails.application.routes.draw do
 
   resources :appeals, only: [ :index ]
 
+  # AC-23.1: public help page so members can use the app without the dev team
+  get '/support', to: 'support#show', as: :support
+
   get '/dashboard', to: 'dashboard#show', as: :dashboard
   get '/admin', to: 'admin#index', as: :admin
   get '/admin/events', to: 'admin/events#index', as: :admin_events
