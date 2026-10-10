@@ -51,6 +51,7 @@ Event.find_or_create_by!(
   event.point_value = 1
   event.category = category
   event.semester = semester
+  event.description = "Test event for member attendance and point tracking."
 end
 
 puts "Seeded: BSC Test Event on #{tomorrow_11am.strftime('%A %-m/%-d/%Y at %-l:%M %p %Z')}"
