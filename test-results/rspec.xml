@@ -1,71 +1,100 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite name="rspec" tests="65" skipped="6" failures="0" errors="0" time="2.785656" timestamp="2026-10-04T19:58:11+00:00" hostname="922be7b48f68">
+<testsuite name="rspec" tests="94" skipped="6" failures="0" errors="0" time="14.633873" timestamp="2026-10-11T15:42:31+00:00" hostname="5aefd5300a72">
 <properties>
-<property name="seed" value="22175"/>
+<property name="seed" value="3742"/>
 </properties>
-<testcase classname="spec.controllers.application_controller_spec" name="ApplicationController#require_login when unauthenticated redirects to root path" file="./spec/controllers/application_controller_spec.rb" time="0.211599"></testcase>
-<testcase classname="spec.controllers.application_controller_spec" name="ApplicationController#require_login when authenticated allows access" file="./spec/controllers/application_controller_spec.rb" time="0.107175"></testcase>
-<testcase classname="spec.helpers.admin_helper_spec" name="AdminHelper add some examples to (or delete) /BSC-500/spec/helpers/admin_helper_spec.rb" file="./spec/helpers/admin_helper_spec.rb" time="0.000037"><skipped/></testcase>
-<testcase classname="spec.helpers.members_helper_spec" name="MembersHelper add some examples to (or delete) /BSC-500/spec/helpers/members_helper_spec.rb" file="./spec/helpers/members_helper_spec.rb" time="0.000013"><skipped/></testcase>
-<testcase classname="spec.models.appeal_spec" name="Appeal Associations is expected to belong to submitting_member class_name =&gt; Member required: true" file="./spec/models/appeal_spec.rb" time="0.252327"></testcase>
-<testcase classname="spec.models.appeal_spec" name="Appeal Associations is expected to belong to reviewed_by_member class_name =&gt; Member optional: true" file="./spec/models/appeal_spec.rb" time="0.009276"></testcase>
-<testcase classname="spec.models.appeal_spec" name="Appeal Associations is expected to belong to event required: true" file="./spec/models/appeal_spec.rb" time="0.010280"></testcase>
-<testcase classname="spec.models.appeal_spec" name="Appeal Validations is expected to validate that :appeal_type cannot be empty/falsy" file="./spec/models/appeal_spec.rb" time="0.017826"></testcase>
-<testcase classname="spec.models.appeal_spec" name="Appeal Validations is expected to validate that :reason cannot be empty/falsy" file="./spec/models/appeal_spec.rb" time="0.013677"></testcase>
-<testcase classname="spec.models.attendance_spec" name="Attendance Associations is expected to belong to member required: true" file="./spec/models/attendance_spec.rb" time="0.031629"></testcase>
-<testcase classname="spec.models.attendance_spec" name="Attendance Associations is expected to belong to event required: true" file="./spec/models/attendance_spec.rb" time="0.010655"></testcase>
-<testcase classname="spec.models.attendance_spec" name="Attendance Validations is expected to validate that :member_id cannot be empty/falsy" file="./spec/models/attendance_spec.rb" time="0.014105"></testcase>
-<testcase classname="spec.models.attendance_spec" name="Attendance Validations is expected to validate that :event_id cannot be empty/falsy" file="./spec/models/attendance_spec.rb" time="0.014270"></testcase>
-<testcase classname="spec.models.category_spec" name="Category Associations is expected to have many events" file="./spec/models/category_spec.rb" time="0.032255"></testcase>
-<testcase classname="spec.models.category_spec" name="Category Associations is expected to have many semester_requirements" file="./spec/models/category_spec.rb" time="0.020934"></testcase>
-<testcase classname="spec.models.category_spec" name="Category Validations is expected to validate that :category_name cannot be empty/falsy" file="./spec/models/category_spec.rb" time="0.023520"></testcase>
-<testcase classname="spec.models.category_spec" name="Category Validations is expected to validate that :category_name is case-sensitively unique" file="./spec/models/category_spec.rb" time="0.032969"></testcase>
-<testcase classname="spec.models.event_spec" name="Event Associations is expected to belong to category required: true" file="./spec/models/event_spec.rb" time="0.023051"></testcase>
-<testcase classname="spec.models.event_spec" name="Event Associations is expected to belong to semester required: true" file="./spec/models/event_spec.rb" time="0.011425"></testcase>
-<testcase classname="spec.models.event_spec" name="Event Associations is expected to have many attendances" file="./spec/models/event_spec.rb" time="0.015395"></testcase>
-<testcase classname="spec.models.event_spec" name="Event Associations is expected to have many members through attendances" file="./spec/models/event_spec.rb" time="0.013837"></testcase>
-<testcase classname="spec.models.event_spec" name="Event Associations is expected to have many appeals" file="./spec/models/event_spec.rb" time="0.008169"></testcase>
-<testcase classname="spec.models.event_spec" name="Event Validations is expected to validate that :event_name cannot be empty/falsy" file="./spec/models/event_spec.rb" time="0.018155"></testcase>
-<testcase classname="spec.models.event_spec" name="Event Validations is expected to validate that :event_date_time cannot be empty/falsy" file="./spec/models/event_spec.rb" time="0.017400"></testcase>
-<testcase classname="spec.models.event_spec" name="Event Validations is expected to validate that :point_value looks like a number greater than or equal to 0" file="./spec/models/event_spec.rb" time="0.017110"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Associations is expected to belong to user optional: true" file="./spec/models/member_spec.rb" time="0.027166"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Associations is expected to have many attendances dependent =&gt; destroy" file="./spec/models/member_spec.rb" time="0.006758"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Associations is expected to have many events through attendances" file="./spec/models/member_spec.rb" time="0.007339"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Associations is expected to have many submitted_appeals class_name =&gt; Appeal" file="./spec/models/member_spec.rb" time="0.008804"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Associations is expected to have many reviewed_appeals class_name =&gt; Appeal" file="./spec/models/member_spec.rb" time="0.006292"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Validations is expected to validate that :name cannot be empty/falsy, producing a custom validation error on failure" file="./spec/models/member_spec.rb" time="0.039829"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Validations is expected to validate that :tamu_email cannot be empty/falsy" file="./spec/models/member_spec.rb" time="0.042206"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Validations is expected to validate that :tamu_email is case-sensitively unique" file="./spec/models/member_spec.rb" time="0.040857"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Validations on update is expected to validate that :uin cannot be empty/falsy, producing a custom validation error on failure" file="./spec/models/member_spec.rb" time="0.031122"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Validations on update is expected to validate that :uin is case-insensitively unique" file="./spec/models/member_spec.rb" time="0.044298"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Validations on update is expected to validate that :class_year cannot be empty/falsy, producing a custom validation error on failure" file="./spec/models/member_spec.rb" time="0.036937"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Validations on update validates numericality and length of uin on update" file="./spec/models/member_spec.rb" time="0.066857"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Validations on update validates class_year range on update" file="./spec/models/member_spec.rb" time="0.038040"></testcase>
-<testcase classname="spec.models.member_spec" name="Member Validations on initial OAuth creation is valid without uin and class_year" file="./spec/models/member_spec.rb" time="0.021591"></testcase>
-<testcase classname="spec.models.semester_requirement_spec" name="SemesterRequirement Associations is expected to belong to semester required: true" file="./spec/models/semester_requirement_spec.rb" time="0.018106"></testcase>
-<testcase classname="spec.models.semester_requirement_spec" name="SemesterRequirement Associations is expected to belong to category required: true" file="./spec/models/semester_requirement_spec.rb" time="0.009362"></testcase>
-<testcase classname="spec.models.semester_requirement_spec" name="SemesterRequirement Validations is expected to validate that :required_count cannot be empty/falsy" file="./spec/models/semester_requirement_spec.rb" time="0.012276"></testcase>
-<testcase classname="spec.models.semester_requirement_spec" name="SemesterRequirement Validations is expected to validate that :required_count looks like a number greater than or equal to 0" file="./spec/models/semester_requirement_spec.rb" time="0.058256"></testcase>
-<testcase classname="spec.models.semester_spec" name="Semester Associations is expected to have many events" file="./spec/models/semester_spec.rb" time="0.014886"></testcase>
-<testcase classname="spec.models.semester_spec" name="Semester Associations is expected to have many semester_requirements" file="./spec/models/semester_spec.rb" time="0.006882"></testcase>
-<testcase classname="spec.models.semester_spec" name="Semester Validations is expected to validate that :term_name cannot be empty/falsy" file="./spec/models/semester_spec.rb" time="0.022811"></testcase>
-<testcase classname="spec.models.semester_spec" name="Semester Validations is expected to validate that :term_name is case-sensitively unique" file="./spec/models/semester_spec.rb" time="0.031454"></testcase>
-<testcase classname="spec.models.user_spec" name="User Associations is expected to have one member dependent =&gt; destroy" file="./spec/models/user_spec.rb" time="0.008848"></testcase>
-<testcase classname="spec.models.user_spec" name="User Validations is expected to validate that :email cannot be empty/falsy" file="./spec/models/user_spec.rb" time="0.018354"></testcase>
-<testcase classname="spec.models.user_spec" name="User Validations allows valid TAMU email addresses" file="./spec/models/user_spec.rb" time="0.009151"></testcase>
-<testcase classname="spec.models.user_spec" name="User Validations rejects non-TAMU email addresses" file="./spec/models/user_spec.rb" time="0.009631"></testcase>
-<testcase classname="spec.models.user_spec" name="User.from_google creates a new user for valid TAMU credentials" file="./spec/models/user_spec.rb" time="0.037933"></testcase>
-<testcase classname="spec.models.user_spec" name="User.from_google returns existing user instead of duplicating" file="./spec/models/user_spec.rb" time="0.034817"></testcase>
-<testcase classname="spec.models.user_spec" name="User.from_google returns nil for non-TAMU email" file="./spec/models/user_spec.rb" time="0.005778"></testcase>
-<testcase classname="spec.requests.admin_spec" name="Admins GET /index returns http success" file="./spec/requests/admin_spec.rb" time="0.485715"></testcase>
-<testcase classname="spec.requests.members_spec" name="Members GET /show returns http success" file="./spec/requests/members_spec.rb" time="0.117007"></testcase>
-<testcase classname="spec.requests.members_spec" name="Members GET /edit returns http success" file="./spec/requests/members_spec.rb" time="0.090065"></testcase>
-<testcase classname="spec.requests.sessions_spec" name="Sessions / OAuth GET /auth/google_oauth2/callback with valid TAMU Google account logs in user and redirects appropriately" file="./spec/requests/sessions_spec.rb" time="0.113052"></testcase>
-<testcase classname="spec.requests.sessions_spec" name="Sessions / OAuth GET /auth/google_oauth2/callback with non-TAMU email account denies login and redirects with an error flash" file="./spec/requests/sessions_spec.rb" time="0.035840"></testcase>
-<testcase classname="spec.requests.sessions_spec" name="Sessions / OAuth DELETE /logout or GET /logout clears session on logout" file="./spec/requests/sessions_spec.rb" time="0.030849"></testcase>
-<testcase classname="spec.system.member_registration_spec" name="Member Registration Flow allows a user to sign in with Google and complete their profile" file="./spec/system/member_registration_spec.rb" time="0.158499"></testcase>
-<testcase classname="spec.views.admin.index" name="admin/index.html.erb add some examples to (or delete) /BSC-500/spec/views/admin/index.html.erb_spec.rb" file="./spec/views/admin/index.html.erb_spec.rb" time="0.000325"><skipped/></testcase>
-<testcase classname="spec.views.members.edit" name="members/edit.html.erb add some examples to (or delete) /BSC-500/spec/views/members/edit.html.erb_spec.rb" file="./spec/views/members/edit.html.erb_spec.rb" time="0.000020"><skipped/></testcase>
-<testcase classname="spec.views.members.show" name="members/show.html.erb add some examples to (or delete) /BSC-500/spec/views/members/show.html.erb_spec.rb" file="./spec/views/members/show.html.erb_spec.rb" time="0.000018"><skipped/></testcase>
-<testcase classname="spec.views.members.update" name="members/update.html.erb add some examples to (or delete) /BSC-500/spec/views/members/update.html.erb_spec.rb" file="./spec/views/members/update.html.erb_spec.rb" time="0.000014"><skipped/></testcase>
+<testcase classname="spec.controllers.application_controller_spec" name="ApplicationController#require_login when unauthenticated redirects to root path" file="./spec/controllers/application_controller_spec.rb" time="0.310533"></testcase>
+<testcase classname="spec.controllers.application_controller_spec" name="ApplicationController#require_login when authenticated allows access" file="./spec/controllers/application_controller_spec.rb" time="0.310017"></testcase>
+<testcase classname="spec.helpers.admin_helper_spec" name="AdminHelper add some examples to (or delete) /BSC-500/spec/helpers/admin_helper_spec.rb" file="./spec/helpers/admin_helper_spec.rb" time="0.000113"><skipped/></testcase>
+<testcase classname="spec.helpers.members_helper_spec" name="MembersHelper add some examples to (or delete) /BSC-500/spec/helpers/members_helper_spec.rb" file="./spec/helpers/members_helper_spec.rb" time="0.000031"><skipped/></testcase>
+<testcase classname="spec.models.appeal_spec" name="Appeal Associations is expected to belong to submitting_member class_name =&gt; Member required: true" file="./spec/models/appeal_spec.rb" time="0.285601"></testcase>
+<testcase classname="spec.models.appeal_spec" name="Appeal Associations is expected to belong to reviewed_by_member class_name =&gt; Member optional: true" file="./spec/models/appeal_spec.rb" time="0.027851"></testcase>
+<testcase classname="spec.models.appeal_spec" name="Appeal Associations is expected to belong to event required: true" file="./spec/models/appeal_spec.rb" time="0.034911"></testcase>
+<testcase classname="spec.models.appeal_spec" name="Appeal Validations is expected to validate that :appeal_type cannot be empty/falsy" file="./spec/models/appeal_spec.rb" time="0.045580"></testcase>
+<testcase classname="spec.models.appeal_spec" name="Appeal Validations is expected to validate that :reason cannot be empty/falsy" file="./spec/models/appeal_spec.rb" time="0.039075"></testcase>
+<testcase classname="spec.models.attendance_spec" name="Attendance Associations is expected to belong to member required: true" file="./spec/models/attendance_spec.rb" time="0.067491"></testcase>
+<testcase classname="spec.models.attendance_spec" name="Attendance Associations is expected to belong to event required: true" file="./spec/models/attendance_spec.rb" time="0.043358"></testcase>
+<testcase classname="spec.models.attendance_spec" name="Attendance Validations is expected to validate that :member_id cannot be empty/falsy" file="./spec/models/attendance_spec.rb" time="0.018141"></testcase>
+<testcase classname="spec.models.attendance_spec" name="Attendance Validations is expected to validate that :event_id cannot be empty/falsy" file="./spec/models/attendance_spec.rb" time="0.015246"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress earned points is 0 when the member has not checked in to anything" file="./spec/models/category_progress_spec.rb" time="0.187469"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress earned points increases by the event point value after a check-in" file="./spec/models/category_progress_spec.rb" time="0.231758"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress earned points keeps each category separate" file="./spec/models/category_progress_spec.rb" time="0.246492"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress earned points does not count points earned by other members" file="./spec/models/category_progress_spec.rb" time="0.195767"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress earned points does not count events from a different semester" file="./spec/models/category_progress_spec.rb" time="0.166014"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress requirement status is not satisfied when under the requirement" file="./spec/models/category_progress_spec.rb" time="0.180881"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress requirement status is satisfied when exactly at the requirement" file="./spec/models/category_progress_spec.rb" time="0.247392"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress requirement status is satisfied and keeps the real total when over the requirement" file="./spec/models/category_progress_spec.rb" time="0.287810"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress requirement status treats a requirement of 0 as satisfied, even with 0 points" file="./spec/models/category_progress_spec.rb" time="0.289705"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress requirement status marks categories without a requirement row as having no requirement" file="./spec/models/category_progress_spec.rb" time="0.332585"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress requirement status ignores requirements from other semesters" file="./spec/models/category_progress_spec.rb" time="0.338382"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress rows lists every category in name order" file="./spec/models/category_progress_spec.rb" time="0.183951"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress rows is empty when there is no current semester" file="./spec/models/category_progress_spec.rb" time="0.084464"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress rows is empty when there is no member" file="./spec/models/category_progress_spec.rb" time="0.168252"></testcase>
+<testcase classname="spec.models.category_progress_spec" name="CategoryProgress rows uses a fixed number of queries no matter how many categories exist" file="./spec/models/category_progress_spec.rb" time="0.212253"></testcase>
+<testcase classname="spec.models.category_spec" name="Category Associations is expected to have many events" file="./spec/models/category_spec.rb" time="0.030038"></testcase>
+<testcase classname="spec.models.category_spec" name="Category Associations is expected to have many semester_requirements" file="./spec/models/category_spec.rb" time="0.025292"></testcase>
+<testcase classname="spec.models.category_spec" name="Category Validations is expected to validate that :category_name cannot be empty/falsy" file="./spec/models/category_spec.rb" time="0.067927"></testcase>
+<testcase classname="spec.models.category_spec" name="Category Validations is expected to validate that :category_name is case-sensitively unique" file="./spec/models/category_spec.rb" time="0.102817"></testcase>
+<testcase classname="spec.models.event_spec" name="Event Associations is expected to belong to category required: true" file="./spec/models/event_spec.rb" time="0.041987"></testcase>
+<testcase classname="spec.models.event_spec" name="Event Associations is expected to belong to semester required: true" file="./spec/models/event_spec.rb" time="0.031836"></testcase>
+<testcase classname="spec.models.event_spec" name="Event Associations is expected to have many attendances" file="./spec/models/event_spec.rb" time="0.023618"></testcase>
+<testcase classname="spec.models.event_spec" name="Event Associations is expected to have many members through attendances" file="./spec/models/event_spec.rb" time="0.029601"></testcase>
+<testcase classname="spec.models.event_spec" name="Event Associations is expected to have many appeals" file="./spec/models/event_spec.rb" time="0.021224"></testcase>
+<testcase classname="spec.models.event_spec" name="Event Validations is expected to validate that :event_name cannot be empty/falsy" file="./spec/models/event_spec.rb" time="0.044822"></testcase>
+<testcase classname="spec.models.event_spec" name="Event Validations is expected to validate that :event_date_time cannot be empty/falsy" file="./spec/models/event_spec.rb" time="0.038515"></testcase>
+<testcase classname="spec.models.event_spec" name="Event Validations is expected to validate that :point_value looks like a number greater than or equal to 0" file="./spec/models/event_spec.rb" time="0.046444"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Associations is expected to belong to user optional: true" file="./spec/models/member_spec.rb" time="0.012829"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Associations is expected to have many attendances dependent =&gt; destroy" file="./spec/models/member_spec.rb" time="0.009317"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Associations is expected to have many events through attendances" file="./spec/models/member_spec.rb" time="0.008639"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Associations is expected to have many submitted_appeals class_name =&gt; Appeal" file="./spec/models/member_spec.rb" time="0.006973"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Associations is expected to have many reviewed_appeals class_name =&gt; Appeal" file="./spec/models/member_spec.rb" time="0.007805"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Validations is expected to validate that :name cannot be empty/falsy, producing a custom validation error on failure" file="./spec/models/member_spec.rb" time="0.036174"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Validations is expected to validate that :tamu_email cannot be empty/falsy" file="./spec/models/member_spec.rb" time="0.036479"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Validations is expected to validate that :tamu_email is case-sensitively unique" file="./spec/models/member_spec.rb" time="0.057606"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Validations on update is expected to validate that :uin cannot be empty/falsy, producing a custom validation error on failure" file="./spec/models/member_spec.rb" time="0.044682"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Validations on update is expected to validate that :uin is case-insensitively unique" file="./spec/models/member_spec.rb" time="0.074135"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Validations on update is expected to validate that :class_year cannot be empty/falsy, producing a custom validation error on failure" file="./spec/models/member_spec.rb" time="0.060600"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Validations on update validates numericality and length of uin on update" file="./spec/models/member_spec.rb" time="0.135221"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Validations on update validates class_year range on update" file="./spec/models/member_spec.rb" time="0.069715"></testcase>
+<testcase classname="spec.models.member_spec" name="Member Validations on initial OAuth creation is valid without uin and class_year" file="./spec/models/member_spec.rb" time="0.031974"></testcase>
+<testcase classname="spec.models.semester_requirement_spec" name="SemesterRequirement Associations is expected to belong to semester required: true" file="./spec/models/semester_requirement_spec.rb" time="0.016317"></testcase>
+<testcase classname="spec.models.semester_requirement_spec" name="SemesterRequirement Associations is expected to belong to category required: true" file="./spec/models/semester_requirement_spec.rb" time="0.016771"></testcase>
+<testcase classname="spec.models.semester_requirement_spec" name="SemesterRequirement Validations is expected to validate that :required_count cannot be empty/falsy" file="./spec/models/semester_requirement_spec.rb" time="0.017839"></testcase>
+<testcase classname="spec.models.semester_requirement_spec" name="SemesterRequirement Validations is expected to validate that :required_count looks like a number greater than or equal to 0" file="./spec/models/semester_requirement_spec.rb" time="0.020779"></testcase>
+<testcase classname="spec.models.semester_spec" name="Semester Associations is expected to have many events" file="./spec/models/semester_spec.rb" time="0.008763"></testcase>
+<testcase classname="spec.models.semester_spec" name="Semester Associations is expected to have many semester_requirements" file="./spec/models/semester_spec.rb" time="0.006639"></testcase>
+<testcase classname="spec.models.semester_spec" name="Semester Validations is expected to validate that :term_name cannot be empty/falsy" file="./spec/models/semester_spec.rb" time="0.030495"></testcase>
+<testcase classname="spec.models.semester_spec" name="Semester Validations is expected to validate that :term_name is case-sensitively unique" file="./spec/models/semester_spec.rb" time="0.035030"></testcase>
+<testcase classname="spec.models.semester_spec" name="Semester.current returns nil when no semesters exist" file="./spec/models/semester_spec.rb" time="0.010215"></testcase>
+<testcase classname="spec.models.semester_spec" name="Semester.current returns the most recently created semester" file="./spec/models/semester_spec.rb" time="0.038479"></testcase>
+<testcase classname="spec.models.user_spec" name="User Associations is expected to have one member dependent =&gt; destroy" file="./spec/models/user_spec.rb" time="0.006621"></testcase>
+<testcase classname="spec.models.user_spec" name="User Validations is expected to validate that :email cannot be empty/falsy" file="./spec/models/user_spec.rb" time="0.019193"></testcase>
+<testcase classname="spec.models.user_spec" name="User Validations allows valid TAMU email addresses" file="./spec/models/user_spec.rb" time="0.010079"></testcase>
+<testcase classname="spec.models.user_spec" name="User Validations rejects non-TAMU email addresses" file="./spec/models/user_spec.rb" time="0.011374"></testcase>
+<testcase classname="spec.models.user_spec" name="User.from_google creates a new user for valid TAMU credentials" file="./spec/models/user_spec.rb" time="0.042721"></testcase>
+<testcase classname="spec.models.user_spec" name="User.from_google returns existing user instead of duplicating" file="./spec/models/user_spec.rb" time="0.046704"></testcase>
+<testcase classname="spec.models.user_spec" name="User.from_google returns nil for non-TAMU email" file="./spec/models/user_spec.rb" time="0.011808"></testcase>
+<testcase classname="spec.requests.admin_spec" name="Admins GET /index returns http success" file="./spec/requests/admin_spec.rb" time="0.908584"></testcase>
+<testcase classname="spec.requests.home_spec" name="Home page category progress with a current semester shows earned / required points for each category" file="./spec/requests/home_spec.rb" time="0.703853"></testcase>
+<testcase classname="spec.requests.home_spec" name="Home page category progress with a current semester no longer shows the total points number" file="./spec/requests/home_spec.rb" time="0.480774"></testcase>
+<testcase classname="spec.requests.home_spec" name="Home page category progress with a current semester shows the Satisfied indicator only on satisfied categories" file="./spec/requests/home_spec.rb" time="0.750259"></testcase>
+<testcase classname="spec.requests.home_spec" name="Home page category progress with a current semester shows earned points with a No requirement label when no requirement is set" file="./spec/requests/home_spec.rb" time="0.899666"></testcase>
+<testcase classname="spec.requests.home_spec" name="Home page category progress when a semester exists but no categories do shows an empty-state message" file="./spec/requests/home_spec.rb" time="0.528692"></testcase>
+<testcase classname="spec.requests.home_spec" name="Home page category progress without any semester shows a No active semester message instead of the progress list" file="./spec/requests/home_spec.rb" time="0.337735"></testcase>
+<testcase classname="spec.requests.home_spec" name="Home page category progress when not signed in shows the sign-in page without category progress" file="./spec/requests/home_spec.rb" time="0.233378"></testcase>
+<testcase classname="spec.requests.members_spec" name="Members GET /show returns http success" file="./spec/requests/members_spec.rb" time="0.474503"></testcase>
+<testcase classname="spec.requests.members_spec" name="Members GET /edit returns http success" file="./spec/requests/members_spec.rb" time="0.374733"></testcase>
+<testcase classname="spec.requests.sessions_spec" name="Sessions / OAuth GET /auth/google_oauth2/callback with valid TAMU Google account logs in user and redirects appropriately" file="./spec/requests/sessions_spec.rb" time="0.101342"></testcase>
+<testcase classname="spec.requests.sessions_spec" name="Sessions / OAuth GET /auth/google_oauth2/callback with non-TAMU email account denies login and redirects with an error flash" file="./spec/requests/sessions_spec.rb" time="0.036252"></testcase>
+<testcase classname="spec.requests.sessions_spec" name="Sessions / OAuth DELETE /logout or GET /logout clears session on logout" file="./spec/requests/sessions_spec.rb" time="0.031868"></testcase>
+<testcase classname="spec.requests.support_spec" name="Support page GET /support is reachable without signing in" file="./spec/requests/support_spec.rb" time="0.153836"></testcase>
+<testcase classname="spec.requests.support_spec" name="Support page GET /support covers each main task in the app" file="./spec/requests/support_spec.rb" time="0.103023"></testcase>
+<testcase classname="spec.requests.support_spec" name="Support page GET /support loads for a signed-in member without the sign-in link" file="./spec/requests/support_spec.rb" time="0.205995"></testcase>
+<testcase classname="spec.requests.support_spec" name="Support page Help links shows a Help link in the navbar for signed-in members that opens the support page" file="./spec/requests/support_spec.rb" time="0.316137"></testcase>
+<testcase classname="spec.requests.support_spec" name="Support page Help links shows a &quot;Need help?&quot; link on the sign-in page" file="./spec/requests/support_spec.rb" time="0.100346"></testcase>
+<testcase classname="spec.system.member_registration_spec" name="Member Registration Flow allows a user to sign in with Google and complete their profile" file="./spec/system/member_registration_spec.rb" time="0.299771"></testcase>
+<testcase classname="spec.views.admin.index" name="admin/index.html.erb add some examples to (or delete) /BSC-500/spec/views/admin/index.html.erb_spec.rb" file="./spec/views/admin/index.html.erb_spec.rb" time="0.000364"><skipped/></testcase>
+<testcase classname="spec.views.members.edit" name="members/edit.html.erb add some examples to (or delete) /BSC-500/spec/views/members/edit.html.erb_spec.rb" file="./spec/views/members/edit.html.erb_spec.rb" time="0.000014"><skipped/></testcase>
+<testcase classname="spec.views.members.show" name="members/show.html.erb add some examples to (or delete) /BSC-500/spec/views/members/show.html.erb_spec.rb" file="./spec/views/members/show.html.erb_spec.rb" time="0.000014"><skipped/></testcase>
+<testcase classname="spec.views.members.update" name="members/update.html.erb add some examples to (or delete) /BSC-500/spec/views/members/update.html.erb_spec.rb" file="./spec/views/members/update.html.erb_spec.rb" time="0.000018"><skipped/></testcase>
 </testsuite>

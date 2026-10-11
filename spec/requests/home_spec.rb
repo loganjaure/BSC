@@ -17,7 +17,7 @@ RSpec.describe 'Home page category progress', type: :request do
   end
 
   def earn(category, points, semester)
-    event = Event.create!(category: category, semester: semester, event_name: "#{category.category_name} event",
+    event = Event.create!(category: category, semester: semester, event_name: "#{category.category_name} event", description: 'Sample event description',
                           event_date_time: 1.day.ago, point_value: points)
     Attendance.create!(member: member, event: event, check_in_time: Time.current, status: 'present')
   end
