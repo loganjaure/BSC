@@ -14,7 +14,7 @@ RSpec.describe CategoryProgress, type: :model do
   end
 
   def create_event(category:, points:, term: semester)
-    Event.create!(category: category, semester: term, event_name: "#{category.category_name} #{points}",
+    Event.create!(category: category, semester: term, event_name: "#{category.category_name} #{points}", description: 'Test event description',
                   event_date_time: 1.day.ago, point_value: points)
   end
 
