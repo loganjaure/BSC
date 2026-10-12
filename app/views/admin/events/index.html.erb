@@ -1,11 +1,231 @@
 <section class="bsc-center">
   <h1 class="bsc-title">Events</h1>
 
-  <div class="bsc-panel">
-    <p>Create and edit events</p>
+  <%# Events section %>
+  <div class="bsc-panel mb-4">
     <div class="d-flex justify-content-between align-items-center mb-3">
-      <h1>Events</h1>
-      <%= link_to "Create Event", new_admin_event_path, class: "btn btn-primary" %>
+      <div>
+        <h2>Manage Events</h2>
+        <p>Create events, assign categories, and update event details.</p>
+      </div>
+
+      <%= link_to "Create Event",
+                  new_admin_event_path,
+                  class: "btn btn-primary" %>
     </div>
+
+    <% if @events.any? %>
+      <div class="table-responsive">
+        <table class="table table-striped align-middle">
+          <thead>
+            <tr>
+              <th>Event</th>
+              <th>Date & Time</th>
+              <th>Category</th>
+              <th>Semester</th>
+              <th>Points</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @events.each do |event| %>
+              <tr>
+                <td>
+                  <strong><%= event.event_name %></strong>
+                  <div class="small text-muted">
+                    <%= truncate(event.description, length: 80) %>
+                  </div>
+                </td>
+
+                <td>
+                  <%= event.event_date_time&.strftime("%b %-d, %Y %I:%M %p") %>
+                </td>
+
+                <td>
+                  <%= event.category&.category_name || "Unassigned" %>
+                </td>
+
+                <td>
+                  <%= event.semester&.term_name || "Unassigned" %>
+                </td>
+
+                <td><%= event.point_value %></td>
+
+                <td>
+                  <%= link_to "Edit",
+                              edit_admin_event_path(event),
+                              class: "btn btn-sm btn-outline-primary" %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p>No events have been created yet.</p>
+    <% end %>
   </div>
+
+  <%# Categories section %>
+  <div class="bsc-panel">
+    <h2>Manage Categories</h2>
+    <p>Create categories and edit existing category names.</p>
+
+    <div class="mb-4">
+      <h3 class="h5">Add Category</h3>
+
+      <%= form_with model: [:admin, @category],
+                    local: true do |form| %>
+        <div class="d-flex flex-wrap gap-2 align-items-end">
+          <div class="flex-grow-1">
+            <%= form.label :category_name, "Category Name",
+                           class: "form-label" %>
+
+            <%= form.text_field :category_name,
+                                class: "form-control",
+                                placeholder: "e.g. Community Service",
+                                required: true %>
+          </div>
+
+          <%= form.submit "Add Category",
+                          class: "btn btn-primary" %>
+        </div>
+      <% end %>
+    </div>
+
+    <h3 class="h5">Existing Categories</h3>
+
+    <% if @categories.any? %>
+      <div class="table-responsive">
+        <table class="table align-middle">
+          <thead>
+            <tr>
+              <th>Category</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+
+          <tbody>
+            <% @categories.each do |category| %>
+              <tr>
+                <td><%= category.category_name %></td>
+
+                <td>
+                  <%= link_to "Edit",
+                              edit_admin_category_path(category),
+                              class: "btn btn-sm btn-outline-primary" %>
+
+                  <%= button_to "Delete",
+                                admin_category_path(category),
+                                method: :delete,
+                                class: "btn btn-sm btn-outline-danger",
+                                form: {
+                                  class: "d-inline",
+                                  data: {
+                                    turbo_confirm: "Delete this category?"
+                                  }
+                                } %>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    <% else %>
+      <p>No categories have been created yet.</p>
+    <% end %>
+  </div>
+
+  <%# Semester category requirements %>
+  <div class="bsc-panel mt-4">
+    <h2>Category Requirements</h2>
+    <p>Set the required count for each category in a semester.</p>
+
+    <% if @semesters.any? && @categories.any? %>
+      <% @semesters.each do |semester| %>
+        <div class="mb-4">
+          <h3 class="h5"><%= semester.term_name %></h3>
+
+          <% requirements = semester.semester_requirements.index_by(&:category_id) %>
+
+          <%= form_with url: admin_semester_requirements_update_path(semester),
+                        method: :patch,
+                        local: true do |form| %>
+            <div class="table-responsive">
+              <table class="table align-middle">
+                <thead>
+                  <tr>
+                    <th>Category</th>
+                    <th>Required Count</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <% @categories.each do |category| %>
+                    <tr>
+                      <td><%= category.category_name %></td>
+                      <td>
+                        <%= number_field_tag "requirements[#{category.id}]",
+                              requirements[category.id]&.required_count,
+                              min: 0,
+                              step: 1,
+                              class: "form-control",
+                              placeholder: "Not required" %>
+                      </td>
+                    </tr>
+                  <% end %>
+                </tbody>
+              </table>
+            </div>
+
+            <%= form.submit "Save Requirements",
+                            class: "btn btn-primary" %>
+          <% end %>
+        </div>
+      <% end %>
+    <% else %>
+      <p>Create at least one semester and one category to configure requirements.</p>
+    <% end %>
+  </div>
+
+  
+  <div class="bsc-panel mt-4">
+    <h2>Manage Semesters</h2>
+    <p>Create semesters for events and category requirements.</p>
+
+    <%= form_with model: [:admin, @semester], local: true do |form| %>
+      <div class="d-flex flex-wrap gap-2 align-items-end mb-4">
+        <div class="flex-grow-1">
+          <%= form.label :term_name, "Semester Name", class: "form-label" %>
+          <%= form.text_field :term_name,
+                              class: "form-control",
+                              placeholder: "e.g. Spring 2027",
+                              required: true %>
+        </div>
+
+        <%= form.submit "Create Semester", class: "btn btn-primary" %>
+      </div>
+    <% end %>
+
+  <h3 class="h5">Existing Semesters</h3>
+
+    <% if @semesters.any? %>
+      <ul class="list-group">
+        <% @semesters.each do |semester| %>
+          <li class="list-group-item d-flex justify-content-between align-items-center">
+            <span><%= semester.term_name %></span>
+
+            <% if semester.id == Semester.current&.id %>
+              <span class="badge bg-success">Current Semester</span>
+            <% end %>
+          </li>
+        <% end %>
+      </ul>
+    <% else %>
+      <p>No semesters have been created yet.</p>
+    <% end %>
+  </div>
+
+
 </section>

@@ -1,8 +1,9 @@
+# app/models/category.rb
 # frozen_string_literal: true
 
 class Category < ApplicationRecord
-  has_many :events, dependent: :destroy
-  has_many :semester_requirements, dependent: :destroy
+  has_many :events, dependent: :restrict_with_error
+  has_many :semester_requirements, dependent: :restrict_with_error
 
   validates :category_name, presence: true, uniqueness: true
 end

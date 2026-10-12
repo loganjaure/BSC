@@ -1,0 +1,46 @@
+<div class="container mt-4">
+  <h2>Category Requirements</h2>
+
+  <% if @semesters.empty? %>
+    <p>Create a semester before setting requirements.</p>
+  <% elsif @categories.empty? %>
+    <p>Create categories before setting requirements.</p>
+  <% else %>
+    <%= form_with url: admin_semester_requirements_path,
+                  method: :get, local: true do %>
+      <div class="mb-3">
+        <%= label_tag :semester_id, "Semester", class: "form-label" %>
+        <%= select_tag :semester_id,
+              options_from_collection_for_select(
+                @semesters, :id, :term_name, @semester&.id
+              ),
+              class: "form-select",
+              onchange: "this.form.submit()" %>
+      </div>
+    <% end %>
+
+    <% if @semester %>
+      <%= form_with url: admin_semester_requirements_update_path(
+            semester_id: @semester.id
+          ), method: :patch, local: true do %>
+
+        <% @categories.each do |category| %>
+          <% requirement = @requirements[category.id] %>
+
+          <div class="mb-3">
+            <%= label_tag "requirements_#{category.id}",
+                  "#{category.category_name} — required points",
+                  class: "form-label" %>
+
+            <%= number_field_tag "requirements[#{category.id}]",
+                  requirement&.required_count,
+                  min: 0, step: 1, placeholder: "No requirement",
+                  class: "form-control" %>
+          </div>
+        <% end %>
+
+        <%= submit_tag "Save Requirements", class: "btn btn-primary" %>
+      <% end %>
+    <% end %>
+  <% end %>
+</div>

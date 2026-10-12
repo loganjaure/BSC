@@ -29,6 +29,16 @@ Rails.application.routes.draw do
   get '/admin/members/:id', to: 'admin#show_member', as: :admin_member
   patch '/admin/members/:id/promote', to: 'admin#promote_member', as: :promote_admin_member
 
+  namespace :admin do
+    resources :categories
+    resources :semesters, only: [ :create ]
+    resources :events
+    resources :semester_requirements, only: [ :index ]
+    patch 'semesters/:semester_id/requirements',
+        to: 'semester_requirements#update',
+        as: :semester_requirements_update
+  end
+
   # Member profile routes (show, edit, update)
   resources :members, only: [ :show, :edit, :update ]
 
