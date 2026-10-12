@@ -3,23 +3,32 @@
 class Admin::SemesterRequirementsController < ApplicationController
   before_action :require_admin
 
-  def create
-    @semester = Semester.new(semester_params)
+  def index
+    @semesters = Semester.order(:term_name)
+    @semester = Semester.find_by(id: params[:semester_id]) || @semesters.first
+    @categories = Category.order(:category_name)
+    @requirements = @semester ? @semester.semester_requirements.index_by(&:category_id) : {}
+  end
 
-    if @semester.save
-      redirect_to admin_events_path,
-                  notice: 'Semester created successfully.'
-    else
-      redirect_to admin_events_path,
-                  alert: @semester.errors.full_messages.to_sentence
+  def update
+    @semester = Semester.find(params[:semester_id])
+    requirements_params = params[:requirements] || {}
+
+    requirements_params.each do |category_id, count|
+      requirement = @semester.semester_requirements.find_or_initialize_by(category_id: category_id)
+
+      if count.present?
+        requirement.update(required_count: count)
+      else
+        requirement.destroy if requirement.persisted?
+      end
     end
+
+    redirect_to admin_semester_requirements_path(semester_id: @semester.id),
+                notice: 'Category requirements saved successfully.'
   end
 
   private
-
-  def semester_params
-    params.require(:semester).permit(:term_name)
-  end
 
   def require_admin
     redirect_to root_path, alert: 'Access denied.' unless current_member&.is_admin?
