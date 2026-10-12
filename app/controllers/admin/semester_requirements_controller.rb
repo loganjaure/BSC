@@ -8,7 +8,7 @@ class Admin::SemestersController < ApplicationController
 
     if @semester.save
       redirect_to admin_events_path,
-                  notice: "Semester created successfully."
+                  notice: 'Semester created successfully.'
     else
       redirect_to admin_events_path,
                   alert: @semester.errors.full_messages.to_sentence
@@ -22,6 +22,6 @@ class Admin::SemestersController < ApplicationController
   end
 
   def require_admin
-    redirect_to root_path, alert: "Access denied." unless current_member&.is_admin?
+    redirect_to root_path, alert: 'Access denied.' unless current_member&.is_admin?
   end
 end

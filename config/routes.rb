@@ -31,13 +31,12 @@ Rails.application.routes.draw do
 
   namespace :admin do
     resources :categories
-    resources :semesters, only: [:create]
+    resources :semesters, only: [ :create ]
     resources :events
-    resources :semester_requirements, only: [:index]
-    patch "semesters/:semester_id/requirements",
-        to: "semester_requirements#update",
+    resources :semester_requirements, only: [ :index ]
+    patch 'semesters/:semester_id/requirements',
+        to: 'semester_requirements#update',
         as: :semester_requirements_update
-
   end
 
   # Member profile routes (show, edit, update)

@@ -187,7 +187,7 @@ RSpec.describe 'Admin features', type: :request do
 
   describe 'authorization' do
     it 'redirects a non-admin away from the categories page' do
-      member.update_column(:is_admin, false)
+      member.update!(:is_admin, false)
 
       get admin_categories_path
 
@@ -196,7 +196,7 @@ RSpec.describe 'Admin features', type: :request do
     end
 
     it 'redirects a non-admin away from the events page' do
-      member.update_column(:is_admin, false)
+      member.update!(:is_admin, false)
 
       get admin_events_path
 
