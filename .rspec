@@ -1,4 +1,4 @@
 --color
 --format documentation
---bactrace
+--backtrace
 --require spec_helper
