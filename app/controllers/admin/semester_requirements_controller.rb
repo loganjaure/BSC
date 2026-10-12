@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class Admin::SemestersController < ApplicationController
+class Admin::SemesterRequirementsController < ApplicationController
   before_action :require_admin
 
   def create
