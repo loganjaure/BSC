@@ -1,0 +1,21 @@
+<div class="admin-member-actions">
+  <%= link_to "Edit Member", edit_admin_member_path(member) %>
+
+  <% if member.is_admin? %>
+    <% unless member.id == current_member.id %>
+      <%= button_to "Revoke Admin",
+                    revoke_admin_member_path(member),
+                    method: :patch,
+                    form: { data: { turbo_confirm: "Remove administrator access for #{member.name}?" } } %>
+    <% end %>
+  <% else %>
+    <%= button_to "Make Admin",
+                  promote_admin_member_path(member),
+                  method: :patch,
+                  form: { data: { turbo_confirm: "Make #{member.name} an admin?" } } %>
+  <% end %>
+
+  <% unless member.id == current_member.id %>
+    <%= link_to "Delete Member", delete_admin_member_path(member) %>
+  <% end %>
+</div>

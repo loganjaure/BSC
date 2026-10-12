@@ -28,6 +28,11 @@ Rails.application.routes.draw do
 
   get '/admin/members/:id', to: 'admin#show_member', as: :admin_member
   patch '/admin/members/:id/promote', to: 'admin#promote_member', as: :promote_admin_member
+  patch '/admin/members/:id/revoke', to: 'admin#revoke_member', as: :revoke_admin_member
+  get '/admin/members/:id/edit', to: 'admin#edit_member', as: :edit_admin_member
+  patch '/admin/members/:id', to: 'admin#update_member'
+  get '/admin/members/:id/delete', to: 'admin#delete_member', as: :delete_admin_member
+  delete '/admin/members/:id', to: 'admin#destroy_member'
 
   namespace :admin do
     resources :categories

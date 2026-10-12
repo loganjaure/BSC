@@ -10,16 +10,7 @@
     <p><strong>Role:</strong> <%= @member.is_admin? ? "Admin" : "Member" %></p>
     <p><strong>Total Points:</strong> <%= @member.total_points %></p>
 
-    <% unless @member.is_admin? %>
-      <%= button_to "Make Admin",
-                    promote_admin_member_path(@member),
-                    method: :patch,
-                    form: {
-                      data: {
-                        turbo_confirm: "Make #{@member.name} an admin?"
-                      }
-                    } %>
-    <% end %>
+    <%= render "member_actions", member: @member %>
 
     <%= link_to "Back to Admin", admin_path %>
   </div>

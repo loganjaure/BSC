@@ -1,0 +1,39 @@
+<section class="bsc-center">
+  <h1 class="bsc-title">Edit Member</h1>
+
+  <div class="bsc-panel">
+    <p><strong>TAMU email:</strong> <%= @member.tamu_email %></p>
+    <p>The sign-in email cannot be changed here because it is linked to Google authentication.</p>
+
+    <% if @member.errors.any? %>
+      <div role="alert" class="admin-member-errors">
+        <h2>Please correct the following:</h2>
+        <ul>
+          <% @member.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <%= form_with model: @member, url: admin_member_path(@member), method: :patch, local: true do |form| %>
+      <div>
+        <%= form.label :name, "Name" %>
+        <%= form.text_field :name, required: true %>
+      </div>
+
+      <div>
+        <%= form.label :uin, "UIN (9 digits)" %>
+        <%= form.text_field :uin, required: true, inputmode: "numeric", pattern: "[0-9]{9}", maxlength: 9 %>
+      </div>
+
+      <div>
+        <%= form.label :class_year, "Class Year" %>
+        <%= form.number_field :class_year, required: true, min: 2001, max: 2099, step: 1 %>
+      </div>
+
+      <%= form.submit "Save Changes" %>
+      <%= link_to "Cancel", admin_member_path(@member) %>
+    <% end %>
+  </div>
+</section>
