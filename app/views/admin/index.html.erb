@@ -58,16 +58,7 @@
                 <td>
                   <%= link_to "View Details", admin_member_path(member) %>
 
-                  <% unless member.is_admin? %>
-                    <%= button_to "Make Admin",
-                                  promote_admin_member_path(member),
-                                  method: :patch,
-                                  form: {
-                                    data: {
-                                      turbo_confirm: "Make #{member.name} an admin?"
-                                    }
-                                  } %>
-                  <% end %>
+                  <%= render "member_actions", member: member %>
                 </td>
               </tr>
             <% end %>
