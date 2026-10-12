@@ -1,61 +1,44 @@
-
 <div class="container mt-4">
-  <h2>Semester Category Requirements</h2>
-
-  <% if alert.present? %>
-    <div class="alert alert-danger"><%= alert %></div>
-  <% end %>
-
-  <% if notice.present? %>
-    <div class="alert alert-success"><%= notice %></div>
-  <% end %>
+  <h2>Category Requirements</h2>
 
   <% if @semesters.empty? %>
-    <p>Create a semester before configuring requirements.</p>
+    <p>Create a semester before setting requirements.</p>
+  <% elsif @categories.empty? %>
+    <p>Create categories before setting requirements.</p>
   <% else %>
-    <%= form_with url: admin_semester_requirements_update_path(@semester),
-              method: :patch, local: true do %>
-      <label for="semester_id" class="form-label">Semester</label>
-      <%= select_tag :semester_id,
-          options_from_collection_for_select(
-            @semesters, :id, :term_name, @semester&.id
-          ),
-          class: "form-select",
-          onchange: "this.form.requestSubmit()" %>
+    <%= form_with url: admin_semester_requirements_path,
+                  method: :get, local: true do %>
+      <div class="mb-3">
+        <%= label_tag :semester_id, "Semester", class: "form-label" %>
+        <%= select_tag :semester_id,
+              options_from_collection_for_select(
+                @semesters, :id, :term_name, @semester&.id
+              ),
+              class: "form-select",
+              onchange: "this.form.submit()" %>
+      </div>
     <% end %>
 
     <% if @semester %>
-      <h4><%= @semester.term_name %></h4>
+      <%= form_with url: admin_semester_requirements_update_path(
+            semester_id: @semester.id
+          ), method: :patch, local: true do %>
 
-      <%= form_with url: admin_semester_requirement_path(@semester),
-                    method: :patch, local: true do %>
         <% @categories.each do |category| %>
           <% requirement = @requirements[category.id] %>
 
           <div class="mb-3">
-            <label class="form-label"
-                   for="requirement_<%= category.id %>">
-              <%= category.category_name %>
-            </label>
+            <%= label_tag "requirements_#{category.id}",
+                  "#{category.category_name} — required points",
+                  class: "form-label" %>
 
-            <%= number_field_tag(
-              "requirements[#{category.id}][required_count]",
-              requirement&.required_count,
-              id: "requirement_#{category.id}",
-              min: 0,
-              step: 1,
-              class: "form-control",
-              placeholder: "No requirement"
-            ) %>
+            <%= number_field_tag "requirements[#{category.id}]",
+                  requirement&.required_count,
+                  min: 0, step: 1, placeholder: "No requirement",
+                  class: "form-control" %>
           </div>
         <% end %>
 
-        <p class="text-muted">
-          Leave a field blank for no requirement. Enter 0 if no points
-          are required but you still want the category marked as required.
-        </p>
-
-        <%= hidden_field_tag :semester_id, @semester.id %>
         <%= submit_tag "Save Requirements", class: "btn btn-primary" %>
       <% end %>
     <% end %>

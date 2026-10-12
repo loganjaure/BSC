@@ -16,7 +16,7 @@ class Admin::CategoriesController < ApplicationController
     @category = Category.new(category_params)
 
     if @category.save
-      redirect_to admin_categories_path, notice: 'Category created successfully.'
+      redirect_to admin_events_path, notice: 'Category created successfully.'
     else
       render :new, status: :unprocessable_entity
     end
@@ -27,20 +27,24 @@ class Admin::CategoriesController < ApplicationController
 
   def update
     if @category.update(category_params)
-      redirect_to admin_categories_path, notice: 'Category updated successfully.'
+      redirect_to admin_events_path, notice: 'Category updated successfully.'
     else
       render :edit, status: :unprocessable_entity
     end
   end
 
-  def destroy
-    if @category.destroy
-      redirect_to admin_categories_path, notice: 'Category deleted successfully.'
-    else
-      redirect_to admin_categories_path,
-                  alert: @category.errors.full_messages.to_sentence
+
+    def destroy
+        if @category.events.exists? || @category.semester_requirements.exists?
+            redirect_to admin_categories_path,
+                alert: 'Cannot delete a category used by events or semester requirements.'
+        elsif @category.destroy
+            redirect_to admin_events_path, notice: 'Category deleted successfully.'
+        else
+            redirect_to admin_categories_path,
+                alert: @category.errors.full_messages.to_sentence
+        end
     end
-  end
 
   private
 

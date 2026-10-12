@@ -7,7 +7,12 @@ class Admin::EventsController < ApplicationController
 
   def index
     @events = Event.includes(:category, :semester)
-                   .order(event_date_time: :asc)
+                 .order(event_date_time: :asc)
+    @categories = Category.order(:category_name)
+    @category = Category.new
+    @semesters = Semester.order(id: :desc)
+    @current_semester = Semester.current
+    @semester = Semester.new
   end
 
   def new
