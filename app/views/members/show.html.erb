@@ -27,6 +27,11 @@
       <div class="bsc-label">Role</div>
       <div><%= display_or_not_provided(@member.is_admin ? "Admin" : "Member") %></div>
     </div>
+
+    <div class="bsc-row">
+      <div class="bsc-label">Total points</div>
+      <div><%= @member.total_points %></div>
+    </div>
   </div>
 
   <div class="bsc-actions">

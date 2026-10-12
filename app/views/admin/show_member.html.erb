@@ -9,6 +9,13 @@
     <p><strong>Class Year:</strong> <%= @member.class_year.presence || "Not provided" %></p>
     <p><strong>Role:</strong> <%= @member.is_admin? ? "Admin" : "Member" %></p>
     <p><strong>Total Points:</strong> <%= @member.total_points %></p>
+    <p><strong>Attendance Points:</strong> <%= @member.attendance_points %></p>
+    <p><strong>Administrator Adjustment:</strong> <%= @member.points_adjustment %></p>
+
+    <% if @member.archived? %>
+      <p role="status">Archived on <%= @member.archived_at.strftime("%B %d, %Y") %>. Records are retained and application access is disabled.</p>
+      <%= link_to "Back to Archived Members", admin_path(archived: "1") %>
+    <% end %>
 
     <%= render "member_actions", member: @member %>
 

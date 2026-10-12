@@ -2,8 +2,7 @@
   <h1 class="bsc-title">Edit Member</h1>
 
   <div class="bsc-panel">
-    <p><strong>TAMU email:</strong> <%= @member.tamu_email %></p>
-    <p>The sign-in email cannot be changed here because it is linked to Google authentication.</p>
+    <p>Update the member's profile and total points below.</p>
 
     <% if @member.errors.any? %>
       <div role="alert" class="admin-member-errors">
@@ -23,6 +22,12 @@
       </div>
 
       <div>
+        <%= form.label :tamu_email, "TAMU Email" %>
+        <%= form.email_field :tamu_email, required: true %>
+        <p>This updates the membership email. The member continues signing in with their existing Google account.</p>
+      </div>
+
+      <div>
         <%= form.label :uin, "UIN (9 digits)" %>
         <%= form.text_field :uin, required: true, inputmode: "numeric", pattern: "[0-9]{9}", maxlength: 9 %>
       </div>
@@ -30,6 +35,12 @@
       <div>
         <%= form.label :class_year, "Class Year" %>
         <%= form.number_field :class_year, required: true, min: 2001, max: 2099, step: 1 %>
+      </div>
+
+      <div>
+        <%= form.label :total_points, "Total Points" %>
+        <%= form.number_field :total_points, value: @member.requested_total_points || @member.total_points, required: true, min: 0, step: "any" %>
+        <p>Correcting the total preserves attendance records. Future check-ins continue adding points. Category progress still reflects attendance in each category.</p>
       </div>
 
       <%= form.submit "Save Changes" %>

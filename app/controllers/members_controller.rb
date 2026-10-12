@@ -21,10 +21,11 @@ class MembersController < ApplicationController
   private
 
   def set_member
-    @member = Member.find(params[:id])
+    @member = current_member
+    raise ActiveRecord::RecordNotFound unless @member && @member.id.to_s == params[:id] && !@member.archived?
   end
 
   def member_params
-    params.require(:member).permit(:name, :uin, :class_year, :tamu_email)
+    params.require(:member).permit(:name, :uin, :class_year)
   end
 end

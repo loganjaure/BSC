@@ -118,18 +118,19 @@ RSpec.describe 'Admin member management', type: :request do
   end
 
   describe 'editing members' do
-    it 'shows a form without editable role, login-email, or user-link fields' do
+    it 'shows editable email and total points without role or user-link fields' do
       get edit_admin_member_path(target)
 
       expect(response).to have_http_status(:ok)
       expect(response.body).to include(
         'member[name]',
         'member[uin]',
-        'member[class_year]'
+        'member[class_year]',
+        'member[tamu_email]',
+        'member[total_points]'
       )
       expect(response.body).not_to include(
         'member[is_admin]',
-        'member[tamu_email]',
         'member[user_id]'
       )
     end
@@ -165,7 +166,14 @@ RSpec.describe 'Admin member management', type: :request do
       blank_class_year: { class_year: '' },
       early_class_year: { class_year: '2000' },
       late_class_year: { class_year: '2100' },
-      nonnumeric_class_year: { class_year: 'invalid' }
+      nonnumeric_class_year: { class_year: 'invalid' },
+      blank_email: { tamu_email: '' },
+      non_tamu_email: { tamu_email: 'someone@gmail.com' },
+      malformed_email: { tamu_email: 'invalid email@tamu.edu' },
+      duplicate_email: { tamu_email: 'ACTING-ADMIN@TAMU.EDU' },
+      blank_points: { total_points: '' },
+      negative_points: { total_points: '-1' },
+      invalid_points: { total_points: 'not-a-number' }
     }.each do |case_name, attributes|
       it "rejects #{case_name} and preserves the saved record" do
         original = target.attributes
@@ -188,9 +196,11 @@ RSpec.describe 'Admin member management', type: :request do
       expect(target.reload.name).to eq('Test Member')
     end
 
-    it 'ignores forged role, identity, and account-link parameters' do
+    it 'ignores forged role, archive, adjustment, and account-link parameters' do
       original = target.attributes.slice(
-        'tamu_email',
+        'archived_at',
+        'archived_by_id',
+        'points_adjustment',
         'user_id',
         'is_admin',
         'standing'
@@ -199,7 +209,9 @@ RSpec.describe 'Admin member management', type: :request do
       patch admin_member_path(target), params: {
         member: {
           name: 'Allowed Name',
-          tamu_email: 'another@tamu.edu',
+          archived_at: Time.current,
+          archived_by_id: admin_member.id,
+          points_adjustment: 999,
           user_id: admin_user.id,
           is_admin: true,
           standing: 'forged'
@@ -208,7 +220,7 @@ RSpec.describe 'Admin member management', type: :request do
 
       expect(target.reload.name).to eq('Allowed Name')
       expect(
-        target.attributes.slice('tamu_email', 'user_id', 'is_admin', 'standing')
+        target.attributes.slice('archived_at', 'archived_by_id', 'points_adjustment', 'user_id', 'is_admin', 'standing')
       ).to eq(original)
       expect(target_user.reload.email).to eq('managed-member@tamu.edu')
     end
@@ -300,151 +312,168 @@ RSpec.describe 'Admin member management', type: :request do
     end
   end
 
-  describe 'member deletion' do
-    it 'only displays confirmation on GET and does not delete anything' do
-      expect { get delete_admin_member_path(target) }.not_to change(Member, :count)
+  describe 'member archival' do
+    it 'only displays confirmation on GET and does not archive anything' do
+      expect { get delete_admin_member_path(target) }.not_to change { target.reload.archived_at }
 
       expect(response).to have_http_status(:ok)
-      expect(response.body).to include(
-        'Permanently Delete Member',
-        'confirm_delete',
-        'Cancel'
-      )
-      expect(User.exists?(target_user.id)).to be(true)
+      expect(response.body).to include('Archive Member', 'confirm_delete', 'Cancel', 'retained')
     end
 
     it 'requires explicit confirmation even for a directly submitted DELETE request' do
       delete admin_member_path(target)
 
-      expect(Member.exists?(target.id)).to be(true)
-      expect(User.exists?(target_user.id)).to be(true)
+      expect(target.reload).not_to be_archived
       expect(response).to redirect_to(delete_admin_member_path(target))
     end
 
-    it 'deletes a history-free member and their linked application login' do
+    it 'archives a member and retains their profile and application login' do
+      original_profile = target.attributes.except('updated_at', 'archived_at', 'archived_by_id')
       expect do
         delete admin_member_path(target), params: { confirm_delete: '1' }
-      end.to change(Member, :count).by(-1).and change(User, :count).by(-1)
+      end.to change(Member, :count).by(0).and change(User, :count).by(0)
 
-      expect(Member.exists?(target.id)).to be(false)
-      expect(User.exists?(target_user.id)).to be(false)
+      expect(target.reload).to be_archived
+      expect(target.archived_by_id).to eq(admin_member.id)
+      expect(target.attributes.except('updated_at', 'archived_at', 'archived_by_id')).to eq(original_profile)
       expect(response).to redirect_to(admin_path)
       expect(response).to have_http_status(:see_other)
     end
 
-    it 'does not authenticate an existing session for a deleted login account' do
-      deleted_user_id = target_user.id
-
+    it 'removes an archived member from the active roster and preserves admin access to their history' do
       delete admin_member_path(target), params: { confirm_delete: '1' }
-
-      allow_any_instance_of(ApplicationController).to receive(:current_user) do
-        User.find_by(id: deleted_user_id)
-      end
-
       get admin_path
+      expect(response.body).not_to include(target.tamu_email)
 
-      expect(response).to redirect_to(root_path)
-      expect(flash[:alert]).to include('Please sign in')
+      get admin_path(archived: '1')
+      expect(response.body).to include(target.tamu_email, 'Archived Members')
+      expect(response.body).not_to include(edit_admin_member_path(target), delete_admin_member_path(target))
+
+      get admin_member_path(target)
+      expect(response).to have_http_status(:ok)
+      expect(response.body).to include('Archived on', target.tamu_email)
     end
 
-    it 'blocks self-deletion even when another administrator exists' do
-      target.update!(is_admin: true)
+    it 'rejects access for an archived login account' do
+      delete admin_member_path(target), params: { confirm_delete: '1' }
+      sign_in_as(target_user)
+      get member_path(target)
 
+      expect(response).to redirect_to(root_path)
+      expect(flash[:alert]).to include('archived')
+    end
+
+    it 'blocks self-archival even when another administrator exists' do
+      target.update!(is_admin: true)
       delete admin_member_path(admin_member), params: { confirm_delete: '1' }
 
-      expect(Member.exists?(admin_member.id)).to be(true)
-      expect(User.exists?(admin_user.id)).to be(true)
+      expect(admin_member.reload).not_to be_archived
       expect(flash[:alert]).to include('your own account')
     end
 
-    it 'blocks deletion of the last administrator' do
+    it 'blocks archival of the last administrator' do
       delete admin_member_path(admin_member), params: { confirm_delete: '1' }
 
-      expect(Member.exists?(admin_member.id)).to be(true)
+      expect(admin_member.reload).not_to be_archived
       expect(flash[:alert]).to include('last administrator')
     end
 
-    it 'can delete a different history-free admin while preserving the acting admin' do
+    it 'archives another administrator and clears their admin role' do
       target.update!(is_admin: true)
-
       delete admin_member_path(target), params: { confirm_delete: '1' }
 
-      expect(Member.exists?(target.id)).to be(false)
+      expect(target.reload).to be_archived
+      expect(target).not_to be_is_admin
       expect(admin_member.reload).to be_is_admin
     end
 
-    it 'preserves members, accounts, and attendance when attendance history exists' do
-      attendance = Attendance.create!(
-        member: target,
-        event: event,
-        check_in_time: Time.current
-      )
-
-      get delete_admin_member_path(target)
-
-      expect(response.body).to include(
-        'Cannot delete a member with attendance history'
-      )
-      expect(response.body).not_to include('Permanently Delete Member')
-
+    it 'retains attendance and adjusted points while archiving a member with history' do
+      attendance = Attendance.create!(member: target, event: event, check_in_time: Time.current)
+      target.update!(total_points: '7.5')
       delete admin_member_path(target), params: { confirm_delete: '1' }
 
-      expect(Member.exists?(target.id)).to be(true)
-      expect(User.exists?(target_user.id)).to be(true)
+      expect(target.reload).to be_archived
       expect(Attendance.exists?(attendance.id)).to be(true)
-      expect(flash[:alert]).to include('attendance history')
+      expect(target.total_points).to eq(7.5)
+      get admin_member_path(target)
+      expect(response.body).to include(event.event_name, '7.5')
     end
 
-    it 'checks history again if attendance is added after opening confirmation' do
+    it 'retains attendance added after opening the confirmation page' do
       get delete_admin_member_path(target)
-
-      attendance = Attendance.create!(
-        member: target,
-        event: event,
-        check_in_time: Time.current
-      )
-
+      attendance = Attendance.create!(member: target, event: event, check_in_time: Time.current)
       delete admin_member_path(target), params: { confirm_delete: '1' }
 
-      expect(Member.exists?(target.id)).to be(true)
+      expect(target.reload).to be_archived
       expect(Attendance.exists?(attendance.id)).to be(true)
     end
 
-    it 'blocks deleting a member who submitted an appeal' do
-      appeal = Appeal.create!(
-        submitting_member_id: target.id,
-        event_id: event.id,
-        appeal_type: 'attendance',
-        reason: 'Test appeal',
-        status: 'pending'
-      )
-
+    it 'retains submitted appeals' do
+      appeal = Appeal.create!(submitting_member: target, event: event,
+                             appeal_type: 'attendance', reason: 'Test appeal', status: 'pending')
       delete admin_member_path(target), params: { confirm_delete: '1' }
 
-      expect(Member.exists?(target.id)).to be(true)
-      expect(User.exists?(target_user.id)).to be(true)
-      expect(Appeal.exists?(appeal.id)).to be(true)
-      expect(flash[:alert]).to include('appeal history')
+      expect(target.reload).to be_archived
+      expect(appeal.reload.submitting_member_id).to eq(target.id)
     end
 
-    it 'preserves appeals reviewed by the target and their submitting member' do
+    it 'retains reviewed appeals and their submitting member' do
       target.update!(is_admin: true)
-
-      appeal = Appeal.create!(
-        submitting_member_id: admin_member.id,
-        reviewed_by_member_id: target.id,
-        event_id: event.id,
-        appeal_type: 'attendance',
-        reason: 'Test appeal',
-        status: 'pending'
-      )
-
+      appeal = Appeal.create!(submitting_member: admin_member, reviewed_by_member: target, event: event,
+                             appeal_type: 'attendance', reason: 'Test appeal', status: 'pending')
       delete admin_member_path(target), params: { confirm_delete: '1' }
 
-      expect(Member.exists?(target.id)).to be(true)
+      expect(target.reload).to be_archived
       expect(admin_member.reload).to be_is_admin
       expect(appeal.reload.reviewed_by_member_id).to eq(target.id)
-      expect(flash[:alert]).to include('appeal history')
+    end
+
+    it 'does not alter an archived record on repeated requests' do
+      delete admin_member_path(target), params: { confirm_delete: '1' }
+      original = target.reload.attributes
+      delete admin_member_path(target), params: { confirm_delete: '1' }
+      patch admin_member_path(target), params: { member: { name: 'Changed', total_points: '100' } }
+      patch promote_admin_member_path(target)
+
+      expect(target.reload.attributes).to eq(original)
+    end
+  end
+
+  describe 'email and point corrections' do
+    it 'saves the member email and points without changing Google identity or attendance' do
+      attendance = Attendance.create!(member: target, event: event, check_in_time: Time.current)
+      original_login = target_user.attributes
+      patch admin_member_path(target), params: { member: { tamu_email: ' CORRECTED@TAMU.EDU ', total_points: '8.5' } }
+
+      expect(response).to redirect_to(admin_member_path(target))
+      expect(target.reload.tamu_email).to eq('corrected@tamu.edu')
+      expect(target.total_points).to eq(8.5)
+      expect(target.points_adjustment).to eq(7.5)
+      expect(attendance.reload.event_id).to eq(event.id)
+      expect(event.reload.point_value).to eq(1)
+      expect(target_user.reload.attributes).to eq(original_login)
+
+      sign_in_as(target_user)
+      get member_path(target)
+      expect(response.body).to include('corrected@tamu.edu', '8.5')
+    end
+
+    it 'continues adding attendance points after a total correction' do
+      patch admin_member_path(target), params: { member: { total_points: '5' } }
+      Attendance.create!(member: target, event: event, check_in_time: Time.current)
+
+      expect(target.reload.total_points).to eq(6)
+    end
+
+    it 'does not save an email or point correction when profile validation fails' do
+      original = target.attributes
+      patch admin_member_path(target), params: {
+        member: { name: '', tamu_email: 'attempted@tamu.edu', total_points: '4.5' }
+      }
+
+      expect(response).to have_http_status(:unprocessable_content)
+      expect(response.body).to include('attempted@tamu.edu', '4.5')
+      expect(target.reload.attributes).to eq(original)
     end
   end
 

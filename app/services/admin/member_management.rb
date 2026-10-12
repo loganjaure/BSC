@@ -4,7 +4,7 @@ module Admin
   class MemberManagement
     class Error < StandardError; end
 
-    EDITABLE_FIELDS = %i[name uin class_year].freeze
+    EDITABLE_FIELDS = %i[name uin class_year tamu_email total_points].freeze
 
     def initialize(actor:, member:)
       @actor = actor
@@ -30,22 +30,21 @@ module Admin
       end
     end
 
-    def destroy!
+    def archive!
       with_authorized_member do
         blocker = deletion_blocker
         raise Error, blocker if blocker
 
-        destroy_account!
+        raise Error, 'Cannot archive an account linked to more than one member. Resolve the duplicate link first.' if shared_account?
+
+        @member.assign_attributes(archived_at: Time.current, archived_by_id: @actor.id, is_admin: false)
+        @member.save(context: :admin_archive) || raise(Error, @member.errors.full_messages.to_sentence)
       end
-    rescue ActiveRecord::RecordNotDestroyed, ActiveRecord::InvalidForeignKey
-      raise Error, 'Cannot delete this member because linked records or a deletion safeguard prevented it. Nothing was deleted.'
     end
 
     def deletion_blocker
-      return 'Cannot delete the last administrator.' if last_admin?
-      return 'You cannot delete your own account from the admin screen.' if own_account?
-      return 'Cannot delete a member with attendance history. Keep the record to preserve their points and history.' if @member.attendances.exists?
-      return 'Cannot delete a member who submitted or reviewed appeals. Keep the record to preserve appeal history.' if appeal_history?
+      return 'Cannot archive the last administrator.' if last_admin?
+      return 'You cannot archive your own account from the admin screen.' if own_account?
 
       nil
     end
@@ -56,13 +55,20 @@ module Admin
       Member.transaction do
         # Lock both accounts in a consistent order, then recheck the actor's role.
         # This also serializes an admin trying to revoke/delete the acting admin.
-        locked_members = Member.where(id: [ @actor&.id, @member.id ]).order(:id).lock.to_a
-        actor = locked_members.find { |record| record.id == @actor&.id }
-        raise Error, 'Access denied.' unless actor&.is_admin?
+        actor_id = @actor&.id
+        locked_members = Member.where(id: [ actor_id, @member.id ]).order(:id).lock.to_a
+        actor = locked_members.find { |record| record.id == actor_id }
+        raise Error, 'Access denied.' unless active_admin?(actor)
 
         @member.reload
+        raise Error, 'This member has been archived.' if @member.archived?
+
         yield
       end
+    end
+
+    def active_admin?(actor)
+      actor&.is_admin? && !actor.archived?
     end
 
     def change_role!(enabled)
@@ -78,30 +84,15 @@ module Admin
     end
 
     def last_admin?
-      @member.is_admin? && Member.where(is_admin: true).count <= 1
+      @member.is_admin? && Member.active.where(is_admin: true).count <= 1
     end
 
     def own_account?
       @member.id == @actor&.id
     end
 
-    def appeal_history?
-      @member.submitted_appeals.exists? || @member.reviewed_appeals.exists?
-    end
-
-    def destroy_account!
-      user = @member.user
-
-      if user
-        user.lock!
-        shared_account = Member.where(user_id: user.id).where.not(id: @member.id).exists?
-        raise Error, 'Cannot delete an account linked to more than one member. Resolve the duplicate link first.' if shared_account
-      end
-
-      @member.destroy!
-
-      # Clear the has_one cache after deleting the member to avoid running
-      user&.reload&.destroy!
+    def shared_account?
+      @member.user_id.present? && Member.where(user_id: @member.user_id).where.not(id: @member.id).exists?
     end
   end
 end

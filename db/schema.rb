@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_10_09_102451) do
+ActiveRecord::Schema[8.1].define(version: 2026_10_12_220000) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -69,6 +69,12 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_09_102451) do
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.bigint "user_id", null: false
+    t.datetime "archived_at"
+    t.bigint "archived_by_id"
+    t.decimal "points_adjustment", default: "0.0", null: false
+    t.index "lower((tamu_email)::text)", name: "index_members_on_normalized_email", unique: true
+    t.index ["archived_at"], name: "index_members_on_archived_at"
+    t.index ["archived_by_id"], name: "index_members_on_archived_by_id"
     t.index ["user_id"], name: "index_members_on_user_id"
   end
 
@@ -97,6 +103,8 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_09_102451) do
     t.string "provider"
     t.string "full_name"
     t.string "avatar_url"
+    t.index "lower((email)::text)", name: "index_users_on_normalized_email", unique: true
+    t.index ["provider", "uid"], name: "index_users_on_google_identity", unique: true, where: "((uid IS NOT NULL) AND ((uid)::text <> ''::text) AND (provider IS NOT NULL) AND ((provider)::text <> ''::text))"
   end
 
   add_foreign_key "appeals", "events"
@@ -106,6 +114,7 @@ ActiveRecord::Schema[8.1].define(version: 2026_10_09_102451) do
   add_foreign_key "attendances", "members"
   add_foreign_key "events", "categories"
   add_foreign_key "events", "semesters"
+  add_foreign_key "members", "members", column: "archived_by_id"
   add_foreign_key "members", "users"
   add_foreign_key "semester_requirements", "categories"
   add_foreign_key "semester_requirements", "semesters"
