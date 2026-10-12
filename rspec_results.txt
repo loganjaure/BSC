@@ -1,0 +1,358 @@
+ApplicationController
+  #require_login
+    when unauthenticated
+      redirects to root path
+    when authenticated
+      allows access
+
+AdminHelper
+  add some examples to (or delete) /BSC-500/spec/helpers/admin_helper_spec.rb (PENDING: Not yet implemented)
+
+MembersHelper
+  add some examples to (or delete) /BSC-500/spec/helpers/members_helper_spec.rb (PENDING: Not yet implemented)
+
+Appeal
+  Associations
+    is expected to belong to submitting_member class_name => Member required: true
+    is expected to belong to reviewed_by_member class_name => Member optional: true
+    is expected to belong to event required: true
+  Validations
+    is expected to validate that :appeal_type cannot be empty/falsy
+    is expected to validate that :reason cannot be empty/falsy
+
+Attendance
+  Associations
+    is expected to belong to member required: true
+    is expected to belong to event required: true
+  Validations
+    is expected to validate that :member_id cannot be empty/falsy
+    is expected to validate that :event_id cannot be empty/falsy
+
+CategoryProgress
+  earned points
+    is 0 when the member has not checked in to anything
+    increases by the event point value after a check-in
+    keeps each category separate
+    does not count points earned by other members
+    does not count events from a different semester
+  requirement status
+    is not satisfied when under the requirement
+    is satisfied when exactly at the requirement
+    is satisfied and keeps the real total when over the requirement
+    treats a requirement of 0 as satisfied, even with 0 points
+    marks categories without a requirement row as having no requirement
+    ignores requirements from other semesters
+  rows
+    lists every category in name order
+    is empty when there is no current semester
+    is empty when there is no member
+    uses a fixed number of queries no matter how many categories exist
+
+Category
+  Associations
+    is expected to have many events
+    is expected to have many semester_requirements
+  Validations
+    is expected to validate that :category_name cannot be empty/falsy
+    is expected to validate that :category_name is case-sensitively unique
+
+Event
+  Associations
+    is expected to belong to category required: true
+    is expected to belong to semester required: true
+    is expected to have many attendances
+    is expected to have many members through attendances
+    is expected to have many appeals
+  Validations
+    is expected to validate that :event_name cannot be empty/falsy
+    is expected to validate that :event_date_time cannot be empty/falsy
+    is expected to validate that :point_value looks like a number greater than or equal to 0
+
+Member point adjustments
+  defaults existing and new members to no adjustment
+  allows a downward correction without modifying an event or attendance
+  does not repeat an adjustment when saving an unrelated profile field
+  retains the total when a correction is submitted twice
+  allows a check-in immediately after a correction on the same member instance
+  rejects a check-in for an archived member and retains prior attendance
+
+Member
+  Associations
+    is expected to belong to user optional: true
+    is expected to have many attendances dependent => destroy
+    is expected to have many events through attendances
+    is expected to have many submitted_appeals class_name => Appeal
+    is expected to have many reviewed_appeals class_name => Appeal
+  Validations
+    is expected to validate that :name cannot be empty/falsy, producing a custom validation error on failure
+    is expected to validate that :tamu_email cannot be empty/falsy
+    is expected to validate that :tamu_email is case-insensitively unique
+    on update
+      is expected to validate that :uin cannot be empty/falsy, producing a custom validation error on failure
+      is expected to validate that :uin is case-insensitively unique
+      is expected to validate that :class_year cannot be empty/falsy, producing a custom validation error on failure
+      validates numericality and length of uin on update
+      validates class_year range on update
+    on initial OAuth creation
+      is valid without uin and class_year
+
+SemesterRequirement
+  Associations
+    is expected to belong to semester required: true
+    is expected to belong to category required: true
+  Validations
+    is expected to validate that :required_count cannot be empty/falsy
+    is expected to validate that :required_count looks like a number greater than or equal to 0
+
+Semester
+  Associations
+    is expected to have many events
+    is expected to have many semester_requirements
+  Validations
+    is expected to validate that :term_name cannot be empty/falsy
+    is expected to validate that :term_name is case-sensitively unique
+  .current
+    returns nil when no semesters exist
+    returns the most recently created semester
+
+User
+  Associations
+    is expected to have one member dependent => destroy
+  Validations
+    is expected to validate that :email cannot be empty/falsy
+    allows valid TAMU email addresses
+    rejects non-TAMU email addresses
+  .from_google
+    creates a new user for valid TAMU credentials
+    returns existing user instead of duplicating
+    returns nil for non-TAMU email
+
+Admin features
+  GET /admin/categories
+    returns success for an admin
+  GET /admin/events
+    returns success for an admin
+  category creation
+    creates a category with valid parameters
+    rejects a category with a blank name
+  category updating
+    updates a category with a valid name
+    rejects a blank category name
+  category deletion
+    deletes a category that is not in use
+    blocks deletion when the category has events
+    blocks deletion when a semester requirement uses the category
+  event creation
+    creates an event with valid parameters
+    rejects an event with a blank name
+  event updating
+    updates an event with valid parameters
+    rejects an event with a blank name
+  authorization
+    redirects a non-admin away from the categories page
+    redirects a non-admin away from the events page
+    redirects a signed-out visitor to the sign-in page
+
+Admin member management
+  admin navigation
+    keeps the member list and exposes edit and deletion-confirmation links
+    keeps member details and event history
+    shows revoke for another admin but not for the acting admin
+  editing members
+    shows editable email and total points without role or user-link fields
+    saves valid edits and shows them on the details page
+    rejects blank_name and preserves the saved record
+    rejects blank_uin and preserves the saved record
+    rejects short_uin and preserves the saved record
+    rejects nonnumeric_uin and preserves the saved record
+    rejects duplicate_uin and preserves the saved record
+    rejects blank_class_year and preserves the saved record
+    rejects early_class_year and preserves the saved record
+    rejects late_class_year and preserves the saved record
+    rejects nonnumeric_class_year and preserves the saved record
+    rejects blank_email and preserves the saved record
+    rejects non_tamu_email and preserves the saved record
+    rejects malformed_email and preserves the saved record
+    rejects duplicate_email and preserves the saved record
+    rejects blank_points and preserves the saved record
+    rejects negative_points and preserves the saved record
+    rejects invalid_points and preserves the saved record
+    preserves attempted valid fields when another field is invalid
+    ignores forged role, archive, adjustment, and account-link parameters
+  administrator roles
+    promotes a regular member
+    revokes another administrator without deleting their account or history
+    allows the revoked admin to use member pages but denies admin pages
+    rejects self-revocation even when another administrator exists
+    rejects revoking the last administrator
+    handles repeated revocation without creating or deleting records
+    can promote and revoke a newly seeded member with an incomplete profile
+  member archival
+    only displays confirmation on GET and does not archive anything
+    requires explicit confirmation even for a directly submitted DELETE request
+    archives a member and retains their profile and application login
+    removes an archived member from the active roster and preserves admin access to their history
+    rejects access for an archived login account
+    blocks self-archival even when another administrator exists
+    blocks archival of the last administrator
+    archives another administrator and clears their admin role
+    retains attendance and adjusted points while archiving a member with history
+    retains attendance added after opening the confirmation page
+    retains submitted appeals
+    retains reviewed appeals and their submitting member
+    does not alter an archived record on repeated requests
+  email and point corrections
+    saves the member email and points without changing Google identity or attendance
+    continues adding attendance points after a total correction
+    does not save an email or point correction when profile validation fails
+  authorization for every member-management endpoint
+    denies ordinary members on GET admin_path
+    denies signed-out visitors on GET admin_path
+    denies ordinary members on GET admin_member_path
+    denies signed-out visitors on GET admin_member_path
+    denies ordinary members on GET edit_admin_member_path
+    denies signed-out visitors on GET edit_admin_member_path
+    denies ordinary members on GET delete_admin_member_path
+    denies signed-out visitors on GET delete_admin_member_path
+    denies ordinary members on PATCH admin_member_path
+    denies signed-out visitors on PATCH admin_member_path
+    denies ordinary members on PATCH promote_admin_member_path
+    denies signed-out visitors on PATCH promote_admin_member_path
+    denies ordinary members on PATCH revoke_admin_member_path
+    denies signed-out visitors on PATCH revoke_admin_member_path
+    denies ordinary members on DELETE admin_member_path
+    denies signed-out visitors on DELETE admin_member_path
+    prevents a member from granting themselves admin access by direct request
+
+Admins
+  GET /index
+    returns http success
+
+Home page category progress
+  with a current semester
+    shows earned / required points for each category
+    no longer shows the total points number
+    shows the Satisfied indicator only on satisfied categories
+    shows earned points with a No requirement label when no requirement is set
+  when a semester exists but no categories do
+    shows an empty-state message
+  without any semester
+    shows a No active semester message instead of the progress list
+  when not signed in
+    shows the sign-in page without category progress
+
+Member identity and archival
+  keeps the same account and edited profile email across Google sign-ins
+  finds a Google account by UID when its Google email changes
+  does not let a different Google identity take over an existing login by email
+  links an unclaimed seeded login on its first sign-in
+  does not link someone else to a member through an edited roster email
+  invalidates an existing session after archival
+  blocks re-registration using the archived Google account
+  still blocks an archived Google UID with a different email
+  blocks an archived seeded account before its first Google sign-in
+  does not count archived members as signed in on the public home page
+  prevents members from viewing or changing another member through the ordinary profile route
+  prevents a member from forging their own email, points, role, or archive state
+
+Members
+  GET /show
+    returns http success
+  GET /edit
+    returns http success
+
+Sessions / OAuth
+  GET /auth/google_oauth2/callback
+    with valid TAMU Google account
+      logs in user and redirects appropriately
+    with non-TAMU email account
+      denies login and redirects with an error flash
+  DELETE /logout or GET /logout
+    clears session on logout
+
+Support page
+  GET /support
+    is reachable without signing in
+    covers each main task in the app
+    loads for a signed-in member without the sign-in link
+  Help links
+    shows a Help link in the navbar for signed-in members that opens the support page
+    shows a "Need help?" link on the sign-in page
+
+Archived seed administrators
+Seeded administrator: ruth_jasadiredja@tamu.edu
+Seeded administrator: loganjaure@tamu.edu
+Seeded: BSC Test Event on Tuesday 10/13/2026 at 11:00 AM CDT
+Skipped archived administrator: ruth_jasadiredja@tamu.edu
+Seeded administrator: loganjaure@tamu.edu
+Seeded: BSC Test Event on Tuesday 10/13/2026 at 11:00 AM CDT
+  does not recreate or reactivate an archived administrator whose roster email was edited
+
+Admin::MemberManagement
+  authorization after acquiring locks
+    rechecks the stored admin role for promote!, rather than trusting a stale actor
+    rechecks the stored admin role for revoke!, rather than trusting a stale actor
+    rechecks the stored admin role for archive!, rather than trusting a stale actor
+    rechecks authorization for profile edits too
+    rejects a missing actor
+  profile updates
+    only accepts editable profile fields even when called without a controller
+    keeps normal profile validation on edits
+  role changes
+    does not save unrelated dirty attributes during a role change
+    still runs unconditional validations in the role-change context
+    does not modify an already-admin member when promotion is repeated
+  archival safeguards
+    retains the login and records which administrator archived the member
+    refuses archival when one login is linked to multiple member records
+    archives an incomplete seeded profile without requiring profile fields
+    rejects a stale archived actor even if their stored role is still admin
+    refuses promote! for an archived member
+    refuses revoke! for an archived member
+    refuses archive! for an archived member
+    does not count an archived account as an active administrator
+
+Member Registration Flow
+  allows a user to sign in with Google and complete their profile
+
+admin/index.html.erb
+  add some examples to (or delete) /BSC-500/spec/views/admin/index.html.erb_spec.rb (PENDING: Not yet implemented)
+
+members/edit.html.erb
+  add some examples to (or delete) /BSC-500/spec/views/members/edit.html.erb_spec.rb (PENDING: Not yet implemented)
+
+members/show.html.erb
+  add some examples to (or delete) /BSC-500/spec/views/members/show.html.erb_spec.rb (PENDING: Not yet implemented)
+
+members/update.html.erb
+  add some examples to (or delete) /BSC-500/spec/views/members/update.html.erb_spec.rb (PENDING: Not yet implemented)
+
+Pending: (Failures listed here are expected and do not affect your suite's status)
+
+  1) AdminHelper add some examples to (or delete) /BSC-500/spec/helpers/admin_helper_spec.rb
+     # Not yet implemented
+     # ./spec/helpers/admin_helper_spec.rb:14
+
+  2) MembersHelper add some examples to (or delete) /BSC-500/spec/helpers/members_helper_spec.rb
+     # Not yet implemented
+     # ./spec/helpers/members_helper_spec.rb:14
+
+  3) admin/index.html.erb add some examples to (or delete) /BSC-500/spec/views/admin/index.html.erb_spec.rb
+     # Not yet implemented
+     # ./spec/views/admin/index.html.erb_spec.rb:4
+
+  4) members/edit.html.erb add some examples to (or delete) /BSC-500/spec/views/members/edit.html.erb_spec.rb
+     # Not yet implemented
+     # ./spec/views/members/edit.html.erb_spec.rb:4
+
+  5) members/show.html.erb add some examples to (or delete) /BSC-500/spec/views/members/show.html.erb_spec.rb
+     # Not yet implemented
+     # ./spec/views/members/show.html.erb_spec.rb:4
+
+  6) members/update.html.erb add some examples to (or delete) /BSC-500/spec/views/members/update.html.erb_spec.rb
+     # Not yet implemented
+     # ./spec/views/members/update.html.erb_spec.rb:4
+
+Finished in 20.65 seconds (files took 4.38 seconds to load)
+210 examples, 0 failures, 6 pending
+
