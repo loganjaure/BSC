@@ -19,7 +19,11 @@ admin_accounts.each do |account|
   user.full_name = account[:name] if user.full_name.blank?
   user.save!
 
-  member = Member.find_or_initialize_by(tamu_email: email)
+  member = user.member || Member.find_or_initialize_by(tamu_email: email)
+  if member.archived?
+    puts "Skipped archived administrator: #{email}"
+    next
+  end
   member.name = account[:name] if member.name.blank?
   member.user = user
   member.is_admin = true

@@ -18,7 +18,7 @@ RSpec.describe Member, type: :model do
     # Always required
     it { should validate_presence_of(:name).with_message('cannot be blank') }
     it { should validate_presence_of(:tamu_email) }
-    it { should validate_uniqueness_of(:tamu_email) }
+    it { should validate_uniqueness_of(:tamu_email).case_insensitive }
 
     # Required ONLY on :update
     context 'on update' do

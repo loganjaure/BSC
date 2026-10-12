@@ -8,11 +8,16 @@
 
   <div class="bsc-panel">
     <div class="admin-header">
-      <h2>Members</h2>
+      <h2><%= @show_archived ? "Archived Members" : "Members" %></h2>
       <span class="admin-member-count">
         <%= pluralize(@members.count, "member") %>
       </span>
     </div>
+
+    <nav aria-label="Member roster">
+      <%= link_to "Active Members", admin_path %>
+      <%= link_to "Archived Members", admin_path(archived: "1") %>
+    </nav>
 
     <% if @members.any? %>
       <div class="admin-table-wrapper">

@@ -1,5 +1,5 @@
 <section class="bsc-center">
-  <h1 class="bsc-title">Delete Member</h1>
+  <h1 class="bsc-title">Delete Member from Roster</h1>
 
   <div class="bsc-panel">
     <h2><%= @member.name %></h2>
@@ -9,15 +9,15 @@
     <% if @deletion_blocker %>
       <p role="alert"><%= @deletion_blocker %></p>
     <% else %>
-      <p>This permanently deletes this member and their linked application login account. It cannot be undone.</p>
-      <p>Members with attendance or appeal history cannot be deleted. This does not delete the person's Google account or ban future registration.</p>
+      <p>This archives the member and removes them from the active roster. Their profile, points, attendance, and appeals are retained.</p>
+      <p>Their current application sessions and future sign-ins will be blocked. Their Google account is unaffected.</p>
 
       <%= form_with url: admin_member_path(@member), method: :delete, local: true do |form| %>
         <p>
           <%= check_box_tag :confirm_delete, "1", false, required: true %>
-          <%= label_tag :confirm_delete, "I understand that this member and their application login account will be permanently deleted." %>
+          <%= label_tag :confirm_delete, "I confirm that this member should be removed from the active roster and their application access disabled." %>
         </p>
-        <%= form.submit "Permanently Delete Member" %>
+        <%= form.submit "Archive Member" %>
       <% end %>
     <% end %>
 

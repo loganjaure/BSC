@@ -16,7 +16,7 @@ RSpec.describe Admin::MemberManagement do
   subject(:management) { described_class.new(actor: actor, member: target) }
 
   describe 'authorization after acquiring locks' do
-    %i[promote! revoke! destroy!].each do |operation|
+    %i[promote! revoke! archive!].each do |operation|
       it "rechecks the stored admin role for #{operation}, rather than trusting a stale actor" do
         stale_actor = actor
         Member.find(actor.id).update!(is_admin: false)
@@ -46,10 +46,10 @@ RSpec.describe Admin::MemberManagement do
 
   describe 'profile updates' do
     it 'only accepts editable profile fields even when called without a controller' do
-      management.update(name: 'Allowed', user_id: actor_user.id, is_admin: true, tamu_email: actor_user.email)
+      management.update(name: 'Allowed', user_id: actor_user.id, is_admin: true, points_adjustment: 999, archived_at: Time.current)
 
       expect(target.reload).to have_attributes(name: 'Allowed', user_id: target_user.id,
-                                              is_admin: false, tamu_email: target_user.email)
+                                              is_admin: false, tamu_email: target_user.email, points_adjustment: 0, archived_at: nil)
     end
 
     it 'keeps normal profile validation on edits' do
@@ -87,35 +87,46 @@ RSpec.describe Admin::MemberManagement do
     end
   end
 
-  describe 'atomic account deletion' do
-    it 'rolls back member deletion if the linked login cannot be destroyed' do
-      allow_any_instance_of(User).to receive(:destroy!).and_raise(ActiveRecord::RecordNotDestroyed, 'Blocked')
-
-      expect { management.destroy! }.to raise_error(described_class::Error, /Nothing was deleted/)
-
-      expect(Member.exists?(target.id)).to be(true)
-      expect(User.exists?(target_user.id)).to be(true)
+  describe 'archival safeguards' do
+    it 'retains the login and records which administrator archived the member' do
+      expect { management.archive! }.not_to change(User, :count)
+      expect(target.reload).to be_archived
+      expect(target.archived_by_id).to eq(actor.id)
       expect(actor.reload).to be_is_admin
     end
 
-    it 'rolls back on a foreign-key failure instead of leaving half an account' do
-      allow_any_instance_of(User).to receive(:destroy!).and_raise(ActiveRecord::InvalidForeignKey, 'Still referenced')
-
-      expect { management.destroy! }.to raise_error(described_class::Error, /Nothing was deleted/)
-
-      expect(Member.exists?(target.id)).to be(true)
-      expect(User.exists?(target_user.id)).to be(true)
-    end
-
-    it 'refuses deletion when one login is linked to multiple member records' do
+    it 'refuses archival when one login is linked to multiple member records' do
       duplicate = Member.create!(user: target_user, name: 'Duplicate Link', tamu_email: 'duplicate-link@tamu.edu',
                                  uin: 456789123, class_year: 2028)
+      expect { management.archive! }.to raise_error(described_class::Error, /more than one member/)
+      expect(target.reload).not_to be_archived
+      expect(duplicate.reload).not_to be_archived
+    end
 
-      expect { management.destroy! }.to raise_error(described_class::Error, /more than one member/)
+    it 'archives an incomplete seeded profile without requiring profile fields' do
+      user = User.create!(email: 'incomplete-archive@tamu.edu')
+      member = Member.create!(user: user, name: 'Incomplete', tamu_email: user.email)
+      described_class.new(actor: actor, member: member).archive!
+      expect(member.reload).to be_archived
+    end
 
-      expect(Member.exists?(target.id)).to be(true)
-      expect(Member.exists?(duplicate.id)).to be(true)
-      expect(User.exists?(target_user.id)).to be(true)
+    it 'rejects a stale archived actor even if their stored role is still admin' do
+      Member.find(actor.id).update!(archived_at: Time.current)
+      expect { management.update(name: 'Forbidden') }.to raise_error(described_class::Error, 'Access denied.')
+      expect(target.reload.name).to eq('Service Member')
+    end
+
+    %i[promote! revoke! archive!].each do |operation|
+      it "refuses #{operation} for an archived member" do
+        management.archive!
+        expect { management.public_send(operation) }.to raise_error(described_class::Error, /archived/)
+      end
+    end
+
+    it 'does not count an archived account as an active administrator' do
+      target.update!(archived_at: Time.current, is_admin: true)
+      service = described_class.new(actor: actor, member: actor)
+      expect { service.revoke! }.to raise_error(described_class::Error, /last administrator/)
     end
   end
 end

@@ -10,7 +10,8 @@ class AdminController < ApplicationController
   rescue_from Admin::MemberManagement::Error, with: :member_action_failed
 
   def index
-    @members = Member.order(:name)
+    @show_archived = params[:archived] == '1'
+    @members = (@show_archived ? Member.archived : Member.active).order(:name)
   end
 
   def show_member
@@ -51,8 +52,8 @@ class AdminController < ApplicationController
       return
     end
 
-    member_management.destroy!
-    redirect_to admin_path, notice: 'Member and linked login account deleted.', status: :see_other
+    member_management.archive!
+    redirect_to admin_path, notice: 'Member removed from the roster. Records are retained and sign-in is disabled.', status: :see_other
   end
 
   private
@@ -62,7 +63,7 @@ class AdminController < ApplicationController
   end
 
   def member_params
-    params.require(:member).permit(:name, :uin, :class_year)
+    params.require(:member).permit(:name, :uin, :class_year, :tamu_email, :total_points)
   end
 
   def member_action_failed(error)
@@ -71,6 +72,9 @@ class AdminController < ApplicationController
 
   def set_member
     @member = Member.find(params[:id])
+    return unless @member.archived? && action_name != 'show_member'
+
+    redirect_to admin_member_path(@member), alert: 'This member has been archived.'
   end
 
   def require_admin
