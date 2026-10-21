@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="theme-color" content="#1a0a0f">
+    <meta name="theme-color" content="#0b2545">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
 
@@ -20,7 +20,7 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 
     <%# Includes all stylesheet files in app/assets/stylesheets (bsc_theme.css included) %>
     <%= stylesheet_link_tag :app, "data-turbo-track": "reload" %>
@@ -28,11 +28,23 @@
   </head>
 
   <body class="bsc-body" data-controller="glow">
-    <%= render "shared/nav" if logged_in? %>
+    <% if logged_in? %>
+      <header class="bsc-header">
+        <div class="bsc-header__inner">
+          <%= image_tag "bsc-logo.png", alt: "Business Student Council, Texas A&M University", class: "bsc-logo" %>
+          <%= render "shared/nav" %>
+        </div>
+      </header>
+    <% end %>
 
     <main class="bsc-page">
       <%= render "shared/flash" %>
       <%= yield %>
     </main>
+
+    <footer class="bsc-footer">
+      <p class="bsc-footer__pillars">Leadership <span aria-hidden="true">|</span> Integrity <span aria-hidden="true">|</span> Excellence <span aria-hidden="true">|</span> Service</p>
+      <p>Business Student Council &middot; Texas A&amp;M University</p>
+    </footer>
   </body>
 </html>

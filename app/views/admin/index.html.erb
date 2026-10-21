@@ -6,6 +6,19 @@
     <span aria-current="page">Admin View</span>
   </nav>
 
+  <%# AC-25.01: download every member's points for a school year as a .csv file %>
+  <div class="bsc-panel admin-export">
+    <div>
+      <h2>Export Member Points</h2>
+      <p>Download a .csv of every member's points for a school year (Aug 1 &ndash; Jul 31).</p>
+    </div>
+    <%= form_with url: admin_export_path, method: :get, local: true, data: { turbo: false }, class: "admin-export__form" do %>
+      <%= label_tag :year, "School year" %>
+      <%= select_tag :year, options_for_select(@school_years.map(&:label), SchoolYear.current.label) %>
+      <%= submit_tag "Export CSV", name: nil, class: "bsc-btn" %>
+    <% end %>
+  </div>
+
   <div class="bsc-panel">
     <div class="admin-header">
       <h2><%= @show_archived ? "Archived Members" : "Members" %></h2>
@@ -14,7 +27,7 @@
       </span>
     </div>
 
-    <nav aria-label="Member roster">
+    <nav class="admin-tabs" aria-label="Member roster">
       <%= link_to "Active Members", admin_path %>
       <%= link_to "Archived Members", admin_path(archived: "1") %>
     </nav>
