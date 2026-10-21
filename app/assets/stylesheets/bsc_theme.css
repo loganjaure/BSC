@@ -7,7 +7,7 @@
 *, *::before, *::after { box-sizing: border-box; }
 
 :root {
-  /* Brand blues (swap these to re-theme) */
+  /* AC-22.01: brand blues similar to the BSC website (swap these to re-theme) */
   --bsc-navy: #0b2545;
   --bsc-navy-700: #13315c;
   --bsc-blue: #1d5fa8;
@@ -94,6 +94,7 @@ code { font-size: .9em; background: var(--gray-100); padding: .1rem .35rem; bord
 :where(input[type="checkbox"]) { width: 1.05rem; height: 1.05rem; accent-color: var(--accent); vertical-align: middle; }
 :where(input[type="checkbox"] + label) { display: inline; margin-left: .4rem; font-weight: 500; }
 
+/* AC-22.03: submit buttons use the accent blue so they stand out from the page */
 :where(input[type="submit"], button[type="submit"]) {
   display: inline-block;
   font: inherit;
@@ -110,6 +111,7 @@ code { font-size: .9em; background: var(--gray-100); padding: .1rem .35rem; bord
 form.button_to { display: inline-block; margin: 0; }
 
 /* ---------- Header + nav ---------- */
+/* AC-22.01: header in the main BSC navy */
 .bsc-header {
   position: sticky;
   top: 0;
@@ -126,6 +128,7 @@ form.button_to { display: inline-block; margin: 0; }
   min-height: 68px;
 }
 .bsc-logo { display: block; height: auto; }
+/* AC-22.02: BSC logo in the header, shown white on navy */
 .bsc-header .bsc-logo {
   width: 92px;
   flex-shrink: 0;
@@ -204,6 +207,7 @@ form.button_to { display: inline-block; margin: 0; }
 .bsc-muted { color: var(--text-muted); font-style: italic; }
 
 /* ---------- Panels, rows, buttons ---------- */
+/* AC-22.03: white panels with a border and shadow set sections apart from the light-blue page */
 .bsc-panel {
   width: 100%;
   text-align: left;
@@ -228,6 +232,7 @@ form.button_to { display: inline-block; margin: 0; }
 .bsc-label { font-weight: 600; font-size: .9rem; color: var(--text-muted); }
 .bsc-actions { display: flex; flex-wrap: wrap; justify-content: center; gap: .75rem; margin-top: 1.25rem; }
 
+/* AC-22.03: primary and secondary (ghost) buttons */
 .bsc-btn {
   display: inline-block;
   font: inherit;
@@ -262,6 +267,7 @@ form.button_to { display: inline-block; margin: 0; }
   overflow-x: auto;
   scroll-snap-type: x proximity;
 }
+/* AC-22.03: category cards stand out from the page background */
 .bsc-progress {
   flex: 0 0 auto;
   display: flex;
@@ -291,6 +297,7 @@ form.button_to { display: inline-block; margin: 0; }
 .bsc-total__label { color: var(--text-muted); font-weight: 600; margin-top: .5rem; }
 
 /* ---------- Tags ---------- */
+/* AC-22.03: status tags, each pairing a color with a text label */
 .bsc-tag {
   flex-shrink: 0;
   display: inline-flex;
@@ -310,6 +317,7 @@ form.button_to { display: inline-block; margin: 0; }
 
 /* ---------- Event list ---------- */
 .bsc-event-list { width: 100%; max-width: 720px; display: flex; flex-direction: column; gap: .75rem; margin-bottom: 1rem; }
+/* AC-22.03: event cards are white with an accent-blue edge; unavailable ones are grayed out */
 .bsc-event-card {
   display: block;
   color: var(--text);
@@ -387,6 +395,7 @@ a.bsc-event-card:focus-visible {
   margin: 0 0 2.5rem;
 }
 
+/* AC-22.01 / AC-22.03: check-in button in BSC blues, the most prominent element on its page */
 .bsc-checkin-btn {
   position: relative;
   isolation: isolate;
@@ -483,6 +492,7 @@ a.bsc-event-card:focus-visible {
   border-radius: var(--radius-lg);
   box-shadow: var(--shadow-lg);
 }
+/* AC-22.02: BSC logo band on the sign-in card */
 .bsc-signin__brand {
   align-self: stretch;
   display: flex;
@@ -512,6 +522,7 @@ a.bsc-event-card:focus-visible {
 .bsc-flash--alert { color: var(--danger); background: var(--danger-tint); border-color: var(--danger); }
 
 /* ---------- Admin ---------- */
+/* AC-22.03: toggles and tabs highlight the selected option */
 .dashboard-view-toggle,
 .admin-tabs {
   display: inline-flex;
@@ -545,6 +556,7 @@ a.bsc-event-card:focus-visible {
 .admin-header h2 { margin: 0; }
 .admin-member-count { color: var(--text-muted); font-size: .9rem; font-weight: 700; }
 
+/* AC-22.03: export panel marked with an accent-blue edge */
 .admin-export {
   display: flex;
   flex-wrap: wrap;
@@ -655,6 +667,7 @@ a.bsc-event-card:focus-visible {
 }
 .container h2 { margin-top: 0; }
 
+/* AC-22.03: buttons on admin pages that use Bootstrap class names */
 .btn {
   display: inline-block;
   font: inherit;
@@ -707,6 +720,7 @@ a.bsc-event-card:focus-visible {
 .text-muted { color: var(--text-muted); }
 
 /* ---------- Footer ---------- */
+/* AC-22.01: footer in the main BSC navy, matching the header */
 .bsc-footer {
   margin-top: auto;
   padding: 1.75rem 1rem;
