@@ -19,6 +19,7 @@ class CategoryProgress
   def self.for(member, semester)
     return [] if member.nil? || semester.nil?
 
+    # AC-25.02: points are grouped by semester (yearly grouping lives in SchoolYear)
     earned = member.events.where(semester: semester).group(:category_id).sum(:point_value)
     # required_count is treated as POINTS required (compared against summed
     # events.point_value), not as a number of events attended.

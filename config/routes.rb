@@ -25,6 +25,8 @@ Rails.application.routes.draw do
 
   get '/dashboard', to: 'dashboard#show', as: :dashboard
   get '/admin', to: 'admin#index', as: :admin
+  # AC-25.01: CSV export of member points by school year
+  get '/admin/export', to: 'admin#export', as: :admin_export
 
   get '/admin/members/:id', to: 'admin#show_member', as: :admin_member
   patch '/admin/members/:id/promote', to: 'admin#promote_member', as: :promote_admin_member

@@ -12,6 +12,15 @@ class AdminController < ApplicationController
   def index
     @show_archived = params[:archived] == '1'
     @members = (@show_archived ? Member.archived : Member.active).order(:name)
+    # AC-25.01: school years offered by the export form
+    @school_years = SchoolYear.available
+  end
+
+  # AC-25.01: admin-only .csv download of member points for the selected school year
+  # (defaults to the current school year); access is guarded by require_admin above
+  def export
+    school_year = SchoolYear.parse(params[:year]) || SchoolYear.current
+    send_data school_year.to_csv, filename: "bsc_points_#{school_year.label}.csv", type: 'text/csv'
   end
 
   def show_member

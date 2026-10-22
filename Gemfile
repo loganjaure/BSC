@@ -21,6 +21,10 @@ gem "json", "< 3.0"
 
 gem 'omniauth-google-oauth2'
 gem 'omniauth-rails_csrf_protection'
+
+# CSV export of member points (no longer bundled with Ruby 3.4)
+gem 'csv'
+
 # Use Active Model has_secure_password [https://guides.rubyonrails.org/active_model_basics.html#securepassword]
 # gem "bcrypt", "~> 3.1.7"
 

@@ -1,36 +1,38 @@
-<div style="max-width: 500px; margin: 40px auto; font-family: sans-serif;">
-  <h2>Complete Your Account Profile</h2>
+<section class="bsc-center">
+  <h1 class="bsc-title">Complete Your Account Profile</h1>
 
-  <%# Displays validation error messages (AC-02.3) %>
-  <% if @member.errors.any? %>
-    <div style="color: red; border: 1px solid red; padding: 10px; margin-bottom: 20px; border-radius: 4px;">
-      <h3><%= pluralize(@member.errors.count, "error") %> prohibited this profile from being saved:</h3>
-      <ul>
-        <% @member.errors.full_messages.each do |message| %>
-          <li><%= message %></li>
-        <% end %>
-      </ul>
-    </div>
-  <% end %>
+  <div class="bsc-panel bsc-panel--narrow">
+    <%# Displays validation error messages (AC-02.3) %>
+    <% if @member.errors.any? %>
+      <div class="bsc-errors" role="alert">
+        <h3><%= pluralize(@member.errors.count, "error") %> prohibited this profile from being saved:</h3>
+        <ul>
+          <% @member.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
-  <%= form_with(model: @member, local: true) do |f| %>
-    <div style="margin-bottom: 15px;">
-      <%= f.label :name, "Full Name", style: "display: block; font-weight: bold;" %>
-      <%= f.text_field :name, required: true, style: "width: 100%; padding: 8px;" %>
-    </div>
+    <%= form_with(model: @member, local: true, class: "bsc-form") do |f| %>
+      <div class="bsc-field">
+        <%= f.label :name, "Full Name" %>
+        <%= f.text_field :name, required: true %>
+      </div>
 
-    <div style="margin-bottom: 15px;">
-      <%= f.label :uin, "UIN (9 Digits)", style: "display: block; font-weight: bold;" %>
-      <%= f.text_field :uin, required: true, placeholder: "e.g. 123004567", style: "width: 100%; padding: 8px;" %>
-    </div>
+      <div class="bsc-field">
+        <%= f.label :uin, "UIN (9 Digits)" %>
+        <%= f.text_field :uin, required: true, placeholder: "e.g. 123004567" %>
+      </div>
 
-    <div style="margin-bottom: 20px;">
-      <%= f.label :class_year, "Class Year", style: "display: block; font-weight: bold;" %>
-      <%= f.number_field :class_year, placeholder: "e.g. 2026", style: "width: 100%; padding: 8px;" %>
-    </div>
+      <div class="bsc-field">
+        <%= f.label :class_year, "Class Year" %>
+        <%= f.number_field :class_year, placeholder: "e.g. 2026" %>
+      </div>
 
-    <div>
-      <%= f.submit "Save Information", style: "background-color: #500000; color: white; padding: 10px 20px; border: none; cursor: pointer;" %>
-    </div>
-  <% end %>
-</div>
+      <div>
+        <%= f.submit "Save Information" %>
+      </div>
+    <% end %>
+  </div>
+</section>
