@@ -10,6 +10,7 @@ class AdminController < ApplicationController
   rescue_from Admin::MemberManagement::Error, with: :member_action_failed
 
   def index
+    @pending_appeals = Appeal.pending.includes(:submitting_member, :event).order(:created_at, :id)
     @show_archived = params[:archived] == '1'
     @members = (@show_archived ? Member.archived : Member.active).order(:name)
     # AC-25.01: school years offered by the export form

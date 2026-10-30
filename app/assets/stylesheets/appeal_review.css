@@ -1,0 +1,9 @@
+.appeal-reason {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.bsc-btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}

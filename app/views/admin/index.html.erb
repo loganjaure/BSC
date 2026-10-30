@@ -6,6 +6,12 @@
     <span aria-current="page">Admin View</span>
   </nav>
 
+  <div class="bsc-panel">
+    <h2>Pending Attendance Appeals</h2>
+    <%= link_to "View All Appeals", admin_appeals_path %>
+    <%= render "admin/appeals/list", appeals: @pending_appeals %>
+  </div>
+
   <%# AC-25.01: download every member's points for a school year as a .csv file %>
   <div class="bsc-panel admin-export">
     <div>
