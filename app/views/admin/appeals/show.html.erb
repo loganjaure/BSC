@@ -1,0 +1,30 @@
+<section class="bsc-center">
+  <h1 class="bsc-title">Review Attendance Appeal</h1>
+  <div class="bsc-panel">
+    <p><strong>Member Name:</strong> <%= @appeal.submitting_member.name %></p>
+    <p><strong>UIN:</strong> <%= @appeal.submitting_member.uin %></p>
+    <p><strong>Email:</strong> <%= @appeal.submitting_member.tamu_email %></p>
+    <p><strong>Event Name:</strong> <%= @appeal.event.event_name %></p>
+    <p><strong>Submission Date:</strong> <%= @appeal.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+    <p><strong>Reasoning:</strong></p>
+    <p class="appeal-reason"><%= @appeal.reason %></p>
+    <p role="status"><strong>Status:</strong> <%= @appeal.status.capitalize %></p>
+    <% if @appeal.reviewed_by_member %>
+      <p><strong>Reviewed By:</strong> <%= @appeal.reviewed_by_member.name %></p>
+    <% end %>
+
+    <% if @appeal.pending? %>
+      <p>Approval records attendance and credits the event's points once. Denial leaves attendance and points unchanged.</p>
+      <%= form_with url: admin_appeal_path(@appeal), method: :patch,
+            data: { controller: "appeal-decision", action: "turbo:submit-start->appeal-decision#disable turbo:submit-end->appeal-decision#enable" } do %>
+        <%= button_tag "Approve", name: "decision", value: "approved", class: "bsc-btn", data: { appeal_decision_target: "button" } %>
+        <%= button_tag "Deny", name: "decision", value: "denied", class: "bsc-btn", data: { appeal_decision_target: "button" } %>
+      <% end %>
+    <% else %>
+      <p>This appeal has already been reviewed.</p>
+      <%= button_tag "Approve", type: "button", disabled: true, class: "bsc-btn" %>
+      <%= button_tag "Deny", type: "button", disabled: true, class: "bsc-btn" %>
+    <% end %>
+    <p><%= link_to "Back to Admin", admin_path %> | <%= link_to "All Appeals", admin_appeals_path %></p>
+  </div>
+</section>

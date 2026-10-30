@@ -1,0 +1,22 @@
+<% if appeals.any? %>
+  <div class="admin-table-wrapper">
+    <table class="admin-table">
+      <thead>
+        <tr><th>Member</th><th>Event</th><th>Submitted</th><th>Status</th><th>Actions</th></tr>
+      </thead>
+      <tbody>
+        <% appeals.each do |appeal| %>
+          <tr>
+            <td><%= appeal.submitting_member.name %></td>
+            <td><%= appeal.event.event_name %></td>
+            <td><%= appeal.created_at.strftime("%B %d, %Y at %I:%M %p") %></td>
+            <td><%= appeal.status.capitalize %></td>
+            <td><%= link_to "Review Appeal", admin_appeal_path(appeal) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+<% else %>
+  <p>No appeals found.</p>
+<% end %>

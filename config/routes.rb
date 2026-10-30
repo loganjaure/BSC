@@ -37,6 +37,7 @@ Rails.application.routes.draw do
   delete '/admin/members/:id', to: 'admin#destroy_member'
 
   namespace :admin do
+    resources :appeals, only: [ :index, :show, :update ]
     resources :categories
     resources :semesters, only: [ :create ]
     resources :events

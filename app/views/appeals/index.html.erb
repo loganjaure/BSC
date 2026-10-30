@@ -1,10 +1,21 @@
 <section class="bsc-center">
-  <h1 class="bsc-title">Appeals</h1>
-  <div class="bsc-panel bsc-panel--narrow">
+  <h1 class="bsc-title">My Appeals</h1>
+  <div class="bsc-panel">
     <% if current_member&.is_admin? %>
-      <p>View appeals from members</p>
-    <% else %>
-      <p>Submit appeals here</p>
+      <p><%= link_to "Review Member Appeals", admin_appeals_path %></p>
     <% end %>
+    <% if @appeals.any? %>
+      <% @appeals.each do |appeal| %>
+        <article>
+          <h2><%= appeal.event.event_name %></h2>
+          <p><strong>Submitted:</strong> <%= appeal.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
+          <p class="appeal-reason"><%= appeal.reason %></p>
+          <p><strong>Status:</strong> <%= appeal.status.capitalize %></p>
+        </article>
+      <% end %>
+    <% else %>
+      <p>You have no submitted appeals.</p>
+    <% end %>
+    <p>Submitting appeals in the app isn't available yet. Contact a BSC officer to submit a request.</p>
   </div>
 </section>
