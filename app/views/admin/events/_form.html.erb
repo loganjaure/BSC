@@ -51,6 +51,19 @@
       <%= f.number_field :point_value, min: 0, step: 1,
           class: "form-control", required: true %>
     </div>
+    
+    <div class="mb-3">
+      <%= f.label :check_in_code, "Check-in Code (Optional)", class: "form-label" %>
+
+      <%= f.text_field :check_in_code,
+          class: "form-control",
+          placeholder: "Leave blank if no code is required",
+          autocomplete: "off" %>
+
+      <div class="form-text">
+        If a code is entered, members must provide it to check in to this event.
+      </div>
+    </div>
 
     <%= f.submit class: "btn btn-primary" %>
     <%= link_to "Cancel", admin_events_path,

@@ -7,6 +7,24 @@
   <p class="bsc-meta"><%= event_datetime(@event) %></p>
   <h1 class="bsc-meta bsc-meta--name"><%= @event.event_name %></h1>
   <p class="bsc-points"><%= event_points(@event) %></p>
+  
+  <% if @event.check_in_code.present? %>
+    <div class="mb-3">
+      <label for="check_in_code" class="form-label">
+        Enter Check-in Code
+      </label>
+
+      <input
+        type="text"
+        id="check_in_code"
+        class="form-control"
+        data-check-in-target="code"
+        placeholder="Enter event code"
+        autocomplete="off"
+      />
+    </div>
+  <% end %>
+
   <%# AC-04.1: check-in button for an active event %>
   <button type="button" class="bsc-checkin-btn"
           data-check-in-target="button" data-action="check-in#submit">

@@ -1,71 +1,118 @@
 <section class="bsc-center">
   <h1 class="bsc-title">Events</h1>
 
-  <%# Events section %>
-  <div class="bsc-panel mb-4">
-    <div class="d-flex justify-content-between align-items-center mb-3">
-      <div>
-        <h2>Manage Events</h2>
-        <p>Create events, assign categories, and update event details.</p>
-      </div>
-
-      <%= link_to "Create Event",
-                  new_admin_event_path,
-                  class: "btn btn-primary" %>
+  
+<div class="bsc-panel mb-4">
+  <div class="d-flex justify-content-between align-items-center mb-3">
+    <div>
+      <h2>Manage Events</h2>
+      <p>Create events, assign categories, and update event details.</p>
     </div>
 
-    <% if @events.any? %>
-      <div class="table-responsive">
-        <table class="table table-striped align-middle">
-          <thead>
-            <tr>
-              <th>Event</th>
-              <th>Date & Time</th>
-              <th>Category</th>
-              <th>Semester</th>
-              <th>Points</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-
-          <tbody>
-            <% @events.each do |event| %>
-              <tr>
-                <td>
-                  <strong><%= event.event_name %></strong>
-                  <div class="small text-muted">
-                    <%= truncate(event.description, length: 80) %>
-                  </div>
-                </td>
-
-                <td>
-                  <%= event.event_date_time&.strftime("%b %-d, %Y %I:%M %p") %>
-                </td>
-
-                <td>
-                  <%= event.category&.category_name || "Unassigned" %>
-                </td>
-
-                <td>
-                  <%= event.semester&.term_name || "Unassigned" %>
-                </td>
-
-                <td><%= event.point_value %></td>
-
-                <td>
-                  <%= link_to "Edit",
-                              edit_admin_event_path(event),
-                              class: "btn btn-sm btn-outline-primary" %>
-                </td>
-              </tr>
-            <% end %>
-          </tbody>
-        </table>
-      </div>
-    <% else %>
-      <p>No events have been created yet.</p>
-    <% end %>
+    <%= link_to "Create Event",
+                new_admin_event_path,
+                class: "btn btn-primary" %>
   </div>
+
+  <%# Upcoming Events %>
+  <h3 class="h4 mt-4">Upcoming Events</h3>
+
+  <% if @upcoming_events.any? %>
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Date & Time</th>
+            <th>Category</th>
+            <th>Semester</th>
+            <th>Points</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @upcoming_events.each do |event| %>
+            <tr>
+              <td>
+                <strong><%= event.event_name %></strong>
+                <div class="small text-muted">
+                  <%= truncate(event.description, length: 80) %>
+                </div>
+              </td>
+
+              <td>
+                <%= event.event_date_time&.strftime("%b %-d, %Y %I:%M %p") %>
+              </td>
+
+              <td><%= event.category&.category_name || "Unassigned" %></td>
+              <td><%= event.semester&.term_name || "Unassigned" %></td>
+              <td><%= event.point_value %></td>
+
+              <td>
+                <%= link_to "Edit",
+                            edit_admin_event_path(event),
+                            class: "btn btn-sm btn-outline-primary" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="text-muted">No upcoming events.</p>
+  <% end %>
+
+  <%# Past Events %>
+  <h3 class="h4 mt-5">Past Events</h3>
+
+  <% if @past_events.any? %>
+    <div class="table-responsive">
+      <table class="table table-striped align-middle">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Date & Time</th>
+            <th>Category</th>
+            <th>Semester</th>
+            <th>Points</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <% @past_events.each do |event| %>
+            <tr>
+              <td>
+                <strong><%= event.event_name %></strong>
+                <div class="small text-muted">
+                  <%= truncate(event.description, length: 80) %>
+                </div>
+              </td>
+
+              <td>
+                <%= event.event_date_time&.strftime("%b %-d, %Y %I:%M %p") %>
+              </td>
+
+              <td><%= event.category&.category_name || "Unassigned" %></td>
+              <td><%= event.semester&.term_name || "Unassigned" %></td>
+              <td><%= event.point_value %></td>
+
+              <td>
+                <%= link_to "Edit",
+                            edit_admin_event_path(event),
+                            class: "btn btn-sm btn-outline-primary" %>
+              </td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+    </div>
+  <% else %>
+    <p class="text-muted">No past events.</p>
+  <% end %>
+</div>
+
 
   <%# Categories section %>
   <div class="bsc-panel">

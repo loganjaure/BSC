@@ -8,9 +8,9 @@
       "RSpec"
     ],
     "project_name": "Bsc-500",
-    "timestamp": "2026-10-21T19:59:19.822+00:00",
-    "root": "/csce431/BSC-500/BSC-500",
-    "commit": "395d58166955d40cf14978d0d4f8e6cfe24e8c2b",
+    "timestamp": "2026-10-30T04:39:04.916-05:00",
+    "root": "/mnt/c/Users/kaika/csce431/bsc500/BSC-500",
+    "commit": "7e506ad94883b47052a19789a1f6346efa9d2ed2",
     "primary_coverage": "line",
     "line_coverage": true,
     "branch_coverage": false,
@@ -18,15 +18,84 @@
   },
   "total": {
     "lines": {
-      "covered": 425,
-      "missed": 65,
-      "omitted": 485,
-      "total": 490,
-      "percent": 86.73469387755102,
-      "strength": 20.038775510204083
+      "covered": 522,
+      "missed": 50,
+      "omitted": 580,
+      "total": 572,
+      "percent": 91.25874125874125,
+      "strength": 20.76048951048951
     }
   },
   "coverage": {
+    "app/controllers/admin/appeals_controller.rb": {
+      "source": [
+        "# frozen_string_literal: true",
+        "",
+        "class Admin::AppealsController < ApplicationController",
+        "  before_action :require_admin",
+        "  before_action :set_appeal, only: %i[show update]",
+        "",
+        "  def index",
+        "    @appeals = Appeal.includes(:submitting_member, :event).order(created_at: :desc, id: :desc)",
+        "  end",
+        "",
+        "  def show; end",
+        "",
+        "  def update",
+        "    Admin::AppealReview.new(actor: current_member, appeal: @appeal).decide!(params[:decision])",
+        "    redirect_to admin_appeal_path(@appeal), notice: \"Appeal #{@appeal.status.capitalize}.\", status: :see_other",
+        "  rescue Admin::AppealReview::Error, ActiveRecord::RecordInvalid, ActiveRecord::RecordNotSaved => error",
+        "    redirect_to admin_appeal_path(@appeal), alert: error.message, status: :see_other",
+        "  end",
+        "",
+        "  private",
+        "",
+        "  def set_appeal",
+        "    @appeal = Appeal.includes(:submitting_member, :event).find(params[:id])",
+        "  end",
+        "",
+        "  def require_admin",
+        "    redirect_to root_path, alert: 'Access denied.' unless current_member&.is_admin?",
+        "  end",
+        "end"
+      ],
+      "lines": [
+        null,
+        null,
+        1,
+        1,
+        1,
+        null,
+        1,
+        1,
+        null,
+        null,
+        1,
+        null,
+        1,
+        18,
+        11,
+        null,
+        7,
+        null,
+        null,
+        1,
+        null,
+        1,
+        22,
+        null,
+        null,
+        1,
+        26,
+        null,
+        null
+      ],
+      "lines_covered_percent": 100.0,
+      "covered_lines": 15,
+      "missed_lines": 0,
+      "omitted_lines": 14,
+      "total_lines": 15
+    },
     "app/controllers/admin/categories_controller.rb": {
       "source": [
         "# frozen_string_literal: true",
@@ -172,14 +241,21 @@
         "  before_action :load_form_options, only: %i[new create edit update]",
         "",
         "  def index",
-        "    @events = Event.includes(:category, :semester)",
-        "                 .order(event_date_time: :asc)",
+        "    @upcoming_events = Event.includes(:category, :semester)",
+        "                            .where(\"event_date_time >= ?\", Time.current)",
+        "                            .order(event_date_time: :asc)",
+        "",
+        "    @past_events = Event.includes(:category, :semester)",
+        "                        .where(\"event_date_time < ?\", Time.current)",
+        "                        .order(event_date_time: :desc)",
+        "",
         "    @categories = Category.order(:category_name)",
         "    @category = Category.new",
         "    @semesters = Semester.order(id: :desc)",
         "    @current_semester = Semester.current",
         "    @semester = Semester.new",
         "  end",
+        "",
         "",
         "  def new",
         "    @event = Event.new(point_value: 1)",
@@ -224,7 +300,8 @@
         "      :category_id,",
         "      :semester_id,",
         "      :description,",
-        "      :point_value",
+        "      :point_value,",
+        "      :check_in_code",
         "    )",
         "  end",
         "",
@@ -242,13 +319,20 @@
         1,
         null,
         1,
-        1,
+        3,
         null,
-        1,
-        1,
-        1,
-        1,
-        1,
+        null,
+        null,
+        3,
+        null,
+        null,
+        null,
+        3,
+        3,
+        3,
+        3,
+        3,
+        null,
         null,
         null,
         1,
@@ -256,41 +340,42 @@
         null,
         null,
         1,
-        2,
+        4,
         null,
-        2,
-        1,
-        null,
-        1,
-        null,
-        null,
-        null,
-        1,
-        null,
-        null,
-        1,
-        2,
-        1,
+        4,
+        3,
         null,
         1,
         null,
         null,
         null,
         1,
-        null,
-        1,
-        2,
         null,
         null,
         1,
         4,
-        4,
+        3,
         null,
+        1,
+        null,
+        null,
+        null,
+        1,
         null,
         1,
         4,
         null,
         null,
+        1,
+        8,
+        8,
+        null,
+        null,
+        1,
+        8,
+        null,
+        null,
+        null,
         null,
         null,
         null,
@@ -299,15 +384,15 @@
         null,
         null,
         1,
-        6,
+        12,
         null,
         null
       ],
-      "lines_covered_percent": 96.96969696969697,
-      "covered_lines": 32,
+      "lines_covered_percent": 97.05882352941177,
+      "covered_lines": 33,
       "missed_lines": 1,
-      "omitted_lines": 35,
-      "total_lines": 33
+      "omitted_lines": 42,
+      "total_lines": 34
     },
     "app/controllers/admin/semester_requirements_controller.rb": {
       "source": [
@@ -406,6 +491,7 @@
         "  rescue_from Admin::MemberManagement::Error, with: :member_action_failed",
         "",
         "  def index",
+        "    @pending_appeals = Appeal.pending.includes(:submitting_member, :event).order(:created_at, :id)",
         "    @show_archived = params[:archived] == '1'",
         "    @members = (@show_archived ? Member.archived : Member.active).order(:name)",
         "    # AC-25.01: school years offered by the export form",
@@ -500,10 +586,11 @@
         1,
         null,
         1,
-        6,
-        6,
+        7,
+        7,
+        7,
         null,
-        6,
+        7,
         null,
         null,
         null,
@@ -577,40 +664,98 @@
         null,
         null,
         1,
-        77,
+        78,
         null,
         null
       ],
       "lines_covered_percent": 100.0,
-      "covered_lines": 47,
+      "covered_lines": 48,
       "missed_lines": 0,
       "omitted_lines": 45,
-      "total_lines": 47
+      "total_lines": 48
     },
     "app/controllers/appeals_controller.rb": {
       "source": [
-        "# Placeholder so the nav link works. Skip if you already have one.",
+        "# app/controllers/appeals_controller.rb",
+        "# frozen_string_literal: true",
+        "",
         "class AppealsController < ApplicationController",
         "  before_action :require_login",
         "",
         "  def index",
+        "    @appeal = Appeal.new",
+        "    load_appeals_data",
+        "  end",
+        "",
+        "  def create",
+        "    @appeal = current_member.submitted_appeals.build(appeal_params)",
+        "",
+        "    if @appeal.save",
+        "      redirect_to appeals_path, notice: 'Your appeal has been submitted successfully.'",
+        "    else",
+        "      load_appeals_data",
+        "      render :index, status: :unprocessable_entity",
+        "    end",
+        "  end",
+        "",
+        "  private",
+        "",
+        "  def load_appeals_data",
+        "    # AC-11.01: Query only events that have already taken place",
+        "    @passed_events = Event.where('event_date_time < ?', Time.current).order(event_date_time: :desc)",
+        "",
+        "    # AC-11.04: Fetch the logged-in member's submitted appeals",
+        "    @appeals = current_member ? current_member.submitted_appeals.includes(:event).order(created_at: :desc, id: :desc) : Appeal.none",
+        "  end",
+        "",
+        "  def appeal_params",
+        "    params.require(:appeal).permit(:event_id, :reason)",
         "  end",
         "end"
       ],
       "lines": [
         null,
+        null,
+        null,
+        1,
+        1,
+        null,
+        1,
+        3,
+        3,
+        null,
+        null,
+        1,
+        0,
+        null,
         0,
         0,
         null,
+        0,
+        0,
+        null,
+        null,
+        null,
+        1,
+        null,
+        1,
+        null,
+        3,
+        null,
+        null,
+        3,
+        null,
+        null,
+        1,
         0,
         null,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 3,
-      "omitted_lines": 4,
-      "total_lines": 3
+      "lines_covered_percent": 64.70588235294117,
+      "covered_lines": 11,
+      "missed_lines": 6,
+      "omitted_lines": 19,
+      "total_lines": 17
     },
     "app/controllers/application_controller.rb": {
       "source": [
@@ -678,36 +823,36 @@
         1,
         null,
         1,
-        168,
+        222,
         null,
-        3,
-        3,
-        3,
-        null,
-        null,
-        1,
-        null,
-        227,
-        null,
-        null,
-        1,
-        495,
-        null,
-        null,
-        1,
-        348,
+        6,
+        6,
+        6,
         null,
         null,
         1,
         null,
-        115,
+        299,
         null,
         null,
         1,
-        150,
+        705,
         null,
         null,
-        110,
+        1,
+        456,
+        null,
+        null,
+        1,
+        null,
+        162,
+        null,
+        null,
+        1,
+        198,
+        null,
+        null,
+        158,
         null,
         null,
         1,
@@ -735,24 +880,43 @@
         "",
         "    @attendance = current_member.attendances.find_by(event: @event)",
         "  end",
+        "",
         "  # AC-04.1: records the member's attendance; points come from Member#total_points",
         "  # AC-04.2: find_or_create_by! means a second check-in never creates a duplicate",
         "  def create",
-        "    # Never trust the button: re-check on the server",
-        "    return render json: { error: \"This event isn't open for check-in yet.\" }, status: :unprocessable_entity unless @event.active?",
+        "    # Re-check the event's check-in window on the server",
+        "    unless @event.active?",
+        "      return render json: {",
+        "        error: \"This event isn't open for check-in yet.\"",
+        "      }, status: :unprocessable_entity",
+        "    end",
+        "",
+        "    # Validate the optional event-specific code",
+        "    unless @event.valid_check_in_code?(params[:check_in_code])",
+        "      return render json: {",
+        "        error: \"Incorrect check-in code. Please try again.\"",
+        "      }, status: :unprocessable_entity",
+        "    end",
         "",
         "    attendance = current_member.attendances.find_or_create_by!(event: @event) do |a|",
         "      a.check_in_time = Time.current",
         "      a.status = 'present'",
         "    end",
         "",
-        "    render json: { checked_in: true, check_in_time: attendance.check_in_time }",
+        "    render json: {",
+        "      checked_in: true,",
+        "      check_in_time: attendance.check_in_time",
+        "    }",
+        "",
         "  rescue ActiveRecord::RecordNotUnique",
-        "    # Double-tap race: the other request already saved it",
         "    render json: { checked_in: true }",
+        "",
         "  rescue ActiveRecord::RecordInvalid => e",
-        "    render json: { error: e.record.errors.full_messages.to_sentence }, status: :unprocessable_entity",
+        "    render json: {",
+        "      error: e.record.errors.full_messages.to_sentence",
+        "    }, status: :unprocessable_entity",
         "  end",
+        "",
         "",
         "  private",
         "",
@@ -772,45 +936,64 @@
         "end"
       ],
       "lines": [
+        1,
+        1,
+        1,
+        1,
+        null,
+        null,
+        null,
+        1,
+        2,
+        null,
+        1,
+        null,
+        null,
+        null,
+        null,
+        1,
+        null,
+        6,
+        1,
+        null,
+        null,
+        null,
+        null,
+        null,
+        5,
+        2,
+        null,
+        null,
+        null,
+        null,
+        3,
+        2,
+        2,
+        null,
+        null,
+        3,
+        null,
+        null,
+        null,
+        null,
+        null,
         0,
-        0,
-        0,
+        null,
+        null,
         0,
         null,
         null,
         null,
-        0,
-        0,
-        null,
-        0,
         null,
         null,
+        1,
         null,
-        0,
-        null,
-        0,
-        null,
-        0,
-        0,
-        0,
+        1,
+        8,
         null,
         null,
-        0,
-        null,
-        null,
-        0,
-        null,
-        0,
-        null,
-        null,
-        0,
-        null,
-        0,
-        0,
-        null,
-        null,
-        0,
-        0,
+        1,
+        8,
         null,
         0,
         0,
@@ -820,11 +1003,11 @@
         null,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 23,
-      "omitted_lines": 24,
-      "total_lines": 23
+      "lines_covered_percent": 80.76923076923077,
+      "covered_lines": 21,
+      "missed_lines": 5,
+      "omitted_lines": 40,
+      "total_lines": 26
     },
     "app/controllers/dashboard_controller.rb": {
       "source": [
@@ -860,8 +1043,16 @@
         "    return unless logged_in?",
         "",
         "    # AC-05.6: list events; active ones are clickable, future ones greyed out",
-        "    events = Event.order(:event_date_time).to_a",
-        "    @events = events.select(&:active?).reverse + events.reject(&:active?)",
+        "    events = Event.order(event_date_time: :asc).to_a",
+        "",
+        "    @upcoming_events = events.select do |event|",
+        "      event.event_date_time.present? && event.event_date_time >= Time.current",
+        "    end",
+        "",
+        "    @past_events = events.select do |event|",
+        "      event.event_date_time.nil? || event.event_date_time < Time.current",
+        "    end.reverse",
+        "",
         "    @checked_in_ids = current_member ? current_member.attendances.pluck(:event_id) : []",
         "",
         "    # AC-05.1 / AC-05.3: current points (0 for a new member), now shown per category",
@@ -869,32 +1060,42 @@
         "    @current_semester = Semester.current",
         "    @category_progress = CategoryProgress.for(current_member, @current_semester)",
         "  end",
-        "end"
+        "end",
+        ""
       ],
       "lines": [
         1,
         1,
         null,
         1,
+        15,
+        null,
+        null,
+        11,
+        null,
+        11,
+        17,
+        null,
+        null,
+        11,
+        17,
+        null,
+        null,
         11,
         null,
         null,
-        7,
-        7,
-        7,
         null,
+        11,
+        11,
         null,
-        null,
-        7,
-        7,
         null,
         null
       ],
       "lines_covered_percent": 100.0,
-      "covered_lines": 9,
+      "covered_lines": 12,
       "missed_lines": 0,
-      "omitted_lines": 8,
-      "total_lines": 9
+      "omitted_lines": 14,
+      "total_lines": 12
     },
     "app/controllers/members_controller.rb": {
       "source": [
@@ -1285,6 +1486,7 @@
     },
     "app/models/appeal.rb": {
       "source": [
+        "# app/models/appeal.rb",
         "# frozen_string_literal: true",
         "",
         "class Appeal < ApplicationRecord",
@@ -1292,13 +1494,34 @@
         "  belongs_to :reviewed_by_member, class_name: 'Member', foreign_key: 'reviewed_by_member_id', optional: true # rubocop:todo Rails/InverseOf",
         "  belongs_to :event",
         "",
+        "  STATUSES = %w[pending approved denied].freeze",
+        "  attribute :status, :string, default: 'pending'",
+        "  normalizes :status, with: ->(value) { value.to_s.strip.downcase.presence || 'pending' }, apply_to_nil: true",
+        "  scope :pending, -> { where(status: 'pending') }",
+        "",
+        "  validates :status, inclusion: { in: STATUSES }",
+        "  validates :event_id, presence: { message: 'must be selected' }",
         "  validates :appeal_type, presence: true",
-        "  validates :reason, presence: true",
+        "  validates :reason, presence: { message: 'cannot be empty' }",
+        "",
+        "  before_validation :set_defaults, on: :create",
+        "",
+        "  def pending?",
+        "    status == 'pending'",
+        "  end",
+        "",
+        "  private",
+        "",
+        "  def set_defaults",
+        "    self.appeal_type ||= 'attendance'",
+        "    self.status ||= 'pending'",
+        "  end",
         "end"
       ],
       "lines": [
         null,
         null,
+        null,
         1,
         1,
         1,
@@ -1306,13 +1529,33 @@
         null,
         1,
         1,
+        53,
+        8,
+        null,
+        1,
+        1,
+        1,
+        1,
+        null,
+        1,
+        null,
+        1,
+        23,
+        null,
+        null,
+        1,
+        null,
+        1,
+        32,
+        32,
+        null,
         null
       ],
       "lines_covered_percent": 100.0,
-      "covered_lines": 6,
+      "covered_lines": 19,
       "missed_lines": 0,
-      "omitted_lines": 4,
-      "total_lines": 6
+      "omitted_lines": 12,
+      "total_lines": 19
     },
     "app/models/application_record.rb": {
       "source": [
@@ -1376,8 +1619,8 @@
         null,
         1,
         null,
-        94,
-        94,
+        104,
+        104,
         null,
         1,
         1,
@@ -1544,6 +1787,17 @@
         "    return false if event_date_time.blank?",
         "    Time.current.between?(event_date_time - 15.minutes, event_date_time + 3.hours)",
         "  end",
+        "",
+        "  # Optional event-specific check-in code",
+        "  def valid_check_in_code?(submitted_code)",
+        "    return true if check_in_code.blank?",
+        "    return false if submitted_code.blank?",
+        "",
+        "    expected = Digest::SHA256.hexdigest(check_in_code)",
+        "    submitted = Digest::SHA256.hexdigest(submitted_code)",
+        "",
+        "    ActiveSupport::SecurityUtils.secure_compare(expected, submitted)",
+        "  end",
         "end"
       ],
       "lines": [
@@ -1565,16 +1819,27 @@
         null,
         null,
         1,
-        36,
-        36,
+        27,
+        26,
+        null,
+        null,
+        null,
+        1,
+        11,
+        7,
+        null,
+        4,
+        4,
+        null,
+        4,
         null,
         null
       ],
       "lines_covered_percent": 100.0,
-      "covered_lines": 15,
+      "covered_lines": 21,
       "missed_lines": 0,
-      "omitted_lines": 7,
-      "total_lines": 15
+      "omitted_lines": 12,
+      "total_lines": 21
     },
     "app/models/member.rb": {
       "source": [
@@ -1646,50 +1911,50 @@
         null,
         1,
         null,
-        26,
-        149,
+        27,
+        200,
         null,
         null,
         1,
         null,
-        772,
+        893,
         1,
         null,
         1,
         1,
         null,
-        393,
+        456,
         1,
         null,
         1,
         null,
         1,
         1,
-        345,
+        383,
         null,
         null,
         null,
         1,
-        31,
+        42,
         null,
         null,
         1,
-        13,
+        15,
         null,
         null,
         1,
-        44,
+        57,
         null,
         null,
         1,
         null,
         1,
-        9,
+        11,
         null,
         null,
         1,
-        392,
-        392,
+        455,
+        455,
         null,
         null
       ],
@@ -1831,12 +2096,12 @@
         1,
         null,
         1,
-        16,
+        18,
         null,
         null,
         1,
-        20,
-        20,
+        24,
+        24,
         null,
         null,
         null,
@@ -1847,18 +2112,18 @@
         null,
         null,
         1,
-        6,
-        6,
-        6,
-        13,
+        7,
+        7,
+        7,
+        15,
         null,
         null,
         1,
-        45,
+        50,
         null,
         null,
         1,
-        33,
+        35,
         null,
         null,
         1,
@@ -1963,7 +2228,7 @@
         1,
         null,
         1,
-        11,
+        17,
         null,
         null
       ],
@@ -2059,12 +2324,12 @@
         1,
         1,
         null,
-        722,
+        838,
         1,
         1,
         null,
         1,
-        151,
+        202,
         null,
         null,
         1,
@@ -2101,13 +2366,124 @@
         1,
         null,
         1,
-        360,
+        418,
         null,
         null
       ],
       "lines_covered_percent": 96.15384615384616,
       "covered_lines": 25,
       "missed_lines": 1,
+      "omitted_lines": 24,
+      "total_lines": 26
+    },
+    "app/services/admin/appeal_review.rb": {
+      "source": [
+        "# frozen_string_literal: true",
+        "",
+        "module Admin",
+        "  class AppealReview",
+        "    class Error < StandardError; end",
+        "",
+        "    def initialize(actor:, appeal:)",
+        "      @actor = actor",
+        "      @appeal = appeal",
+        "    end",
+        "",
+        "    def decide!(decision)",
+        "      raise Error, 'Select Approve or Deny.' unless %w[approved denied].include?(decision)",
+        "",
+        "      Appeal.transaction do",
+        "        actor = lock_and_authorize_reviewer!",
+        "",
+        "        @appeal.lock!",
+        "        raise Error, 'This appeal has already been reviewed.' unless @appeal.pending?",
+        "",
+        "        record_attendance! if decision == 'approved'",
+        "        @appeal.update!(status: decision, reviewed_by_member: actor)",
+        "      end",
+        "    end",
+        "",
+        "    private",
+        "",
+        "    def lock_and_authorize_reviewer!",
+        "      actor_id = @actor&.id",
+        "",
+        "      # Keep the same member lock order as MemberManagement.",
+        "      members = Member.where(id: [ actor_id, @appeal.submitting_member_id ])",
+        "                      .order(:id).lock.to_a",
+        "      actor = members.find { |member| member.id == actor_id }",
+        "",
+        "      raise Error, 'Access denied.' unless actor&.is_admin? && !actor.archived?",
+        "",
+        "      actor",
+        "    end",
+        "",
+        "    def record_attendance!",
+        "      member = @appeal.submitting_member.reload",
+        "      raise Error, 'Cannot approve an appeal for an archived member.' if member.archived?",
+        "",
+        "      # Preserve existing check-in times and administrator point adjustments.",
+        "      attendance = member.attendances.find_or_initialize_by(event_id: @appeal.event_id)",
+        "      attendance.update!(status: 'present')",
+        "    end",
+        "  end",
+        "end"
+      ],
+      "lines": [
+        null,
+        null,
+        1,
+        1,
+        1,
+        null,
+        1,
+        19,
+        19,
+        null,
+        null,
+        1,
+        19,
+        null,
+        18,
+        18,
+        null,
+        17,
+        17,
+        null,
+        13,
+        12,
+        null,
+        null,
+        null,
+        1,
+        null,
+        1,
+        18,
+        null,
+        null,
+        18,
+        null,
+        36,
+        null,
+        18,
+        null,
+        17,
+        null,
+        null,
+        1,
+        9,
+        9,
+        null,
+        null,
+        8,
+        8,
+        null,
+        null,
+        null
+      ],
+      "lines_covered_percent": 100.0,
+      "covered_lines": 26,
+      "missed_lines": 0,
       "omitted_lines": 24,
       "total_lines": 26
     },
@@ -2322,14 +2698,15 @@
   "groups": {
     "Controllers": {
       "lines": {
-        "covered": 188,
-        "missed": 56,
-        "omitted": 240,
-        "total": 244,
-        "percent": 77.04918032786885,
-        "strength": 11.237704918032787
+        "covered": 240,
+        "missed": 41,
+        "omitted": 298,
+        "total": 281,
+        "percent": 85.40925266903915,
+        "strength": 12.911032028469752
       },
       "files": [
+        "app/controllers/admin/appeals_controller.rb",
         "app/controllers/admin/categories_controller.rb",
         "app/controllers/admin/events_controller.rb",
         "app/controllers/admin/semester_requirements_controller.rb",
@@ -2357,12 +2734,12 @@
     },
     "Models": {
       "lines": {
-        "covered": 174,
+        "covered": 193,
         "missed": 5,
-        "omitted": 169,
-        "total": 179,
-        "percent": 97.20670391061452,
-        "strength": 32.14525139664804
+        "omitted": 182,
+        "total": 198,
+        "percent": 97.47474747474747,
+        "strength": 33.44949494949495
       },
       "files": [
         "app/models/appeal.rb",
@@ -2445,14 +2822,15 @@
     },
     "Ungrouped": {
       "lines": {
-        "covered": 50,
+        "covered": 76,
         "missed": 0,
-        "omitted": 48,
-        "total": 50,
+        "omitted": 72,
+        "total": 76,
         "percent": 100.0,
-        "strength": 24.62
+        "strength": 20.157894736842106
       },
       "files": [
+        "app/services/admin/appeal_review.rb",
         "app/services/admin/member_management.rb"
       ]
     }
@@ -4958,6 +5336,282 @@
         },
         "app/models/user.rb": {
           "line": 96.15
+        },
+        "app/services/admin/member_management.rb": {
+          "line": 100.0
+        }
+      }
+    },
+    {
+      "created_at": "2026-10-30T09:37:58Z",
+      "branch": "event_refine",
+      "commit": "7e506ad94883b47052a19789a1f6346efa9d2ed2",
+      "totals": {
+        "line": 26.74
+      },
+      "groups": {
+        "Controllers": {
+          "line": 22.77
+        },
+        "Channels": {
+          "line": 100.0
+        },
+        "Models": {
+          "line": 40.9
+        },
+        "Mailers": {
+          "line": 0.0
+        },
+        "Helpers": {
+          "line": 61.53
+        },
+        "Views": {
+          "line": 100.0
+        },
+        "Jobs": {
+          "line": 0.0
+        },
+        "Libraries": {
+          "line": 100.0
+        },
+        "Ungrouped": {
+          "line": 0.0
+        }
+      },
+      "files": {
+        "app/controllers/admin/appeals_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/admin/categories_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/admin/events_controller.rb": {
+          "line": 91.17
+        },
+        "app/controllers/admin/semester_requirements_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/admin_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/appeals_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/application_controller.rb": {
+          "line": 84.0
+        },
+        "app/controllers/check_ins_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/dashboard_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/home_controller.rb": {
+          "line": 100.0
+        },
+        "app/controllers/members_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/sessions_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/support_controller.rb": {
+          "line": 0.0
+        },
+        "app/helpers/admin_helper.rb": {
+          "line": 100.0
+        },
+        "app/helpers/application_helper.rb": {
+          "line": 100.0
+        },
+        "app/helpers/events_helper.rb": {
+          "line": 50.0
+        },
+        "app/helpers/members_helper.rb": {
+          "line": 100.0
+        },
+        "app/jobs/application_job.rb": {
+          "line": 0.0
+        },
+        "app/mailers/application_mailer.rb": {
+          "line": 0.0
+        },
+        "app/models/appeal.rb": {
+          "line": 0.0
+        },
+        "app/models/application_record.rb": {
+          "line": 100.0
+        },
+        "app/models/attendance.rb": {
+          "line": 66.66
+        },
+        "app/models/category.rb": {
+          "line": 100.0
+        },
+        "app/models/category_progress.rb": {
+          "line": 41.66
+        },
+        "app/models/check_in.rb": {
+          "line": 0.0
+        },
+        "app/models/event.rb": {
+          "line": 66.66
+        },
+        "app/models/member.rb": {
+          "line": 84.37
+        },
+        "app/models/school_year.rb": {
+          "line": 0.0
+        },
+        "app/models/semester.rb": {
+          "line": 100.0
+        },
+        "app/models/semester_requirement.rb": {
+          "line": 0.0
+        },
+        "app/models/user.rb": {
+          "line": 57.69
+        },
+        "app/services/admin/appeal_review.rb": {
+          "line": 0.0
+        },
+        "app/services/admin/member_management.rb": {
+          "line": 0.0
+        }
+      }
+    },
+    {
+      "created_at": "2026-10-30T09:39:04Z",
+      "branch": "event_refine",
+      "commit": "7e506ad94883b47052a19789a1f6346efa9d2ed2",
+      "totals": {
+        "line": 91.25
+      },
+      "groups": {
+        "Controllers": {
+          "line": 85.4
+        },
+        "Channels": {
+          "line": 100.0
+        },
+        "Models": {
+          "line": 97.47
+        },
+        "Mailers": {
+          "line": 0.0
+        },
+        "Helpers": {
+          "line": 100.0
+        },
+        "Views": {
+          "line": 100.0
+        },
+        "Jobs": {
+          "line": 0.0
+        },
+        "Libraries": {
+          "line": 100.0
+        },
+        "Ungrouped": {
+          "line": 100.0
+        }
+      },
+      "files": {
+        "app/controllers/admin/appeals_controller.rb": {
+          "line": 100.0
+        },
+        "app/controllers/admin/categories_controller.rb": {
+          "line": 93.33
+        },
+        "app/controllers/admin/events_controller.rb": {
+          "line": 97.05
+        },
+        "app/controllers/admin/semester_requirements_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/admin_controller.rb": {
+          "line": 100.0
+        },
+        "app/controllers/appeals_controller.rb": {
+          "line": 64.7
+        },
+        "app/controllers/application_controller.rb": {
+          "line": 100.0
+        },
+        "app/controllers/check_ins_controller.rb": {
+          "line": 80.76
+        },
+        "app/controllers/dashboard_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/home_controller.rb": {
+          "line": 100.0
+        },
+        "app/controllers/members_controller.rb": {
+          "line": 92.85
+        },
+        "app/controllers/sessions_controller.rb": {
+          "line": 90.9
+        },
+        "app/controllers/support_controller.rb": {
+          "line": 100.0
+        },
+        "app/helpers/admin_helper.rb": {
+          "line": 100.0
+        },
+        "app/helpers/application_helper.rb": {
+          "line": 100.0
+        },
+        "app/helpers/events_helper.rb": {
+          "line": 100.0
+        },
+        "app/helpers/members_helper.rb": {
+          "line": 100.0
+        },
+        "app/jobs/application_job.rb": {
+          "line": 0.0
+        },
+        "app/mailers/application_mailer.rb": {
+          "line": 0.0
+        },
+        "app/models/appeal.rb": {
+          "line": 100.0
+        },
+        "app/models/application_record.rb": {
+          "line": 100.0
+        },
+        "app/models/attendance.rb": {
+          "line": 100.0
+        },
+        "app/models/category.rb": {
+          "line": 100.0
+        },
+        "app/models/category_progress.rb": {
+          "line": 100.0
+        },
+        "app/models/check_in.rb": {
+          "line": 0.0
+        },
+        "app/models/event.rb": {
+          "line": 100.0
+        },
+        "app/models/member.rb": {
+          "line": 100.0
+        },
+        "app/models/school_year.rb": {
+          "line": 100.0
+        },
+        "app/models/semester.rb": {
+          "line": 100.0
+        },
+        "app/models/semester_requirement.rb": {
+          "line": 100.0
+        },
+        "app/models/user.rb": {
+          "line": 96.15
+        },
+        "app/services/admin/appeal_review.rb": {
+          "line": 100.0
         },
         "app/services/admin/member_management.rb": {
           "line": 100.0

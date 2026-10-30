@@ -19,4 +19,15 @@ class Event < ApplicationRecord
     return false if event_date_time.blank?
     Time.current.between?(event_date_time - 15.minutes, event_date_time + 3.hours)
   end
+
+  # Optional event-specific check-in code
+  def valid_check_in_code?(submitted_code)
+    return true if check_in_code.blank?
+    return false if submitted_code.blank?
+
+    expected = Digest::SHA256.hexdigest(check_in_code)
+    submitted = Digest::SHA256.hexdigest(submitted_code)
+
+    ActiveSupport::SecurityUtils.secure_compare(expected, submitted)
+  end
 end

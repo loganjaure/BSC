@@ -10,24 +10,43 @@ class CheckInsController < ApplicationController
 
     @attendance = current_member.attendances.find_by(event: @event)
   end
+
   # AC-04.1: records the member's attendance; points come from Member#total_points
   # AC-04.2: find_or_create_by! means a second check-in never creates a duplicate
   def create
-    # Never trust the button: re-check on the server
-    return render json: { error: "This event isn't open for check-in yet." }, status: :unprocessable_entity unless @event.active?
+    # Re-check the event's check-in window on the server
+    unless @event.active?
+      return render json: {
+        error: "This event isn't open for check-in yet."
+      }, status: :unprocessable_entity
+    end
+
+    # Validate the optional event-specific code
+    unless @event.valid_check_in_code?(params[:check_in_code])
+      return render json: {
+        error: "Incorrect check-in code. Please try again."
+      }, status: :unprocessable_entity
+    end
 
     attendance = current_member.attendances.find_or_create_by!(event: @event) do |a|
       a.check_in_time = Time.current
       a.status = 'present'
     end
 
-    render json: { checked_in: true, check_in_time: attendance.check_in_time }
+    render json: {
+      checked_in: true,
+      check_in_time: attendance.check_in_time
+    }
+
   rescue ActiveRecord::RecordNotUnique
-    # Double-tap race: the other request already saved it
     render json: { checked_in: true }
+
   rescue ActiveRecord::RecordInvalid => e
-    render json: { error: e.record.errors.full_messages.to_sentence }, status: :unprocessable_entity
+    render json: {
+      error: e.record.errors.full_messages.to_sentence
+    }, status: :unprocessable_entity
   end
+
 
   private
 

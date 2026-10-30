@@ -25,17 +25,36 @@
         </ul>
       <% end %>
 
-      <%# AC-05.6: event list showing which events are active %>
-      <h2 class="bsc-section-title">Events</h2>
-      <% if @events.empty? %>
-        <p class="bsc-sub">No events have been added yet.</p>
+      
+      <%# AC-05.6: events separated by scheduled date %>
+      <h2 class="bsc-section-title">Upcoming Events</h2>
+
+      <% if @upcoming_events.empty? %>
+        <p class="bsc-sub">No upcoming events.</p>
       <% else %>
         <div class="bsc-event-list">
-          <% @events.each do |event| %>
-            <%= render "home/event_card", event: event, checked_in: @checked_in_ids.include?(event.id) %>
+          <% @upcoming_events.each do |event| %>
+            <%= render "home/event_card",
+                      event: event,
+                      checked_in: @checked_in_ids.include?(event.id) %>
           <% end %>
         </div>
       <% end %>
+
+      <h2 class="bsc-section-title mt-4">Past Events</h2>
+
+      <% if @past_events.empty? %>
+        <p class="bsc-sub">No past events.</p>
+      <% else %>
+        <div class="bsc-event-list">
+          <% @past_events.each do |event| %>
+            <%= render "home/event_card",
+                      event: event,
+                      checked_in: @checked_in_ids.include?(event.id) %>
+          <% end %>
+        </div>
+      <% end %>
+
 
       <%# AC-05.4: Appeals section is visible but not interactive yet %>
       <div class="bsc-appeals-preview" aria-disabled="true">

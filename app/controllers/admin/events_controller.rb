@@ -6,14 +6,21 @@ class Admin::EventsController < ApplicationController
   before_action :load_form_options, only: %i[new create edit update]
 
   def index
-    @events = Event.includes(:category, :semester)
-                 .order(event_date_time: :asc)
+    @upcoming_events = Event.includes(:category, :semester)
+                            .where("event_date_time >= ?", Time.current)
+                            .order(event_date_time: :asc)
+
+    @past_events = Event.includes(:category, :semester)
+                        .where("event_date_time < ?", Time.current)
+                        .order(event_date_time: :desc)
+
     @categories = Category.order(:category_name)
     @category = Category.new
     @semesters = Semester.order(id: :desc)
     @current_semester = Semester.current
     @semester = Semester.new
   end
+
 
   def new
     @event = Event.new(point_value: 1)
@@ -58,7 +65,8 @@ class Admin::EventsController < ApplicationController
       :category_id,
       :semester_id,
       :description,
-      :point_value
+      :point_value,
+      :check_in_code
     )
   end
 

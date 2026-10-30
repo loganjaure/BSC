@@ -1,14 +1,18 @@
 <% body = capture do %>
   <div class="bsc-event-card__top">
     <span class="bsc-event-card__name"><%= event.event_name %></span>
+
     <% if checked_in %>
       <span class="bsc-tag bsc-tag--done">Checked in</span>
+    <% elsif event.event_date_time.present? && event.event_date_time < Time.current %>
+      <span class="bsc-tag bsc-tag--muted">Absent</span>
     <% elsif event.active? %>
       <span class="bsc-tag bsc-tag--open">Open</span>
     <% else %>
       <span class="bsc-tag bsc-tag--muted">Upcoming</span>
     <% end %>
   </div>
+
   <div class="bsc-event-card__meta">
     <span><%= event_datetime(event) %></span>
     <span><%= event_points(event) %></span>
