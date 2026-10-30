@@ -1,18 +1,20 @@
+
 import { Controller } from "@hotwired/stimulus"
 
 const TIMEOUT_MS = 10000
 
 export default class extends Controller {
-  static targets = ["button", "label", "spinner", "status", "check"]
+  static targets = ["button", "label", "spinner", "status", "check", "code"]
   static values = { url: String, checkedIn: Boolean }
+
   // AC-04.2: if already checked in, button loads disabled
   connect() {
-    // Already checked in (page reload / came back later)
     if (this.checkedInValue) this.showSuccess()
   }
 
   async submit() {
     if (this.checkedInValue || this.busy) return
+
     this.busy = true
     this.showLoading()
 
@@ -24,15 +26,19 @@ export default class extends Controller {
         method: "POST",
         headers: {
           "Accept": "application/json",
+          "Content-Type": "application/json",
           "X-CSRF-Token": document.querySelector('meta[name="csrf-token"]')?.content
         },
         credentials: "same-origin",
-        signal: abort.signal
+        signal: abort.signal,
+        body: JSON.stringify({
+          check_in_code: this.hasCodeTarget ? this.codeTarget.value : ""
+        })
       })
+
       const data = await res.json().catch(() => ({}))
 
-      // Only show success if the server confirms the row was saved
-      // AC-04.3: only confirm once the server says attendance was saved
+      // Only show success if the server confirms attendance was saved
       if (res.ok && data.checked_in) {
         this.checkedInValue = true
         this.showSuccess()
@@ -40,9 +46,11 @@ export default class extends Controller {
         this.showError(data.error || "Check-in wasn't saved. Try again.")
       }
     } catch (err) {
-      this.showError(err.name === "AbortError"
-        ? "Check-in timed out. Try again."
-        : "Couldn't reach the server. Check your connection and try again.")
+      this.showError(
+        err.name === "AbortError"
+          ? "Check-in timed out. Try again."
+          : "Couldn't reach the server. Check your connection and try again."
+      )
     } finally {
       clearTimeout(timer)
       this.busy = false
@@ -56,7 +64,7 @@ export default class extends Controller {
     this.checkTarget.hidden = true
   }
 
-  // AC-04.3: visual confirmation (green button + checkmark); AC-04.2: button disabled
+  // AC-04.3: visual confirmation
   showSuccess() {
     this.setButton("is-checked", "Checked in", true)
     this.spinnerTarget.hidden = true

@@ -65,7 +65,8 @@ class Admin::EventsController < ApplicationController
       :category_id,
       :semester_id,
       :description,
-      :point_value
+      :point_value,
+      :check_in_code
     )
   end
 
