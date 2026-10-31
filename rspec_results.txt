@@ -1,358 +1,427 @@
+
+Admin::EventsController
+  GET #index
+[32m    separates upcoming and past events[0m
+[32m    includes an event happening now in upcoming events[0m
+  POST #create
+[32m    saves an event with a check-in code[0m
+[32m    allows an event to be created without a check-in code[0m
+  PATCH #update
+[32m    updates the event check-in code[0m
+[32m    allows the check-in code to be removed[0m
+
 ApplicationController
   #require_login
     when unauthenticated
-      redirects to root path
+[32m      redirects to root path[0m
     when authenticated
-      allows access
+[32m      allows access[0m
 
-AdminHelper
-  add some examples to (or delete) /BSC-500/spec/helpers/admin_helper_spec.rb (PENDING: Not yet implemented)
+CheckInsController
+  GET #show
+[32m    renders the check-in page for an active event[0m
+[32m    redirects when the event is not active[0m
+  POST #create
+    when the event does not require a code
+[32m      creates an attendance record[0m
+    when the event requires a code
+[32m      allows check-in with the correct code[0m
+[32m      rejects an incorrect code[0m
+[32m      rejects a missing code[0m
+    when the event is outside the check-in window
+[32m      does not create an attendance record[0m
+    when the member has already checked in
+[32m      does not create a duplicate attendance record[0m
 
-MembersHelper
-  add some examples to (or delete) /BSC-500/spec/helpers/members_helper_spec.rb (PENDING: Not yet implemented)
+HomeController
+  GET #index
+[32m    places future events in upcoming events[0m
+[32m    places past events in past events[0m
+[32m    places an event happening now in upcoming events[0m
+[32m    places multiple events in their correct sections[0m
 
 Appeal
   Associations
-    is expected to belong to submitting_member class_name => Member required: true
-    is expected to belong to reviewed_by_member class_name => Member optional: true
-    is expected to belong to event required: true
+[32m    is expected to belong to submitting_member class_name => Member required: true[0m
+[32m    is expected to belong to reviewed_by_member class_name => Member optional: true[0m
+[32m    is expected to belong to event required: true[0m
   Validations
-    is expected to validate that :appeal_type cannot be empty/falsy
-    is expected to validate that :reason cannot be empty/falsy
+[32m    defaults a missing appeal type to attendance before validation[0m
+[32m    rejects a blank appeal type: ""[0m
+[32m    rejects a blank appeal type: "   "[0m
+[32m    is expected to validate that :reason cannot be empty/falsy, producing a custom validation error on failure[0m
+  review statuses
+[32m    defaults new appeals to pending[0m
+[32m    normalizes status capitalization[0m
+[32m    treats a missing status as pending[0m
+[32m    rejects unsupported statuses[0m
 
 Attendance
   Associations
-    is expected to belong to member required: true
-    is expected to belong to event required: true
+[32m    is expected to belong to member required: true[0m
+[32m    is expected to belong to event required: true[0m
   Validations
-    is expected to validate that :member_id cannot be empty/falsy
-    is expected to validate that :event_id cannot be empty/falsy
+[32m    is expected to validate that :member_id cannot be empty/falsy[0m
+[32m    is expected to validate that :event_id cannot be empty/falsy[0m
 
 CategoryProgress
   earned points
-    is 0 when the member has not checked in to anything
-    increases by the event point value after a check-in
-    keeps each category separate
-    does not count points earned by other members
-    does not count events from a different semester
+[32m    is 0 when the member has not checked in to anything[0m
+[32m    increases by the event point value after a check-in[0m
+[32m    keeps each category separate[0m
+[32m    does not count points earned by other members[0m
+[32m    does not count events from a different semester[0m
   requirement status
-    is not satisfied when under the requirement
-    is satisfied when exactly at the requirement
-    is satisfied and keeps the real total when over the requirement
-    treats a requirement of 0 as satisfied, even with 0 points
-    marks categories without a requirement row as having no requirement
-    ignores requirements from other semesters
+[32m    is not satisfied when under the requirement[0m
+[32m    is satisfied when exactly at the requirement[0m
+[32m    is satisfied and keeps the real total when over the requirement[0m
+[32m    treats a requirement of 0 as satisfied, even with 0 points[0m
+[32m    marks categories without a requirement row as having no requirement[0m
+[32m    ignores requirements from other semesters[0m
   rows
-    lists every category in name order
-    is empty when there is no current semester
-    is empty when there is no member
-    uses a fixed number of queries no matter how many categories exist
+[32m    lists every category in name order[0m
+[32m    is empty when there is no current semester[0m
+[32m    is empty when there is no member[0m
+[32m    uses a fixed number of queries no matter how many categories exist[0m
 
 Category
   Associations
-    is expected to have many events
-    is expected to have many semester_requirements
+[32m    is expected to have many events[0m
+[32m    is expected to have many semester_requirements[0m
   Validations
-    is expected to validate that :category_name cannot be empty/falsy
-    is expected to validate that :category_name is case-sensitively unique
+[32m    is expected to validate that :category_name cannot be empty/falsy[0m
+[32m    is expected to validate that :category_name is case-sensitively unique[0m
 
 Event
   Associations
-    is expected to belong to category required: true
-    is expected to belong to semester required: true
-    is expected to have many attendances
-    is expected to have many members through attendances
-    is expected to have many appeals
+[32m    is expected to belong to category required: true[0m
+[32m    is expected to belong to semester required: true[0m
+[32m    is expected to have many attendances[0m
+[32m    is expected to have many members through attendances[0m
+[32m    is expected to have many appeals[0m
   Validations
-    is expected to validate that :event_name cannot be empty/falsy
-    is expected to validate that :event_date_time cannot be empty/falsy
-    is expected to validate that :point_value looks like a number greater than or equal to 0
+[32m    is expected to validate that :event_name cannot be empty/falsy[0m
+[32m    is expected to validate that :event_date_time cannot be empty/falsy[0m
+[32m    is expected to validate that :point_value looks like a number greater than or equal to 0[0m
+  #active?
+[32m    allows check-in 15 minutes before the event[0m
+[32m    does not allow check-in more than 15 minutes before the event[0m
+[32m    allows check-in when the event starts[0m
+[32m    allows check-in within 3 hours after the event starts[0m
+[32m    allows check-in exactly 3 hours after the event starts[0m
+[32m    does not allow check-in more than 3 hours after the event starts[0m
+[32m    does not allow check-in when the event date is missing[0m
+  #valid_check_in_code?
+    when no check-in code is configured
+[32m      accepts a blank submitted code[0m
+[32m      accepts a submitted code[0m
+    when a check-in code is configured
+[32m      accepts the correct code[0m
+[32m      rejects an incorrect code[0m
+[32m      rejects a blank submitted code[0m
+[32m      rejects a nil submitted code[0m
 
 Member point adjustments
-  defaults existing and new members to no adjustment
-  allows a downward correction without modifying an event or attendance
-  does not repeat an adjustment when saving an unrelated profile field
-  retains the total when a correction is submitted twice
-  allows a check-in immediately after a correction on the same member instance
-  rejects a check-in for an archived member and retains prior attendance
+[32m  defaults existing and new members to no adjustment[0m
+[32m  allows a downward correction without modifying an event or attendance[0m
+[32m  does not repeat an adjustment when saving an unrelated profile field[0m
+[32m  retains the total when a correction is submitted twice[0m
+[32m  allows a check-in immediately after a correction on the same member instance[0m
+[32m  rejects a check-in for an archived member and retains prior attendance[0m
 
 Member
   Associations
-    is expected to belong to user optional: true
-    is expected to have many attendances dependent => destroy
-    is expected to have many events through attendances
-    is expected to have many submitted_appeals class_name => Appeal
-    is expected to have many reviewed_appeals class_name => Appeal
+[32m    is expected to belong to user optional: true[0m
+[32m    is expected to have many attendances dependent => destroy[0m
+[32m    is expected to have many events through attendances[0m
+[32m    is expected to have many submitted_appeals class_name => Appeal[0m
+[32m    is expected to have many reviewed_appeals class_name => Appeal[0m
   Validations
-    is expected to validate that :name cannot be empty/falsy, producing a custom validation error on failure
-    is expected to validate that :tamu_email cannot be empty/falsy
-    is expected to validate that :tamu_email is case-insensitively unique
+[32m    is expected to validate that :name cannot be empty/falsy, producing a custom validation error on failure[0m
+[32m    is expected to validate that :tamu_email cannot be empty/falsy[0m
+[32m    is expected to validate that :tamu_email is case-insensitively unique[0m
     on update
-      is expected to validate that :uin cannot be empty/falsy, producing a custom validation error on failure
-      is expected to validate that :uin is case-insensitively unique
-      is expected to validate that :class_year cannot be empty/falsy, producing a custom validation error on failure
-      validates numericality and length of uin on update
-      validates class_year range on update
+[32m      is expected to validate that :uin cannot be empty/falsy, producing a custom validation error on failure[0m
+[32m      is expected to validate that :uin is case-insensitively unique[0m
+[32m      is expected to validate that :class_year cannot be empty/falsy, producing a custom validation error on failure[0m
+[32m      validates numericality and length of uin on update[0m
+[32m      validates class_year range on update[0m
     on initial OAuth creation
-      is valid without uin and class_year
+[32m      is valid without uin and class_year[0m
+
+SchoolYear
+  school year boundaries
+[32m    puts Jul 31 in the earlier school year and starts the new one on Aug 1[0m
+[32m    covers Aug 1 through Jul 31 in the app time zone[0m
+[32m    parses labels like "2026-2027" and rejects anything else[0m
+[32m    knows the current school year[0m
+  #total_points_for
+[32m    adds Fall and Spring points into one total without resetting between semesters[0m
+[32m    excludes points from a different school year[0m
+[32m    counts a Jul 31 event in the earlier year and an Aug 1 event in the new year[0m
+[32m    equals the sum of the category points for that year[0m
+[32m    is 0 for a member with no points that year[0m
+[32m    leaves out the undated admin points adjustment[0m
+[32m    does not include other members' points[0m
 
 SemesterRequirement
   Associations
-    is expected to belong to semester required: true
-    is expected to belong to category required: true
+[32m    is expected to belong to semester required: true[0m
+[32m    is expected to belong to category required: true[0m
   Validations
-    is expected to validate that :required_count cannot be empty/falsy
-    is expected to validate that :required_count looks like a number greater than or equal to 0
+[32m    is expected to validate that :required_count cannot be empty/falsy[0m
+[32m    is expected to validate that :required_count looks like a number greater than or equal to 0[0m
 
 Semester
   Associations
-    is expected to have many events
-    is expected to have many semester_requirements
+[32m    is expected to have many events[0m
+[32m    is expected to have many semester_requirements[0m
   Validations
-    is expected to validate that :term_name cannot be empty/falsy
-    is expected to validate that :term_name is case-sensitively unique
+[32m    is expected to validate that :term_name cannot be empty/falsy[0m
+[32m    is expected to validate that :term_name is case-sensitively unique[0m
   .current
-    returns nil when no semesters exist
-    returns the most recently created semester
+[32m    returns nil when no semesters exist[0m
+[32m    returns the most recently created semester[0m
 
 User
   Associations
-    is expected to have one member dependent => destroy
+[32m    is expected to have one member dependent => destroy[0m
   Validations
-    is expected to validate that :email cannot be empty/falsy
-    allows valid TAMU email addresses
-    rejects non-TAMU email addresses
+[32m    is expected to validate that :email cannot be empty/falsy[0m
+[32m    allows valid TAMU email addresses[0m
+[32m    rejects non-TAMU email addresses[0m
   .from_google
-    creates a new user for valid TAMU credentials
-    returns existing user instead of duplicating
-    returns nil for non-TAMU email
+[32m    creates a new user for valid TAMU credentials[0m
+[32m    returns existing user instead of duplicating[0m
+[32m    returns nil for non-TAMU email[0m
+
+Attendance appeal review
+[32m  shows only pending appeals in the admin dashboard and keeps decided appeals in history[0m
+[32m  shows the required details and two decision buttons on a pending appeal[0m
+[32m  approves attendance and adds event points while preserving the administrator adjustment[0m
+[32m  denies without changing any attendance or points[0m
+[32m  disables both buttons after approved and displays the decision to the submitting member[0m
+[32m  cannot repeat or reverse a approved decision using a direct request[0m
+[32m  disables both buttons after denied and displays the decision to the submitting member[0m
+[32m  cannot repeat or reverse a denied decision using a direct request[0m
+[32m  does not duplicate an existing check-in or award points again[0m
+[32m  credits one attendance when multiple pending appeals concern the same member and event[0m
+[32m  does not accept a forged status, reviewer, member, event, or reason[0m
+[32m  ignores forged appeal attributes when processing a valid decision[0m
+[32m  rechecks the reviewers role inside the transaction[0m
+[32m  rolls back attendance if saving the decision fails[0m
+[32m  cannot approve an archived member but can deny their pending appeal[0m
+[32m  keeps other members appeals private[0m
+[32m  shows past and upcoming events as separate appeal choices[0m
+[32m  submits an appeal for an upcoming event without requiring proof[0m
+[32m  attaches submitted proof and makes it available to the reviewer[0m
+[32m  escapes reasoning text rather than rendering submitted HTML[0m
+[32m  rejects signed-out visitors from every review endpoint[0m
+[32m  rejects member from every review endpoint[0m
+[32m  rejects archived_admin from every review endpoint[0m
+
+Admin points export
+  access
+[32m    redirects a logged-out visitor to sign in[0m
+[32m    blocks a signed-in member who is not an admin[0m
+[32m    shows the export form with school years on the admin dashboard[0m
+  as an admin
+[32m    downloads a .csv named for the school year[0m
+[32m    starts with the school year, then a blank line, then the header row[0m
+[32m    lists each member once with their email, UIN, yearly total, and per-category points[0m
+[32m    includes members with zero points as 0s[0m
+[32m    includes archived members only if they earned points that year[0m
+[32m    exports only the selected school year's data[0m
+[32m    defaults to the current school year when none is selected[0m
+[32m    writes each UIN so spreadsheets keep all 9 digits[0m
+[32m    neutralizes cells that could run as spreadsheet formulas[0m
 
 Admin features
   GET /admin/categories
-    returns success for an admin
+[32m    returns success for an admin[0m
   GET /admin/events
-    returns success for an admin
+[32m    returns success for an admin[0m
   category creation
-    creates a category with valid parameters
-    rejects a category with a blank name
+[32m    creates a category with valid parameters[0m
+[32m    rejects a category with a blank name[0m
   category updating
-    updates a category with a valid name
-    rejects a blank category name
+[32m    updates a category with a valid name[0m
+[32m    rejects a blank category name[0m
   category deletion
-    deletes a category that is not in use
-    blocks deletion when the category has events
-    blocks deletion when a semester requirement uses the category
+[32m    deletes a category that is not in use[0m
+[32m    blocks deletion when the category has events[0m
+[32m    blocks deletion when a semester requirement uses the category[0m
+  semester creation
+[32m    creates a semester and returns to semester requirements[0m
+[32m    does not create a semester with a blank name[0m
+[32m    does not create a semester with a duplicate name[0m
   event creation
-    creates an event with valid parameters
-    rejects an event with a blank name
+[32m    creates an event with valid parameters[0m
+[32m    rejects an event with a blank name[0m
   event updating
-    updates an event with valid parameters
-    rejects an event with a blank name
+[32m    updates an event with valid parameters[0m
+[32m    rejects an event with a blank name[0m
   authorization
-    redirects a non-admin away from the categories page
-    redirects a non-admin away from the events page
-    redirects a signed-out visitor to the sign-in page
+[32m    redirects a non-admin away from the categories page[0m
+[32m    redirects a non-admin away from the events page[0m
+[32m    redirects a signed-out visitor to the sign-in page[0m
 
 Admin member management
   admin navigation
-    keeps the member list and exposes edit and deletion-confirmation links
-    keeps member details and event history
-    shows revoke for another admin but not for the acting admin
+[32m    keeps the member list and exposes edit and deletion-confirmation links[0m
+[32m    keeps member details and event history[0m
+[32m    shows revoke for another admin but not for the acting admin[0m
   editing members
-    shows editable email and total points without role or user-link fields
-    saves valid edits and shows them on the details page
-    rejects blank_name and preserves the saved record
-    rejects blank_uin and preserves the saved record
-    rejects short_uin and preserves the saved record
-    rejects nonnumeric_uin and preserves the saved record
-    rejects duplicate_uin and preserves the saved record
-    rejects blank_class_year and preserves the saved record
-    rejects early_class_year and preserves the saved record
-    rejects late_class_year and preserves the saved record
-    rejects nonnumeric_class_year and preserves the saved record
-    rejects blank_email and preserves the saved record
-    rejects non_tamu_email and preserves the saved record
-    rejects malformed_email and preserves the saved record
-    rejects duplicate_email and preserves the saved record
-    rejects blank_points and preserves the saved record
-    rejects negative_points and preserves the saved record
-    rejects invalid_points and preserves the saved record
-    preserves attempted valid fields when another field is invalid
-    ignores forged role, archive, adjustment, and account-link parameters
+[32m    shows editable email and total points without role or user-link fields[0m
+[32m    saves valid edits and shows them on the details page[0m
+[32m    rejects blank_name and preserves the saved record[0m
+[32m    rejects blank_uin and preserves the saved record[0m
+[32m    rejects short_uin and preserves the saved record[0m
+[32m    rejects nonnumeric_uin and preserves the saved record[0m
+[32m    rejects duplicate_uin and preserves the saved record[0m
+[32m    rejects blank_class_year and preserves the saved record[0m
+[32m    rejects early_class_year and preserves the saved record[0m
+[32m    rejects late_class_year and preserves the saved record[0m
+[32m    rejects nonnumeric_class_year and preserves the saved record[0m
+[32m    rejects blank_email and preserves the saved record[0m
+[32m    rejects non_tamu_email and preserves the saved record[0m
+[32m    rejects malformed_email and preserves the saved record[0m
+[32m    rejects duplicate_email and preserves the saved record[0m
+[32m    rejects blank_points and preserves the saved record[0m
+[32m    rejects negative_points and preserves the saved record[0m
+[32m    rejects invalid_points and preserves the saved record[0m
+[32m    preserves attempted valid fields when another field is invalid[0m
+[32m    ignores forged role, archive, adjustment, and account-link parameters[0m
   administrator roles
-    promotes a regular member
-    revokes another administrator without deleting their account or history
-    allows the revoked admin to use member pages but denies admin pages
-    rejects self-revocation even when another administrator exists
-    rejects revoking the last administrator
-    handles repeated revocation without creating or deleting records
-    can promote and revoke a newly seeded member with an incomplete profile
+[32m    promotes a regular member[0m
+[32m    revokes another administrator without deleting their account or history[0m
+[32m    allows the revoked admin to use member pages but denies admin pages[0m
+[32m    rejects self-revocation even when another administrator exists[0m
+[32m    rejects revoking the last administrator[0m
+[32m    handles repeated revocation without creating or deleting records[0m
+[32m    can promote and revoke a newly seeded member with an incomplete profile[0m
   member archival
-    only displays confirmation on GET and does not archive anything
-    requires explicit confirmation even for a directly submitted DELETE request
-    archives a member and retains their profile and application login
-    removes an archived member from the active roster and preserves admin access to their history
-    rejects access for an archived login account
-    blocks self-archival even when another administrator exists
-    blocks archival of the last administrator
-    archives another administrator and clears their admin role
-    retains attendance and adjusted points while archiving a member with history
-    retains attendance added after opening the confirmation page
-    retains submitted appeals
-    retains reviewed appeals and their submitting member
-    does not alter an archived record on repeated requests
+[32m    only displays confirmation on GET and does not archive anything[0m
+[32m    requires explicit confirmation even for a directly submitted DELETE request[0m
+[32m    archives a member and retains their profile and application login[0m
+[32m    removes an archived member from the active roster and preserves admin access to their history[0m
+[32m    rejects access for an archived login account[0m
+[32m    blocks self-archival even when another administrator exists[0m
+[32m    blocks archival of the last administrator[0m
+[32m    archives another administrator and clears their admin role[0m
+[32m    retains attendance and adjusted points while archiving a member with history[0m
+[32m    retains attendance added after opening the confirmation page[0m
+[32m    retains submitted appeals[0m
+[32m    retains reviewed appeals and their submitting member[0m
+[32m    does not alter an archived record on repeated requests[0m
   email and point corrections
-    saves the member email and points without changing Google identity or attendance
-    continues adding attendance points after a total correction
-    does not save an email or point correction when profile validation fails
+[32m    saves the member email and points without changing Google identity or attendance[0m
+[32m    continues adding attendance points after a total correction[0m
+[32m    does not save an email or point correction when profile validation fails[0m
   authorization for every member-management endpoint
-    denies ordinary members on GET admin_path
-    denies signed-out visitors on GET admin_path
-    denies ordinary members on GET admin_member_path
-    denies signed-out visitors on GET admin_member_path
-    denies ordinary members on GET edit_admin_member_path
-    denies signed-out visitors on GET edit_admin_member_path
-    denies ordinary members on GET delete_admin_member_path
-    denies signed-out visitors on GET delete_admin_member_path
-    denies ordinary members on PATCH admin_member_path
-    denies signed-out visitors on PATCH admin_member_path
-    denies ordinary members on PATCH promote_admin_member_path
-    denies signed-out visitors on PATCH promote_admin_member_path
-    denies ordinary members on PATCH revoke_admin_member_path
-    denies signed-out visitors on PATCH revoke_admin_member_path
-    denies ordinary members on DELETE admin_member_path
-    denies signed-out visitors on DELETE admin_member_path
-    prevents a member from granting themselves admin access by direct request
+[32m    denies ordinary members on GET admin_path[0m
+[32m    denies signed-out visitors on GET admin_path[0m
+[32m    denies ordinary members on GET admin_member_path[0m
+[32m    denies signed-out visitors on GET admin_member_path[0m
+[32m    denies ordinary members on GET edit_admin_member_path[0m
+[32m    denies signed-out visitors on GET edit_admin_member_path[0m
+[32m    denies ordinary members on GET delete_admin_member_path[0m
+[32m    denies signed-out visitors on GET delete_admin_member_path[0m
+[32m    denies ordinary members on PATCH admin_member_path[0m
+[32m    denies signed-out visitors on PATCH admin_member_path[0m
+[32m    denies ordinary members on PATCH promote_admin_member_path[0m
+[32m    denies signed-out visitors on PATCH promote_admin_member_path[0m
+[32m    denies ordinary members on PATCH revoke_admin_member_path[0m
+[32m    denies signed-out visitors on PATCH revoke_admin_member_path[0m
+[32m    denies ordinary members on DELETE admin_member_path[0m
+[32m    denies signed-out visitors on DELETE admin_member_path[0m
+[32m    prevents a member from granting themselves admin access by direct request[0m
 
 Admins
   GET /index
-    returns http success
+[32m    returns http success[0m
 
 Home page category progress
   with a current semester
-    shows earned / required points for each category
-    no longer shows the total points number
-    shows the Satisfied indicator only on satisfied categories
-    shows earned points with a No requirement label when no requirement is set
+[32m    shows earned / required points for each category[0m
+[32m    no longer shows the total points number[0m
+[32m    shows the Satisfied indicator only on satisfied categories[0m
+[32m    shows earned points with a No requirement label when no requirement is set[0m
   when a semester exists but no categories do
-    shows an empty-state message
+[32m    shows an empty-state message[0m
   without any semester
-    shows a No active semester message instead of the progress list
+[32m    shows a No active semester message instead of the progress list[0m
   when not signed in
-    shows the sign-in page without category progress
+[32m    shows the sign-in page without category progress[0m
 
 Member identity and archival
-  keeps the same account and edited profile email across Google sign-ins
-  finds a Google account by UID when its Google email changes
-  does not let a different Google identity take over an existing login by email
-  links an unclaimed seeded login on its first sign-in
-  does not link someone else to a member through an edited roster email
-  invalidates an existing session after archival
-  blocks re-registration using the archived Google account
-  still blocks an archived Google UID with a different email
-  blocks an archived seeded account before its first Google sign-in
-  does not count archived members as signed in on the public home page
-  prevents members from viewing or changing another member through the ordinary profile route
-  prevents a member from forging their own email, points, role, or archive state
+[32m  keeps the same account and edited profile email across Google sign-ins[0m
+[32m  finds a Google account by UID when its Google email changes[0m
+[32m  does not let a different Google identity take over an existing login by email[0m
+[32m  links an unclaimed seeded login on its first sign-in[0m
+[32m  does not link someone else to a member through an edited roster email[0m
+[32m  invalidates an existing session after archival[0m
+[32m  blocks re-registration using the archived Google account[0m
+[32m  still blocks an archived Google UID with a different email[0m
+[32m  blocks an archived seeded account before its first Google sign-in[0m
+[32m  does not count archived members as signed in on the public home page[0m
+[32m  prevents members from viewing or changing another member through the ordinary profile route[0m
+[32m  prevents a member from forging their own email, points, role, or archive state[0m
 
 Members
   GET /show
-    returns http success
+[32m    returns http success[0m
   GET /edit
-    returns http success
+[32m    returns http success[0m
 
 Sessions / OAuth
   GET /auth/google_oauth2/callback
     with valid TAMU Google account
-      logs in user and redirects appropriately
+[32m      logs in user and redirects appropriately[0m
     with non-TAMU email account
-      denies login and redirects with an error flash
+[32m      denies login and redirects with an error flash[0m
   DELETE /logout or GET /logout
-    clears session on logout
+[32m    clears session on logout[0m
 
 Support page
   GET /support
-    is reachable without signing in
-    covers each main task in the app
-    loads for a signed-in member without the sign-in link
+[32m    is reachable without signing in[0m
+[32m    covers each main task in the app[0m
+[32m    loads for a signed-in member without the sign-in link[0m
   Help links
-    shows a Help link in the navbar for signed-in members that opens the support page
-    shows a "Need help?" link on the sign-in page
+[32m    shows a Help link in the navbar for signed-in members that opens the support page[0m
+[32m    shows a "Need help?" link on the sign-in page[0m
 
 Archived seed administrators
-Seeded administrator: ruth_jasadiredja@tamu.edu
-Seeded administrator: loganjaure@tamu.edu
-Seeded: BSC Test Event on Tuesday 10/13/2026 at 11:00 AM CDT
-Skipped archived administrator: ruth_jasadiredja@tamu.edu
-Seeded administrator: loganjaure@tamu.edu
-Seeded: BSC Test Event on Tuesday 10/13/2026 at 11:00 AM CDT
-  does not recreate or reactivate an archived administrator whose roster email was edited
+[32m  does not recreate or reactivate an archived administrator whose roster email was edited[0m
 
 Admin::MemberManagement
   authorization after acquiring locks
-    rechecks the stored admin role for promote!, rather than trusting a stale actor
-    rechecks the stored admin role for revoke!, rather than trusting a stale actor
-    rechecks the stored admin role for archive!, rather than trusting a stale actor
-    rechecks authorization for profile edits too
-    rejects a missing actor
+[32m    rechecks the stored admin role for promote!, rather than trusting a stale actor[0m
+[32m    rechecks the stored admin role for revoke!, rather than trusting a stale actor[0m
+[32m    rechecks the stored admin role for archive!, rather than trusting a stale actor[0m
+[32m    rechecks authorization for profile edits too[0m
+[32m    rejects a missing actor[0m
   profile updates
-    only accepts editable profile fields even when called without a controller
-    keeps normal profile validation on edits
+[32m    only accepts editable profile fields even when called without a controller[0m
+[32m    keeps normal profile validation on edits[0m
   role changes
-    does not save unrelated dirty attributes during a role change
-    still runs unconditional validations in the role-change context
-    does not modify an already-admin member when promotion is repeated
+[32m    does not save unrelated dirty attributes during a role change[0m
+[32m    still runs unconditional validations in the role-change context[0m
+[32m    does not modify an already-admin member when promotion is repeated[0m
   archival safeguards
-    retains the login and records which administrator archived the member
-    refuses archival when one login is linked to multiple member records
-    archives an incomplete seeded profile without requiring profile fields
-    rejects a stale archived actor even if their stored role is still admin
-    refuses promote! for an archived member
-    refuses revoke! for an archived member
-    refuses archive! for an archived member
-    does not count an archived account as an active administrator
+[32m    retains the login and records which administrator archived the member[0m
+[32m    refuses archival when one login is linked to multiple member records[0m
+[32m    archives an incomplete seeded profile without requiring profile fields[0m
+[32m    rejects a stale archived actor even if their stored role is still admin[0m
+[32m    refuses promote! for an archived member[0m
+[32m    refuses revoke! for an archived member[0m
+[32m    refuses archive! for an archived member[0m
+[32m    does not count an archived account as an active administrator[0m
 
 Member Registration Flow
-  allows a user to sign in with Google and complete their profile
+[32m  allows a user to sign in with Google and complete their profile[0m
 
-admin/index.html.erb
-  add some examples to (or delete) /BSC-500/spec/views/admin/index.html.erb_spec.rb (PENDING: Not yet implemented)
-
-members/edit.html.erb
-  add some examples to (or delete) /BSC-500/spec/views/members/edit.html.erb_spec.rb (PENDING: Not yet implemented)
-
-members/show.html.erb
-  add some examples to (or delete) /BSC-500/spec/views/members/show.html.erb_spec.rb (PENDING: Not yet implemented)
-
-members/update.html.erb
-  add some examples to (or delete) /BSC-500/spec/views/members/update.html.erb_spec.rb (PENDING: Not yet implemented)
-
-Pending: (Failures listed here are expected and do not affect your suite's status)
-
-  1) AdminHelper add some examples to (or delete) /BSC-500/spec/helpers/admin_helper_spec.rb
-     # Not yet implemented
-     # ./spec/helpers/admin_helper_spec.rb:14
-
-  2) MembersHelper add some examples to (or delete) /BSC-500/spec/helpers/members_helper_spec.rb
-     # Not yet implemented
-     # ./spec/helpers/members_helper_spec.rb:14
-
-  3) admin/index.html.erb add some examples to (or delete) /BSC-500/spec/views/admin/index.html.erb_spec.rb
-     # Not yet implemented
-     # ./spec/views/admin/index.html.erb_spec.rb:4
-
-  4) members/edit.html.erb add some examples to (or delete) /BSC-500/spec/views/members/edit.html.erb_spec.rb
-     # Not yet implemented
-     # ./spec/views/members/edit.html.erb_spec.rb:4
-
-  5) members/show.html.erb add some examples to (or delete) /BSC-500/spec/views/members/show.html.erb_spec.rb
-     # Not yet implemented
-     # ./spec/views/members/show.html.erb_spec.rb:4
-
-  6) members/update.html.erb add some examples to (or delete) /BSC-500/spec/views/members/update.html.erb_spec.rb
-     # Not yet implemented
-     # ./spec/views/members/update.html.erb_spec.rb:4
-
-Finished in 20.65 seconds (files took 4.38 seconds to load)
-210 examples, 0 failures, 6 pending
+Finished in 1 minute 22.9 seconds (files took 8.97 seconds to load)
+[32m290 examples, 0 failures[0m
 
