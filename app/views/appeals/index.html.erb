@@ -24,16 +24,36 @@
     <%# AC-11.01 & AC-11.02: Submission Form %>
     <%= form_with(model: @appeal, local: true) do |f| %>
       <div style="margin-bottom: 1rem;">
-        <%= f.label :event_id, "Select Missed Event", style: "display: block; font-weight: bold; margin-bottom: 0.25rem;" %>
-        <%= f.collection_select :event_id, @passed_events, :id, :event_name,
-            { prompt: "-- Select a passed event --" },
+        <%= f.label :event_id, "Select Event", style: "display: block; font-weight: bold; margin-bottom: 0.25rem;" %>
+        <%= f.select :event_id,
+            grouped_options_for_select([
+              ["Past Events", @past_event_options],
+              ["Upcoming Events", @upcoming_event_options]
+            ], @appeal.event_id),
+            { prompt: "-- Select an event --" },
             { class: "bsc-input" } %>
       </div>
 
       <div style="margin-bottom: 1rem;">
         <%= f.label :reason, "Reason for Appeal", style: "display: block; font-weight: bold; margin-bottom: 0.25rem;" %>
-        <%= f.text_area :reason, rows: 4, placeholder: "Explain why you missed this event or event check-in...", class: "bsc-input" %>
+        <%= f.text_area :reason, rows: 4, placeholder: "Explain why you are appealing this event or its attendance record...", class: "bsc-input" %>
       </div>
+
+      <div style="margin-bottom: 1rem;">
+        <%= f.label :proof, "Upload Proof of Absence (optional)", style: "display: block; font-weight: bold; margin-bottom: 0.25rem;" %>
+        <%= f.file_field :proof, accept: "application/pdf,image/jpeg,image/png", class: "bsc-input" %>
+        <p>Attach a PDF, JPG, or PNG smaller than 10 MB if you have supporting documentation.</p>
+      </div>
+
+      <aside class="bsc-panel" aria-labelledby="avoid-absence-heading">
+        <h3 id="avoid-absence-heading">Steps to Avoid Future Absences</h3>
+        <ul>
+          <li>Review the event schedule and add upcoming events to your calendar.</li>
+          <li>Set a reminder before each event and plan transportation or other arrangements ahead of time.</li>
+          <li>Check in during the event and confirm that your attendance was recorded.</li>
+          <li>If you cannot attend, contact an officer as early as possible.</li>
+        </ul>
+      </aside>
 
       <div>
         <%= f.submit "Submit Appeal", class: "bsc-btn" %>

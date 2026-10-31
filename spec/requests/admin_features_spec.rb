@@ -135,6 +135,35 @@ RSpec.describe 'Admin features', type: :request do
     end
   end
 
+  describe 'semester creation' do
+    it 'creates a semester and returns to semester requirements' do
+      expect do
+        post admin_semesters_path, params: { semester: { term_name: 'Spring 2026' } }
+      end.to change(Semester, :count).by(1)
+
+      expect(response).to redirect_to(admin_semester_requirements_path)
+      expect(flash[:notice]).to eq('Semester created successfully.')
+    end
+
+    it 'does not create a semester with a blank name' do
+      expect do
+        post admin_semesters_path, params: { semester: { term_name: ' ' } }
+      end.not_to change(Semester, :count)
+
+      expect(response).to redirect_to(admin_semester_requirements_path)
+      expect(flash[:alert]).to include("can't be blank")
+    end
+
+    it 'does not create a semester with a duplicate name' do
+      expect do
+        post admin_semesters_path, params: { semester: { term_name: semester.term_name } }
+      end.not_to change(Semester, :count)
+
+      expect(response).to redirect_to(admin_semester_requirements_path)
+      expect(flash[:alert]).to include('has already been taken')
+    end
+  end
+
   describe 'event creation' do
     let(:valid_event_params) do
       {
