@@ -29,7 +29,10 @@ RSpec.describe 'Support page', type: :request do
       get support_path
 
       [ 'Signing in', '@tamu.edu', 'Checking in to an event', 'Viewing your points',
-        'Category requirements', 'Satisfied', 'Appeals', 'For admins' ].each do |text|
+        'Category requirements', 'Satisfied', 'Appeals', 'upcoming event lists',
+        'supporting proof of absence', 'For admins', 'Pending Attendance Appeals',
+        'Download proof of absence', 'Export Member Points', 'Manage Categories',
+        'Manage Semesters', 'check-in code', 'BSC officer' ].each do |text|
         expect(response.body).to include(text)
       end
     end
