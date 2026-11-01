@@ -1,16 +1,31 @@
 # BSC-500 Attendance Application
 
-A concise description of the project, its core functionality, and its purpose.
+This is an attendance tracker for the Business Student Council's members and officers.
 
 ## Table of Contents
 
-* [Getting Started](#getting-started)
+- [Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
   * [Installation](#installation)
-* [Running Tests Locally](#running-tests-locally)
-* [CI/CD Pipeline & Deployment](#cicd-pipeline--deployment)
-* [Configuration Items List](#configuration-items-list)
-* [OAuth & Environment Configuration Notice](#oauth--environment-configuration-notice)
+- [Running Tests Locally](#running-tests-locally)
+- [CI/CD Pipeline & Deployment](#cicd-pipeline--deployment)
+- [Configuration Items List](#configuration-items-list)
+- [OAuth & Environment Configuration Notice](#oauth--environment-configuration-notice)
+- [Member Quick Start & Check-in Guide](#member-quick-start--check-in-guide)
+  * [Sign in and complete your profile](#sign-in-and-complete-your-profile)
+  * [Find events and check in](#find-events-and-check-in)
+  * [View your points and category progress](#view-your-points-and-category-progress)
+  * [Update your profile or submit an appeal](#update-your-profile-or-submit-an-appeal)
+- [Admin Role Management & Dashboard Guide](#admin-role-management--dashboard-guide)
+  * [Open the admin area](#open-the-admin-area)
+  * [Review members and manage roles](#review-members-and-manage-roles)
+  * [Archive a member](#archive-a-member)
+  * [Review attendance appeals](#review-attendance-appeals)
+  * [Export member points](#export-member-points)
+  * [Manage events, categories, semesters, and requirements](#manage-events-categories-semesters-and-requirements)
+- [Final Known Issues and Next Steps](#final-known-issues-and-next-steps)
+  * [Known behavior and limitations](#known-behavior-and-limitations)
+  * [Recommended next steps](#recommended-next-steps)
 
 ---
 
@@ -29,8 +44,8 @@ Make sure you have the following installed on your local machine:
 
 1. **Clone the repository:**
    ```bash
-   git clone https://github.com/your-username/your-repo-name.git
-   cd your-repo-name
+   git clone https://github.com/your-username/BSC-500.git
+   cd BSC-500
    ```
 
 2. **Install dependencies:**
@@ -91,6 +106,13 @@ On every push or pull request to the main branch, GitHub Actions automatically r
 | **Dependencies** | Locked Gem versions (`pg`), multi-stage Docker build (`ruby:3.4.6-slim`) | `Gemfile.lock` and `Dockerfile` |
 | **Database and deployment environment** | PostgreSQL (`bsc_500_development` locally, Heroku Postgres via `DATABASE_URL` in production) | `config/database.yml` and Heroku Add-ons dashboard |
 | **Supporting instructions** | OAuth configurations, owner details (Qayyum Alli), and deployment guidance | `README.md` and Heroku Config Vars (`OAUTH_CLIENT_ID`, `OAUTH_CLIENT_SECRET`) |
+
+---
+
+## OAuth & Environment Configuration Notice
+- **OAuth Owner:** Qayyum Alli
+- **Production Deployment:** Deployed on Heroku with production database connections handled automatically via `DATABASE_URL`. OAuth credentials (Client ID and Secret) are stored securely in Heroku Config Vars.
+- **Local & Docker Setup:** Uses PostgreSQL adapter (`pg` gem). Secrets are injected dynamically via environment variables in accordance with 12-factor app practices and are never hardcoded.
 
 ---
 
@@ -174,22 +196,11 @@ Administrators can also manage categories, create semesters, and set category re
 
 ### Known behavior and limitations
 
-- The member home page currently displays an **Appeals** panel saying submissions are not available, but the **Appeals** navigation page does provide a working submission form and appeal history. This is an inconsistent message in the interface.
-- The most recently created semester is treated as the current semester. Creating semesters out of order can therefore change which semester’s category progress members see.
 - Administrator point adjustments change a member’s total points but do not change attendance-based category progress.
 - Check-in is available only from 15 minutes before until 3 hours after an event’s scheduled start.
 - Only Google accounts with an `@tamu.edu` email address can sign in. A member whose access has been archived cannot sign in, even though their records are retained.
-- The README’s setup instructions still contain generic repository clone placeholders and deployment/commit details that should be checked against the current project before relying on them.
 
 ### Recommended next steps
 
-- Update the member home page’s Appeals message so it matches the functioning Appeals page.
-- Confirm the intended semester-creation process with administrators and document it for each new term.
 - Verify Google OAuth settings and deployment details in the environment where the application will be used.
 - Test the main workflows before a new term: TAMU sign-in and profile completion, event check-in and optional codes, role changes and archive safeguards, points exports, and appeal approval and denial.
-- Review the setup and deployment sections of the README and replace placeholders or outdated details with verified project information.
-
-### OAuth & Environment Configuration Notice
-- **OAuth Owner:** Qayyum Alli
-- **Production Deployment:** Deployed on Heroku with production database connections handled automatically via `DATABASE_URL`. OAuth credentials (Client ID and Secret) are stored securely in Heroku Config Vars.
-- **Local & Docker Setup:** Uses PostgreSQL adapter (`pg` gem). Secrets are injected dynamically via environment variables in accordance with 12-factor app practices and are never hardcoded.
