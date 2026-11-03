@@ -101,7 +101,7 @@ On every push or pull request to the main branch, GitHub Actions automatically r
 
 | Item | What to Record | Evidence Location |
 | :--- | :--- | :--- |
-| **Deployed code** | Git Commit `7283aca` (GitHub) / `7283acad` (Heroku Release) | GitHub repository commit history / Heroku deployment pipeline |
+| **Deployed code** | Git Commit `16f2a89` (GitHub) / `16f2a891` (Heroku Release) | GitHub repository commit history / Heroku deployment pipeline |
 | **Runtime/framework** | Ruby 3.4.6 with Rails 8.0 | `Dockerfile` (`ARG RUBY_VERSION=3.4.6`), `.ruby-version`, and `Gemfile` |
 | **Dependencies** | Locked Gem versions (`pg`), multi-stage Docker build (`ruby:3.4.6-slim`) | `Gemfile.lock` and `Dockerfile` |
 | **Database and deployment environment** | PostgreSQL (`bsc_500_development` locally, Heroku Postgres via `DATABASE_URL` in production) | `config/database.yml` and Heroku Add-ons dashboard |
