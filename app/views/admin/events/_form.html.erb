@@ -65,6 +65,42 @@
       </div>
     </div>
 
+
+    <hr class="my-4">
+
+    <h4>Check-in Time Settings</h4>
+    <p class="text-muted">
+      Customize when members are allowed to check in for this event.
+      The defaults are 15 minutes before and 60 minutes after the event starts.
+    </p>
+
+    <div class="row">
+      <div class="col-md-6 mb-3">
+        <%= f.label :check_in_opens_minutes_before,
+            "Open Check-in (Minutes Before Event)", class: "form-label" %>
+
+        <%= f.number_field :check_in_opens_minutes_before,
+            min: 0, step: 1, class: "form-control", required: true %>
+
+        <div class="form-text">
+          Example: 15 means check-in opens 15 minutes before the event.
+        </div>
+      </div>
+
+      <div class="col-md-6 mb-3">
+        <%= f.label :check_in_closes_minutes_after,
+            "Close Check-in (Minutes After Event)", class: "form-label" %>
+
+        <%= f.number_field :check_in_closes_minutes_after,
+            min: 0, step: 1, class: "form-control", required: true %>
+
+        <div class="form-text">
+          Example: 60 means check-in closes 1 hour after the event starts.
+        </div>
+      </div>
+    </div>
+
+
     <%= f.submit class: "btn btn-primary" %>
     <%= link_to "Cancel", admin_events_path,
         class: "btn btn-secondary ms-2" %>

@@ -8,9 +8,9 @@
       "RSpec"
     ],
     "project_name": "Bsc-500",
-    "timestamp": "2026-10-30T09:18:16.579-05:00",
+    "timestamp": "2026-11-12T23:55:57.372-06:00",
     "root": "/mnt/c/Users/kaika/csce431/bsc500/BSC-500",
-    "commit": "0615dc29cb805582910c46ead3777bc77e6800ec",
+    "commit": "0176f8d15326ed4449e6e8fca4098bd17cad2b97",
     "primary_coverage": "line",
     "line_coverage": true,
     "branch_coverage": false,
@@ -18,12 +18,12 @@
   },
   "total": {
     "lines": {
-      "covered": 68,
-      "missed": 504,
-      "omitted": 579,
-      "total": 572,
-      "percent": 11.888111888111888,
-      "strength": 0.15734265734265734
+      "covered": 91,
+      "missed": 495,
+      "omitted": 602,
+      "total": 586,
+      "percent": 15.52901023890785,
+      "strength": 0.22866894197952217
     }
   },
   "coverage": {
@@ -116,7 +116,7 @@
         "    @category = Category.new(category_params)",
         "",
         "    if @category.save",
-        "      redirect_to admin_events_path, notice: 'Category created successfully.'",
+        "      redirect_to admin_events_path(anchor: 'categories'), notice: 'Category created successfully.'",
         "    else",
         "      render :new, status: :unprocessable_entity",
         "    end",
@@ -258,7 +258,11 @@
         "",
         "",
         "  def new",
-        "    @event = Event.new(point_value: 1)",
+        "    @event = Event.new(",
+        "      point_value: 1,",
+        "      check_in_opens_minutes_before: 15,",
+        "      check_in_closes_minutes_after: 60",
+        "    )",
         "  end",
         "",
         "  def create",
@@ -301,7 +305,9 @@
         "      :semester_id,",
         "      :description,",
         "      :point_value,",
-        "      :check_in_code",
+        "      :check_in_code,",
+        "      :check_in_opens_minutes_before,",
+        "      :check_in_closes_minutes_after",
         "    )",
         "  end",
         "",
@@ -339,20 +345,13 @@
         0,
         null,
         null,
-        0,
-        0,
+        null,
+        null,
+        null,
         null,
         0,
         0,
         null,
-        0,
-        null,
-        null,
-        null,
-        0,
-        null,
-        null,
-        0,
         0,
         0,
         null,
@@ -362,6 +361,17 @@
         null,
         0,
         null,
+        null,
+        0,
+        0,
+        0,
+        null,
+        0,
+        null,
+        null,
+        null,
+        0,
+        null,
         0,
         0,
         null,
@@ -373,6 +383,8 @@
         null,
         0,
         0,
+        null,
+        null,
         null,
         null,
         null,
@@ -391,7 +403,7 @@
       "lines_covered_percent": 0.0,
       "covered_lines": 0,
       "missed_lines": 34,
-      "omitted_lines": 42,
+      "omitted_lines": 48,
       "total_lines": 34
     },
     "app/controllers/admin/semester_requirements_controller.rb": {
@@ -476,6 +488,67 @@
       "missed_lines": 19,
       "omitted_lines": 17,
       "total_lines": 19
+    },
+    "app/controllers/admin/semesters_controller.rb": {
+      "source": [
+        "class Admin::SemestersController < ApplicationController",
+        "  before_action :require_admin",
+        "",
+        "  def create",
+        "    @semester = Semester.new(semester_params)",
+        "",
+        "    if @semester.save",
+        "      redirect_to admin_events_path,",
+        "                  notice: 'Semester created successfully.'",
+        "    else",
+        "      redirect_to admin_events_path,",
+        "                  alert: @semester.errors.full_messages.to_sentence",
+        "    end",
+        "  end",
+        "",
+        "  private",
+        "",
+        "  def semester_params",
+        "    params.require(:semester).permit(:term_name)",
+        "  end",
+        "",
+        "  def require_admin",
+        "    redirect_to root_path, alert: 'Access denied.' unless current_member&.is_admin?",
+        "  end",
+        "end"
+      ],
+      "lines": [
+        0,
+        0,
+        null,
+        0,
+        0,
+        null,
+        0,
+        0,
+        null,
+        null,
+        0,
+        null,
+        null,
+        null,
+        null,
+        0,
+        null,
+        0,
+        0,
+        null,
+        null,
+        0,
+        0,
+        null,
+        null
+      ],
+      "lines_covered_percent": 0.0,
+      "covered_lines": 0,
+      "missed_lines": 12,
+      "omitted_lines": 13,
+      "total_lines": 12
     },
     "app/controllers/admin_controller.rb": {
       "source": [
@@ -1527,31 +1600,31 @@
         null,
         1,
         1,
-        10,
-        1,
-        null,
-        1,
-        1,
         1,
         1,
         null,
         1,
-        null,
         1,
-        2,
-        null,
-        null,
+        1,
         1,
         null,
         1,
-        7,
-        7,
+        null,
+        1,
+        0,
+        null,
+        null,
+        1,
+        null,
+        1,
+        0,
+        0,
         null,
         null
       ],
-      "lines_covered_percent": 100.0,
-      "covered_lines": 19,
-      "missed_lines": 0,
+      "lines_covered_percent": 84.21052631578948,
+      "covered_lines": 16,
+      "missed_lines": 3,
       "omitted_lines": 12,
       "total_lines": 19
     },
@@ -1604,18 +1677,18 @@
       "lines": [
         null,
         null,
-        0,
-        0,
-        0,
+        1,
+        1,
+        1,
         null,
-        0,
-        0,
+        1,
+        1,
         null,
-        0,
+        1,
         null,
-        0,
+        1,
         null,
-        0,
+        1,
         null,
         0,
         0,
@@ -1625,9 +1698,9 @@
         null,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 12,
+      "lines_covered_percent": 66.66666666666667,
+      "covered_lines": 8,
+      "missed_lines": 4,
       "omitted_lines": 10,
       "total_lines": 12
     },
@@ -1647,16 +1720,16 @@
         null,
         null,
         null,
-        0,
-        0,
-        0,
+        1,
+        1,
+        1,
         null,
-        0,
+        1,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 4,
+      "lines_covered_percent": 100.0,
+      "covered_lines": 4,
+      "missed_lines": 0,
       "omitted_lines": 5,
       "total_lines": 4
     },
@@ -1783,8 +1856,14 @@
         "  # AC-04.1 / AC-05.6: an event is \"active\" (check-in allowed) once it has started",
         "  def active?",
         "    return false if event_date_time.blank?",
-        "    Time.current.between?(event_date_time - 15.minutes, event_date_time + 3.hours)",
+        "",
+        "    check_in_opens_at = event_date_time - check_in_opens_minutes_before.minutes",
+        "",
+        "    check_in_closes_at = event_date_time + check_in_closes_minutes_after.minutes",
+        "",
+        "    Time.current.between?(check_in_opens_at, check_in_closes_at)",
         "  end",
+        "",
         "",
         "  # Optional event-specific check-in code",
         "  def valid_check_in_code?(submitted_code)",
@@ -1817,27 +1896,33 @@
         null,
         null,
         1,
-        0,
-        0,
+        9,
+        null,
+        9,
+        null,
+        9,
+        null,
+        9,
+        null,
         null,
         null,
         null,
         1,
-        0,
-        0,
+        6,
+        4,
         null,
-        0,
-        0,
+        2,
+        2,
         null,
-        0,
+        2,
         null,
         null
       ],
-      "lines_covered_percent": 66.66666666666667,
-      "covered_lines": 14,
-      "missed_lines": 7,
-      "omitted_lines": 12,
-      "total_lines": 21
+      "lines_covered_percent": 100.0,
+      "covered_lines": 23,
+      "missed_lines": 0,
+      "omitted_lines": 16,
+      "total_lines": 23
     },
     "app/models/member.rb": {
       "source": [
@@ -2219,20 +2304,20 @@
       "lines": [
         null,
         null,
-        0,
-        0,
-        0,
+        1,
+        1,
+        1,
         null,
-        0,
+        1,
         null,
-        0,
+        1,
         0,
         null,
         null
       ],
-      "lines_covered_percent": 0.0,
-      "covered_lines": 0,
-      "missed_lines": 6,
+      "lines_covered_percent": 83.33333333333333,
+      "covered_lines": 5,
+      "missed_lines": 1,
       "omitted_lines": 6,
       "total_lines": 6
     },
@@ -2697,9 +2782,9 @@
     "Controllers": {
       "lines": {
         "covered": 0,
-        "missed": 281,
-        "omitted": 297,
-        "total": 281,
+        "missed": 293,
+        "omitted": 316,
+        "total": 293,
         "percent": 0.0,
         "strength": 0.0
       },
@@ -2708,6 +2793,7 @@
         "app/controllers/admin/categories_controller.rb",
         "app/controllers/admin/events_controller.rb",
         "app/controllers/admin/semester_requirements_controller.rb",
+        "app/controllers/admin/semesters_controller.rb",
         "app/controllers/admin_controller.rb",
         "app/controllers/appeals_controller.rb",
         "app/controllers/application_controller.rb",
@@ -2732,12 +2818,12 @@
     },
     "Models": {
       "lines": {
-        "covered": 60,
-        "missed": 138,
-        "omitted": 182,
-        "total": 198,
-        "percent": 30.303030303030305,
-        "strength": 0.41414141414141414
+        "covered": 83,
+        "missed": 117,
+        "omitted": 186,
+        "total": 200,
+        "percent": 41.5,
+        "strength": 0.63
       },
       "files": [
         "app/models/appeal.rb",
@@ -5479,11 +5565,11 @@
       }
     },
     {
-      "created_at": "2026-10-30T14:18:16Z",
+      "created_at": "2026-11-13T05:55:57Z",
       "branch": "event_refine",
-      "commit": "0615dc29cb805582910c46ead3777bc77e6800ec",
+      "commit": "0176f8d15326ed4449e6e8fca4098bd17cad2b97",
       "totals": {
-        "line": 11.88
+        "line": 15.52
       },
       "groups": {
         "Controllers": {
@@ -5493,7 +5579,7 @@
           "line": 100.0
         },
         "Models": {
-          "line": 30.3
+          "line": 41.5
         },
         "Mailers": {
           "line": 0.0
@@ -5525,6 +5611,9 @@
           "line": 0.0
         },
         "app/controllers/admin/semester_requirements_controller.rb": {
+          "line": 0.0
+        },
+        "app/controllers/admin/semesters_controller.rb": {
           "line": 0.0
         },
         "app/controllers/admin_controller.rb": {
@@ -5573,16 +5662,16 @@
           "line": 0.0
         },
         "app/models/appeal.rb": {
-          "line": 100.0
+          "line": 84.21
         },
         "app/models/application_record.rb": {
           "line": 100.0
         },
         "app/models/attendance.rb": {
-          "line": 0.0
+          "line": 66.66
         },
         "app/models/category.rb": {
-          "line": 0.0
+          "line": 100.0
         },
         "app/models/category_progress.rb": {
           "line": 0.0
@@ -5591,7 +5680,7 @@
           "line": 0.0
         },
         "app/models/event.rb": {
-          "line": 66.66
+          "line": 100.0
         },
         "app/models/member.rb": {
           "line": 78.12
@@ -5600,7 +5689,7 @@
           "line": 0.0
         },
         "app/models/semester.rb": {
-          "line": 0.0
+          "line": 83.33
         },
         "app/models/semester_requirement.rb": {
           "line": 0.0

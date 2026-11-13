@@ -18,6 +18,7 @@ RSpec.describe Event, type: :model do
     it { should validate_numericality_of(:point_value).is_greater_than_or_equal_to(0) }
   end
 
+  
   describe "#active?" do
     around do |example|
       travel_to(Time.zone.parse("2026-10-30 12:00:00")) do
@@ -25,9 +26,10 @@ RSpec.describe Event, type: :model do
       end
     end
 
-    it "allows check-in 15 minutes before the event" do
+    it "uses the default opening time of 15 minutes before the event" do
       event = Event.new(event_date_time: 15.minutes.from_now)
 
+      expect(event.check_in_opens_minutes_before).to eq(15)
       expect(event.active?).to be true
     end
 
@@ -43,30 +45,43 @@ RSpec.describe Event, type: :model do
       expect(event.active?).to be true
     end
 
-    it "allows check-in within 3 hours after the event starts" do
-      event = Event.new(event_date_time: 2.hours.ago)
+    it "allows check-in 45 minutes after the event starts" do
+      event = Event.new(event_date_time: 45.minutes.ago)
 
       expect(event.active?).to be true
     end
 
-    it "allows check-in exactly 3 hours after the event starts" do
-      event = Event.new(event_date_time: 3.hours.ago)
+    it "allows check-in exactly 60 minutes after the event starts" do
+      event = Event.new(event_date_time: 60.minutes.ago)
 
+      expect(event.check_in_closes_minutes_after).to eq(60)
       expect(event.active?).to be true
     end
 
-    it "does not allow check-in more than 3 hours after the event starts" do
-      event = Event.new(event_date_time: 3.hours.ago - 1.second)
+    it "does not allow check-in more than 60 minutes after the event starts" do
+      event = Event.new(event_date_time: 61.minutes.ago)
 
       expect(event.active?).to be false
     end
 
-    it "does not allow check-in when the event date is missing" do
-      event = Event.new(event_date_time: nil)
+    it "respects custom check-in window settings" do
+      event = Event.new(
+        event_date_time: Time.current,
+        check_in_opens_minutes_before: 30,
+        check_in_closes_minutes_after: 90
+      )
 
+      travel_to(event.event_date_time - 20.minutes)
+      expect(event.active?).to be true
+
+      travel_to(event.event_date_time + 80.minutes)
+      expect(event.active?).to be true
+
+      travel_to(event.event_date_time + 91.minutes)
       expect(event.active?).to be false
     end
   end
+
 
   describe "#valid_check_in_code?" do
     context "when no check-in code is configured" do

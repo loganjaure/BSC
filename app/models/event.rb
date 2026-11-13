@@ -17,8 +17,14 @@ class Event < ApplicationRecord
   # AC-04.1 / AC-05.6: an event is "active" (check-in allowed) once it has started
   def active?
     return false if event_date_time.blank?
-    Time.current.between?(event_date_time - 15.minutes, event_date_time + 3.hours)
+
+    check_in_opens_at = event_date_time - check_in_opens_minutes_before.minutes
+
+    check_in_closes_at = event_date_time + check_in_closes_minutes_after.minutes
+
+    Time.current.between?(check_in_opens_at, check_in_closes_at)
   end
+
 
   # Optional event-specific check-in code
   def valid_check_in_code?(submitted_code)

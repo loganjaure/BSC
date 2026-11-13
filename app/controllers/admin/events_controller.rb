@@ -23,7 +23,11 @@ class Admin::EventsController < ApplicationController
 
 
   def new
-    @event = Event.new(point_value: 1)
+    @event = Event.new(
+      point_value: 1,
+      check_in_opens_minutes_before: 15,
+      check_in_closes_minutes_after: 60
+    )
   end
 
   def create
@@ -66,7 +70,9 @@ class Admin::EventsController < ApplicationController
       :semester_id,
       :description,
       :point_value,
-      :check_in_code
+      :check_in_code,
+      :check_in_opens_minutes_before,
+      :check_in_closes_minutes_after
     )
   end
 
