@@ -39,7 +39,8 @@ Rails.application.routes.draw do
   namespace :admin do
     resources :appeals, only: [ :index, :show, :update ]
     resources :categories
-    resources :semesters, only: [ :create ]
+    resources :semester_requirements, only: [ :create ]
+    resources :semesters, only: [:create]
     resources :events
     resources :semester_requirements, only: [ :index ]
     patch 'semesters/:semester_id/requirements',

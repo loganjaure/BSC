@@ -7,11 +7,11 @@ class Admin::EventsController < ApplicationController
 
   def index
     @upcoming_events = Event.includes(:category, :semester)
-                            .where("event_date_time >= ?", Time.current)
+                            .where('event_date_time >= ?', Time.current)
                             .order(event_date_time: :asc)
 
     @past_events = Event.includes(:category, :semester)
-                        .where("event_date_time < ?", Time.current)
+                        .where('event_date_time < ?', Time.current)
                         .order(event_date_time: :desc)
 
     @categories = Category.order(:category_name)

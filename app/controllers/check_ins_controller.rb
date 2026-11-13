@@ -24,7 +24,7 @@ class CheckInsController < ApplicationController
     # Validate the optional event-specific code
     unless @event.valid_check_in_code?(params[:check_in_code])
       return render json: {
-        error: "Incorrect check-in code. Please try again."
+        error: 'Incorrect check-in code. Please try again.'
       }, status: :unprocessable_entity
     end
 
