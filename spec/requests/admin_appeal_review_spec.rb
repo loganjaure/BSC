@@ -18,6 +18,10 @@ RSpec.describe 'Attendance appeal review', type: :request do
                   description: 'Attendance appeal test', category: Category.create!(category_name: 'Meeting'),
                   semester: Semester.create!(term_name: 'Fall 2026'))
   end
+  let!(:upcoming_event) do
+    Event.create!(event_name: 'Upcoming Meeting', event_date_time: 2.days.from_now, point_value: 2.5,
+                  description: 'Upcoming appeal test', category: event.category, semester: event.semester)
+  end
   let!(:appeal) do
     Appeal.create!(submitting_member: member, event: event, appeal_type: 'attendance',
                    reason: 'I attended, but the check-in failed.')
@@ -178,6 +182,56 @@ RSpec.describe 'Attendance appeal review', type: :request do
     get appeals_path
     expect(response.body).to include(appeal.reason)
     expect(response.body).not_to include(other.reason, 'Review Member Appeals')
+  end
+
+  it 'shows past and upcoming events as separate appeal choices' do
+    sign_in_as(member_user)
+    get appeals_path
+
+    expect(response).to have_http_status(:ok)
+    expect(document.at_css('optgroup[label="Past Events"]')&.text).to include(event.event_name)
+    expect(document.at_css('optgroup[label="Upcoming Events"]')&.text).to include(upcoming_event.event_name)
+    expect(response.body).to include('Steps to Avoid Future Absences', 'Upload Proof of Absence (optional)')
+  end
+
+  it 'submits an appeal for an upcoming event without requiring proof' do
+    sign_in_as(member_user)
+
+    expect do
+      post appeals_path, params: { appeal: { event_id: upcoming_event.id, reason: 'I could not attend.' } }
+    end.to change(Appeal, :count).by(1)
+
+    expect(response).to redirect_to(appeals_path)
+    expect(Appeal.order(:id).last).to have_attributes(event_id: upcoming_event.id, reason: 'I could not attend.')
+  end
+
+  it 'attaches submitted proof and makes it available to the reviewer' do
+    sign_in_as(member_user)
+
+    expect do
+      post appeals_path, params: {
+        appeal: {
+          event_id: event.id,
+          reason: 'I was unable to attend.',
+          proof: fixture_file_upload('absence-proof.pdf', 'application/pdf')
+        }
+      }
+    end.to change(Appeal, :count).by(1)
+
+    submitted_appeal = Appeal.order(:id).last
+    expect(submitted_appeal.proof).to be_attached
+
+    sign_in_as(admin_user)
+    get admin_appeal_path(submitted_appeal)
+    expect(response.body).to include('Download proof of absence')
+
+    get proof_admin_appeal_path(submitted_appeal)
+    expect(response).to have_http_status(:ok)
+    expect(response.headers['Content-Disposition']).to include('attachment')
+
+    sign_in_as(member_user)
+    get proof_admin_appeal_path(submitted_appeal)
+    expect(response).to redirect_to(root_path)
   end
 
   it 'escapes reasoning text rather than rendering submitted HTML' do

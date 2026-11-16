@@ -2,13 +2,22 @@
 
 class Admin::AppealsController < ApplicationController
   before_action :require_admin
-  before_action :set_appeal, only: %i[show update]
+  before_action :set_appeal, only: %i[show update proof]
 
   def index
     @appeals = Appeal.includes(:submitting_member, :event).order(created_at: :desc, id: :desc)
   end
 
   def show; end
+
+  def proof
+    return head :not_found unless @appeal.proof.attached?
+
+    send_data @appeal.proof.download,
+              filename: @appeal.proof.filename.to_s,
+              type: @appeal.proof.content_type,
+              disposition: 'attachment'
+  end
 
   def update
     Admin::AppealReview.new(actor: current_member, appeal: @appeal).decide!(params[:decision])

@@ -8,6 +8,9 @@
     <p><strong>Submission Date:</strong> <%= @appeal.created_at.strftime("%B %d, %Y at %I:%M %p") %></p>
     <p><strong>Reasoning:</strong></p>
     <p class="appeal-reason"><%= @appeal.reason %></p>
+    <% if @appeal.proof.attached? %>
+      <p><%= link_to "Download proof of absence", proof_admin_appeal_path(@appeal) %></p>
+    <% end %>
     <p role="status"><strong>Status:</strong> <%= @appeal.status.capitalize %></p>
     <% if @appeal.reviewed_by_member %>
       <p><strong>Reviewed By:</strong> <%= @appeal.reviewed_by_member.name %></p>
