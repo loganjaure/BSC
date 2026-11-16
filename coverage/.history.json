@@ -2785,6 +2785,147 @@
             "line": 0.0
           }
         }
+      },
+      {
+        "created_at": "2026-11-16T19:20:05Z",
+        "branch": "event_refine",
+        "commit": "83a778aac99aa56e9c198cc39ec3bb07239af10d",
+        "totals": {
+          "line": 23.36
+        },
+        "groups": {
+          "Controllers": {
+            "line": 16.22
+          },
+          "Channels": {
+            "line": 100.0
+          },
+          "Models": {
+            "line": 41.0
+          },
+          "Mailers": {
+            "line": 0.0
+          },
+          "Helpers": {
+            "line": 61.53
+          },
+          "Views": {
+            "line": 100.0
+          },
+          "Jobs": {
+            "line": 0.0
+          },
+          "Libraries": {
+            "line": 100.0
+          },
+          "Ungrouped": {
+            "line": 0.0
+          }
+        },
+        "files": {
+          "app/controllers/admin/appeals_controller.rb": {
+            "line": 0.0
+          },
+          "app/controllers/admin/categories_controller.rb": {
+            "line": 71.79
+          },
+          "app/controllers/admin/events_controller.rb": {
+            "line": 0.0
+          },
+          "app/controllers/admin/semester_requirements_controller.rb": {
+            "line": 0.0
+          },
+          "app/controllers/admin/semesters_controller.rb": {
+            "line": 0.0
+          },
+          "app/controllers/admin_controller.rb": {
+            "line": 0.0
+          },
+          "app/controllers/appeals_controller.rb": {
+            "line": 0.0
+          },
+          "app/controllers/application_controller.rb": {
+            "line": 84.0
+          },
+          "app/controllers/check_ins_controller.rb": {
+            "line": 0.0
+          },
+          "app/controllers/dashboard_controller.rb": {
+            "line": 0.0
+          },
+          "app/controllers/home_controller.rb": {
+            "line": 0.0
+          },
+          "app/controllers/members_controller.rb": {
+            "line": 0.0
+          },
+          "app/controllers/sessions_controller.rb": {
+            "line": 0.0
+          },
+          "app/controllers/support_controller.rb": {
+            "line": 0.0
+          },
+          "app/helpers/admin_helper.rb": {
+            "line": 100.0
+          },
+          "app/helpers/application_helper.rb": {
+            "line": 100.0
+          },
+          "app/helpers/events_helper.rb": {
+            "line": 50.0
+          },
+          "app/helpers/members_helper.rb": {
+            "line": 100.0
+          },
+          "app/jobs/application_job.rb": {
+            "line": 0.0
+          },
+          "app/mailers/application_mailer.rb": {
+            "line": 0.0
+          },
+          "app/models/appeal.rb": {
+            "line": 0.0
+          },
+          "app/models/application_record.rb": {
+            "line": 100.0
+          },
+          "app/models/attendance.rb": {
+            "line": 83.33
+          },
+          "app/models/category.rb": {
+            "line": 100.0
+          },
+          "app/models/category_progress.rb": {
+            "line": 0.0
+          },
+          "app/models/check_in.rb": {
+            "line": 0.0
+          },
+          "app/models/event.rb": {
+            "line": 60.86
+          },
+          "app/models/member.rb": {
+            "line": 87.5
+          },
+          "app/models/school_year.rb": {
+            "line": 0.0
+          },
+          "app/models/semester.rb": {
+            "line": 83.33
+          },
+          "app/models/semester_requirement.rb": {
+            "line": 100.0
+          },
+          "app/models/user.rb": {
+            "line": 57.69
+          },
+          "app/services/admin/appeal_review.rb": {
+            "line": 0.0
+          },
+          "app/services/admin/member_management.rb": {
+            "line": 0.0
+          }
+        }
       }
     ]
   }
