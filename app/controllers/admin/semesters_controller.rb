@@ -1,5 +1,3 @@
-# frozen_string_literal: true
-
 class Admin::SemestersController < ApplicationController
   before_action :require_admin
 
@@ -7,9 +5,11 @@ class Admin::SemestersController < ApplicationController
     @semester = Semester.new(semester_params)
 
     if @semester.save
-      redirect_to admin_semester_requirements_path, notice: 'Semester created successfully.'
+      redirect_to admin_events_path,
+                  notice: 'Semester created successfully.'
     else
-      redirect_to admin_semester_requirements_path, alert: @semester.errors.full_messages.to_sentence
+      redirect_to admin_events_path,
+                  alert: @semester.errors.full_messages.to_sentence
     end
   end
 

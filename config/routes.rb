@@ -41,7 +41,8 @@ Rails.application.routes.draw do
       get :proof, on: :member
     end
     resources :categories
-    resources :semesters, only: [ :create ]
+    resources :semester_requirements, only: [ :create ]
+    resources :semesters, only: [:create]
     resources :events
     resources :semester_requirements, only: [ :index ]
     patch 'semesters/:semester_id/requirements',

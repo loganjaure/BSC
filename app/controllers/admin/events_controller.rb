@@ -7,11 +7,11 @@ class Admin::EventsController < ApplicationController
 
   def index
     @upcoming_events = Event.includes(:category, :semester)
-                            .where("event_date_time >= ?", Time.current)
+                            .where('event_date_time >= ?', Time.current)
                             .order(event_date_time: :asc)
 
     @past_events = Event.includes(:category, :semester)
-                        .where("event_date_time < ?", Time.current)
+                        .where('event_date_time < ?', Time.current)
                         .order(event_date_time: :desc)
 
     @categories = Category.order(:category_name)
@@ -23,7 +23,11 @@ class Admin::EventsController < ApplicationController
 
 
   def new
-    @event = Event.new(point_value: 1)
+    @event = Event.new(
+      point_value: 1,
+      check_in_opens_minutes_before: 15,
+      check_in_closes_minutes_after: 60
+    )
   end
 
   def create
@@ -66,7 +70,9 @@ class Admin::EventsController < ApplicationController
       :semester_id,
       :description,
       :point_value,
-      :check_in_code
+      :check_in_code,
+      :check_in_opens_minutes_before,
+      :check_in_closes_minutes_after
     )
   end
 

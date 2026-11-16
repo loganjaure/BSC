@@ -16,7 +16,7 @@ class Admin::CategoriesController < ApplicationController
     @category = Category.new(category_params)
 
     if @category.save
-      redirect_to admin_events_path, notice: 'Category created successfully.'
+      redirect_to admin_events_path(anchor: 'categories'), notice: 'Category created successfully.'
     else
       render :new, status: :unprocessable_entity
     end
@@ -34,17 +34,46 @@ class Admin::CategoriesController < ApplicationController
   end
 
 
-    def destroy
-        if @category.events.exists? || @category.semester_requirements.exists?
-            redirect_to admin_categories_path,
-                alert: 'Cannot delete a category used by events or semester requirements.'
-        elsif @category.destroy
-            redirect_to admin_events_path, notice: 'Category deleted successfully.'
-        else
-            redirect_to admin_categories_path,
-                alert: @category.errors.full_messages.to_sentence
-        end
+  
+  def destroy
+    replacement_category = nil
+
+    # A replacement is required if events belong to this category.
+    if @category.events.exists?
+      replacement_category = Category.find_by(
+        id: params[:replacement_category_id]
+      )
+
+      if replacement_category.nil? || replacement_category == @category
+        redirect_to admin_categories_path,
+                    alert: 'Please select a valid replacement category.'
+        return
+      end
     end
+
+    Category.transaction do
+      # Reassign existing events without deleting them.
+      if replacement_category
+        @category.events.find_each do |event|
+          event.update!(category: replacement_category)
+        end
+      end
+
+      # Remove semester associations.
+      @category.semester_requirements.destroy_all
+
+      # Finally delete the category.
+      @category.destroy!
+    end
+
+    redirect_to admin_events_path(anchor: 'categories'),
+                notice: 'Category deleted successfully. Events have been reassigned.'
+
+  rescue ActiveRecord::RecordInvalid, ActiveRecord::RecordNotDestroyed => e
+    redirect_to admin_categories_path,
+                alert: "Could not delete category: #{e.message}"
+  end
+
 
   private
 

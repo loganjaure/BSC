@@ -23,4 +23,3 @@ class HomeController < ApplicationController
     @category_progress = CategoryProgress.for(current_member, @current_semester)
   end
 end
-
