@@ -29,3 +29,12 @@ All notable changes to the **BSC Attendance Application** are documented in this
 ### Deployment & Infrastructure
 - **Web Deployment (`US-28` / `SCRUM-28`):**
   - Deployed production release on Heroku Staging/Production environments with continuous integration checks[cite: 1].
+
+## [Final Release / Sprint 3 Handoff] - 2026-11-18
+
+### Changed
+- Updated `README.md` with final customer ownership details (Logan Jaure), production CI/CD workflow, environment configuration, and end-of-course support notice.
+- Cleaned `db/seeds.rb` to retain only the customer admin account (`loganjaure@tamu.edu`) for production handoff.
+
+### Fixed
+- Resolved RuboCop lint offenses across controllers, models, routes, migrations, and specs so all GitHub Actions CI checks (`scan_ruby`, `scan_js`, `lint`) pass cleanly.
