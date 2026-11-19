@@ -34,7 +34,7 @@ class AppealsController < ApplicationController
 
   def event_options(events)
     events.map do |event|
-      ["#{event.event_name} (#{event.event_date_time.strftime('%b %d, %Y')})", event.id]
+      [ "#{event.event_name} (#{event.event_date_time.strftime('%b %d, %Y')})", event.id ]
     end
   end
 

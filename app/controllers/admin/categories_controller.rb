@@ -34,7 +34,7 @@ class Admin::CategoriesController < ApplicationController
   end
 
 
-  
+
   def destroy
     replacement_category = nil
 

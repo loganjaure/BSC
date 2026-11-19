@@ -18,7 +18,7 @@ RSpec.describe Event, type: :model do
     it { should validate_numericality_of(:point_value).is_greater_than_or_equal_to(0) }
   end
 
-  
+
   describe "#active?" do
     around do |example|
       travel_to(Time.zone.parse("2026-10-30 12:00:00")) do

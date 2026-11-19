@@ -42,7 +42,7 @@ Rails.application.routes.draw do
     end
     resources :categories
     resources :semester_requirements, only: [ :create ]
-    resources :semesters, only: [:create]
+    resources :semesters, only: [ :create ]
     resources :events
     resources :semester_requirements, only: [ :index ]
     patch 'semesters/:semester_id/requirements',
