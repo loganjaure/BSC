@@ -64,7 +64,7 @@ group :development, :test do
   gem "rspec_junit_formatter"
   gem "simplecov", require: false
   gem 'rubocop', require: false
-  gem 'shoulda-matchers', '~>6.0'
+  gem 'shoulda-matchers', '~>8.0'
   gem "rails-controller-testing"
 end
 
